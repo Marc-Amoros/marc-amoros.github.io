@@ -480,10 +480,16 @@ p { text-wrap: pretty; }
 
 /* ------------------------------------------------------------------
    Aurora de la portada — solo se ve en oscuro
-   Tres lobulos de luz por DEBAJO de la malla, en violeta y ciruela: los dos
+   Dos lobulos de luz por DEBAJO de la malla, en violeta y ciruela: los dos
    acentos del sistema, sin meter colores de fuera. En claro los tokens
    --portada-* la dejan en opacidad 0, asi que esto no se duplica por tema.
    Se anima con transform, que resuelve el compositor: no repinta nada.
+
+   Los dos se quedan del lado de la «M». Antes habia un tercero centrado y
+   otro a la izquierda, y el titular y los parrafos se leian sobre un lavado
+   violeta en degradado; ahora ese lado es negro plano y la luz acompana solo
+   a la letra. En movil, con el arte debajo del texto, la aurora queda arriba
+   a la derecha, lejos de los renglones.
    ------------------------------------------------------------------ */
 .hero::before {
   content: "";
@@ -495,12 +501,10 @@ p { text-wrap: pretty; }
   opacity: var(--portada-aurora);
   pointer-events: none;
   background:
-    radial-gradient(52% 44% at 50% 26%,
+    radial-gradient(38% 42% at 72% 34%,
       color-mix(in oklab, var(--color-accent) 40%, transparent) 0%, transparent 70%),
-    radial-gradient(34% 40% at 22% 52%,
-      color-mix(in oklab, var(--color-accent-2) 42%, transparent) 0%, transparent 70%),
-    radial-gradient(30% 34% at 79% 44%,
-      color-mix(in oklab, var(--color-accent) 30%, transparent) 0%, transparent 70%);
+    radial-gradient(30% 34% at 86% 50%,
+      color-mix(in oklab, var(--color-accent-2) 38%, transparent) 0%, transparent 70%);
   animation: aurora 26s var(--ease-soft) infinite alternate;
   will-change: transform;
 }
