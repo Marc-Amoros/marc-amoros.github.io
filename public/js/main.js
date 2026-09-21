@@ -921,3 +921,87 @@
     window.addEventListener('scroll', fabScroll, { passive: true });
   }
 })();
+
+/* ============================================================
+   Lo que flota se detiene sobre el pie
+   ------------------------------------------------------------
+   El menú lateral de artículos y fichas y el botón «Hablemos» son fijos:
+   flotan sobre la ventana y no saben dónde termina la página, así que al
+   llegar al final el pie les quedaba debajo. Aquí se mide cuánto pie se ve y
+   se le pasa al CSS: en pantalla ancha el panel del menú se acorta hasta
+   quedar justo encima; el botón del menú en pantalla pequeña y «Hablemos» se
+   levantan. Depende del alto de la ventana y del número de apartados, por
+   eso fallaba solo en algunas resoluciones.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var pie = document.querySelector('.footer');
+  var menu = document.querySelector('.menu');
+  var panel = menu && menu.querySelector('.menu__panel');
+  var fab = document.getElementById('fab');
+  if (!pie || (!menu && !fab)) return;
+
+  var AIRE = 16;      // px de aire entre lo que flota y el pie
+  var MINIMO = 112;   // px: por debajo de esto un panel ya no sirve
+  var esRail = window.matchMedia('(min-width: 64rem)');
+  var pendiente = false;
+
+  /* Con el panel más corto no cabe todo. Al llegar al pie lo que importa es el
+     final —los últimos apartados y lo que queda de lectura—, así que el panel
+     se alinea por abajo y solo sube si con eso se sale el apartado activo. Sin
+     animar, porque esto se recalcula en cada fotograma del scroll. */
+  function verActivo() {
+    if (panel.scrollHeight <= panel.clientHeight + 1) return;
+    panel.scrollTop = panel.scrollHeight - panel.clientHeight;
+    var a = panel.querySelector('.indice__a[aria-current="true"]');
+    if (!a) return;
+    var p = panel.getBoundingClientRect();
+    var r = a.getBoundingClientRect();
+    if (r.top < p.top) panel.scrollTop -= p.top - r.top + 8;
+  }
+
+  function ajustar() {
+    pendiente = false;
+    var topePie = pie.getBoundingClientRect().top;
+    var visible = window.innerHeight - topePie;          // píxeles de pie a la vista
+    var sube = visible > 0 ? (visible + AIRE).toFixed(1) + 'px' : '';
+
+    /* «Hablemos» va anclado abajo a la derecha: se sube lo que el pie tapa. */
+    if (fab) {
+      if (sube) fab.style.setProperty('--alza', sube);
+      else fab.style.removeProperty('--alza');
+    }
+    if (!menu) return;
+
+    if (visible <= 0) {
+      menu.style.removeProperty('--alza');
+      menu.style.removeProperty('--libre');
+      return;
+    }
+    if (esRail.matches) {
+      /* Panel anclado arriba: su borde superior no se mueve, así que el alto
+         que le queda es lo que hay hasta el pie. */
+      menu.style.removeProperty('--alza');
+      var libre = topePie - AIRE - panel.getBoundingClientRect().top;
+      menu.style.setProperty('--libre', Math.max(libre, MINIMO).toFixed(1) + 'px');
+      verActivo();
+    } else {
+      /* Botón anclado abajo: se sube igual que «Hablemos». */
+      menu.style.removeProperty('--libre');
+      menu.style.setProperty('--alza', sube);
+    }
+  }
+
+  function pedir() {
+    if (pendiente) return;
+    pendiente = true;
+    window.requestAnimationFrame(ajustar);
+  }
+
+  window.addEventListener('scroll', pedir, { passive: true });
+  window.addEventListener('resize', pedir);
+  window.addEventListener('load', pedir);
+  if (esRail.addEventListener) esRail.addEventListener('change', pedir);
+  ajustar();
+})();

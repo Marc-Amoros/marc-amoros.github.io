@@ -1551,7 +1551,14 @@ p { text-wrap: pretty; }
   align-items: center;
   justify-content: space-between;
 }
-.footer a:hover { color: var(--color-text); }
+/* El enlace del pie va en el violeta de acento: es la única acción de la
+   franja, y así se distingue del texto apagado que la rodea. */
+.footer a { color: var(--color-accent); }
+.footer a:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
 
 /* ------------------------------------------------------------
    11 bis. Menú de móvil
@@ -2018,7 +2025,9 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
    ============================================================ */
 .fab {
   position: fixed;
-  inset-block-end: clamp(1rem, 4vw, 2rem);
+  /* --alza la escribe main.js cuando el pie entra en la ventana: el botón se
+     detiene encima en vez de taparle el enlace de volver. */
+  inset-block-end: max(clamp(1rem, 4vw, 2rem), var(--alza, 0px));
   inset-inline-end: clamp(1rem, 4vw, 2rem);
   z-index: 60;
   display: inline-flex;
