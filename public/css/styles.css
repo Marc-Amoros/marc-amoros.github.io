@@ -82,6 +82,10 @@ p { text-wrap: pretty; }
   inset-inline-start: var(--spacing-2xs);
   z-index: 200;
   padding: var(--spacing-2xs) var(--spacing-s);
+  /* 44px de alto: es el primer mando de la página para quien va con teclado. */
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
   border-radius: var(--radius-pill);
   background: var(--color-accent);
   color: var(--color-on-accent);
@@ -161,6 +165,8 @@ p { text-wrap: pretty; }
   gap: var(--spacing-2xs);
   padding-block: 0.72em;
   padding-inline: 1.35em;
+  /* 44px de alto como mínimo: con el relleno solo llegaban a 42. */
+  min-block-size: 2.75rem;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   font-size: var(--text-sm);
@@ -293,11 +299,11 @@ p { text-wrap: pretty; }
   letter-spacing: var(--tracking-title);
   margin-inline-end: auto;
   white-space: nowrap;
-  /* Medía 23,8px de alto y el minimo de 2.5.8 son 24. El inline-flex no
-     cambia nada visualmente, solo asegura la altura de la diana. */
+  /* El inline-flex no cambia nada visualmente: solo da altura a la diana.
+     44px, como el resto de mandos; la barra mide 60 y no se entera. */
   display: inline-flex;
   align-items: center;
-  min-block-size: 1.5rem;
+  min-block-size: 2.75rem;
 }
 
 .nav__nav { position: relative; }
@@ -319,6 +325,17 @@ p { text-wrap: pretty; }
   white-space: nowrap;
   color: var(--color-text-muted);
   transition: color var(--dur-fast) var(--ease-out);
+}
+/* La diana llega a 44px de alto sin tocar la caja: la píldora que se desliza
+   por detrás se mide contra ella y habría crecido con el enlace. Solo hacia
+   arriba y hacia abajo; a los lados están pegados unos a otros. */
+.nav__link::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline: 0;
+  translate: 0 -50%;
+  block-size: max(100%, 2.75rem);
 }
 .nav__link:hover,
 .nav__link[aria-current="true"] { color: var(--color-text); }
@@ -344,7 +361,10 @@ p { text-wrap: pretty; }
 }
 .nav__nav[data-spot="on"] .nav__spot { opacity: 1; }
 
-.nav__actions { display: flex; align-items: center; gap: var(--spacing-2xs); }
+/* El hueco es de 12px y no de 8 a propósito: los dos círculos de la barra
+   miden 32px y su zona de pulsación, 44. Con 8px de hueco quedaban a 40px de
+   centro a centro y las dos zonas se solapaban; con 12 no se tocan. */
+.nav__actions { display: flex; align-items: center; gap: var(--spacing-xs); }
 
 .theme-toggle {
   display: grid;
@@ -368,27 +388,25 @@ p { text-wrap: pretty; }
 }
 .theme-toggle:hover { color: var(--color-text); border-color: var(--color-text-subtle); transform: scale(1.06); }
 
-/* En el movil estos dos son los unicos mandos de la barra, y un circulo de
-   32px se falla al pulsarlo con el pulgar. Se agranda solo la zona sensible
-   -hasta 40x44, que es lo que cabe entre los dos sin que se solapen- y el
-   boton que se ve sigue midiendo lo mismo. */
-@media (pointer: coarse) {
-  .theme-toggle,
-  .nav__burger { position: relative; }
-  .theme-toggle::after,
-  .nav__burger::after {
-    content: "";
-    position: absolute;
-    inset-block: -6px;
-    inset-inline: -4px;
-  }
-  /* El flotante se queda en 42px, un pelo por debajo de los 44 que pide la
-     WCAG en su nivel mas alto. Se estira la zona sensible, no el boton. */
-  .fab::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-  }
+/* Zona de pulsación de los mandos redondos: 44×44, que es lo que piden Apple
+   y Material para el dedo y lo que marca la WCAG en su nivel más alto (2.5.5).
+   Los círculos que se ven siguen midiendo lo que medían -32px los dos de la
+   barra, 42 el flotante-: lo que crece es un pseudoelemento transparente
+   centrado encima. Va para ratón y para dedo, no solo en táctil: con el ratón
+   también se agradece no tener que afinar. */
+.theme-toggle,
+.nav__burger,
+.fab { position: relative; }
+.theme-toggle::after,
+.nav__burger::after,
+.fab::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  inline-size: max(100%, 2.75rem);
+  block-size: max(100%, 2.75rem);
 }
 /* Sol y luna comparten la misma celda del grid y se relevan girando. Antes
    se cambiaban con display, que no admite transicion: en una barra donde
@@ -1561,6 +1579,18 @@ p { text-wrap: pretty; }
   inline-size: 1.5rem;
   background: var(--color-accent);
 }
+/* 24×24 es el mínimo de la norma y no da para más ancho: doce puntos a 44 no
+   caben en un móvil. A lo alto sí hay sitio, así que la diana sube a 44 y el
+   punto que se ve no cambia. */
+.carrusel__punto { position: relative; }
+.carrusel__punto::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline: 0;
+  translate: 0 -50%;
+  block-size: max(100%, 2.75rem);
+}
 .carrusel__punto:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 
 .carrusel__flechas { display: flex; gap: var(--spacing-2xs); }
@@ -2023,7 +2053,14 @@ p { text-wrap: pretty; }
 }
 /* El enlace del pie va en el violeta de acento: es la única acción de la
    franja, y así se distingue del texto apagado que la rodea. */
-.footer a { color: var(--color-accent); }
+/* 44px de alto: medía 16, que es lo que ocupa su renglón. Cumplía por estar
+   lejos de cualquier otro enlace, pero con el dedo se falla igual. */
+.footer a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  color: var(--color-accent);
+}
 .footer a:hover {
   color: var(--color-accent-hover);
   text-decoration: underline;

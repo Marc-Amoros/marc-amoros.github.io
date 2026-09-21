@@ -327,8 +327,17 @@ Lo que hay hecho, y lo que conviene no romper al tocar:
   página con `inert`: el foco no se escapa a lo que queda tapado y Escape cierra.
 - Los puestos de la trayectoria son titulares (`<h3>`) que envuelven al botón que
   los abre, el patrón de acordeón de WAI-ARIA.
-- Contraste AA en claro y oscuro, tema recordado, `prefers-reduced-motion`
-  respetado y tamaños de diana de 24 px como mínimo.
+- Contraste AA en claro y oscuro, tema recordado y `prefers-reduced-motion`
+  respetado.
+- Todo lo que se pulsa tiene 44 px de diana, que es lo que piden Apple y
+  Material para el dedo y el nivel más alto de la WCAG (2.5.5). En los mandos
+  redondos -los dos círculos de la barra, el flotante, el de ampliar vídeo- el
+  botón que se ve sigue midiendo lo que medía y lo que crece es un
+  pseudoelemento transparente centrado encima; lo mismo en los enlaces del menú
+  (la píldora que se desliza por detrás se mide contra la caja y habría crecido
+  con ellos) y en los puntos del carrusel, que solo crecen a lo alto porque doce
+  puntos de 44 px de ancho no caben en un móvil. El hueco entre los dos círculos
+  de la barra es de 12 px y no de 8 para que sus dianas no se solapen.
 
 ## Decisiones que conviene que conozcas
 
