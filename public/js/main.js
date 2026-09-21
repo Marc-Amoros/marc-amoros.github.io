@@ -225,8 +225,10 @@
 
   /* ---------- Carrusel del portafolio ----------
      La pista es un scroller nativo con scroll-snap: el gesto táctil, el
-     trackpad y la rueda ya funcionan sin esto. Aquí solo se añaden las
-     flechas, los puntos y el teclado, y se mantiene su estado. */
+     trackpad y la rueda ya funcionan sin esto, y como cada tarjeta es una
+     parada obligatoria (scroll-snap-stop), un gesto pasa de una en una. Aquí
+     solo se añaden las flechas, los puntos y el teclado, que avanzan igual:
+     una tarjeta por paso. */
   document.querySelectorAll('[data-carrusel]').forEach(function (carrusel) {
     var pista = carrusel.querySelector('[data-pista]');
     var puntos = carrusel.querySelector('[data-puntos]');
@@ -236,54 +238,73 @@
     var tarjetas = Array.prototype.slice.call(pista.children);
     if (!tarjetas.length) return;
 
-    var paginas = 1;
-    var porVista = 1;
-    var paso = 0;
-    var margen = 2;
-
-    function desplazamiento() { return paso || pista.clientWidth; }
+    /* Cada parada es el scrollLeft que deja una tarjeta pegada al margen de la
+       página. Las últimas tarjetas no pueden llegar a ese punto porque la pista
+       se acaba antes: se quedan en el tope y solo cuenta la primera de ellas. */
+    var paradas = [];
+    var holgura = 2;
+    var firma = '';
+    var destino = null;      // parada a la que va un desplazamiento en curso
+    var reposo = 0;
 
     function medir() {
-      var ancho = tarjetas[0].getBoundingClientRect().width;
+      var maximo = Math.max(0, Math.round(pista.scrollWidth - pista.clientWidth));
+      var izquierda = pista.getBoundingClientRect().left;
+      var relleno = parseFloat(getComputedStyle(pista).scrollPaddingLeft) || 0;
       var hueco = parseFloat(getComputedStyle(pista).columnGap) || 0;
-      porVista = Math.max(1, Math.round(pista.clientWidth / (ancho + hueco)));
-      /* El paso es un número entero de tarjetas, no el ancho de la pista:
-         así las flechas y los puntos apuntan siempre al mismo sitio. */
-      paso = porVista * (ancho + hueco);
+      var ancho = tarjetas[0].getBoundingClientRect().width;
       /* El snap puede dejar la pista unos píxeles antes del final; con este
-         margen el último grupo cuenta como final y la flecha se apaga. */
-      margen = hueco + 4;
-      paginas = Math.max(1, Math.ceil(tarjetas.length / porVista));
+         margen el último tramo cuenta como final y la flecha se apaga. */
+      holgura = hueco + 4;
+      /* Dos paradas a menos de un tercio de tarjeta son la misma: pasa cuando
+         las últimas tarjetas se quedan en el tope de la pista. */
+      var minimo = (ancho + hueco) / 3;
+
+      paradas = [];
+      tarjetas.forEach(function (t, i) {
+        var x = t.getBoundingClientRect().left - izquierda + pista.scrollLeft - relleno;
+        x = Math.min(Math.max(0, Math.round(x)), maximo);
+        if (!paradas.length || x - paradas[paradas.length - 1].x > minimo) paradas.push({ x: x, tarjeta: i });
+      });
       pintarPuntos();
       actualizar();
     }
 
     function pintarPuntos() {
-      if (!puntos || puntos.childElementCount === paginas) return;
+      if (!puntos) return;
+      var nueva = paradas.map(function (p) { return p.tarjeta; }).join(',');
+      if (nueva === firma) return;
+      firma = nueva;
       puntos.textContent = '';
-      for (var i = 0; i < paginas; i++) {
+      paradas.forEach(function (p, i) {
         var li = document.createElement('li');
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'carrusel__punto';
-        b.dataset.pagina = String(i);
-        b.setAttribute('aria-label', 'Ir al grupo de proyectos ' + (i + 1) + ' de ' + paginas);
+        b.dataset.parada = String(i);
+        b.setAttribute('aria-label', 'Ir al proyecto ' + (p.tarjeta + 1) + ' de ' + tarjetas.length);
         li.appendChild(b);
         puntos.appendChild(li);
-      }
+      });
     }
 
     function alFinal() {
-      return pista.scrollLeft >= pista.scrollWidth - pista.clientWidth - margen;
+      return pista.scrollLeft >= pista.scrollWidth - pista.clientWidth - holgura;
     }
 
-    function paginaActual() {
-      if (alFinal()) return paginas - 1;
-      return Math.min(paginas - 1, Math.round(pista.scrollLeft / desplazamiento()));
+    function paradaActual() {
+      if (alFinal()) return paradas.length - 1;
+      var mejor = 0;
+      var distancia = Infinity;
+      paradas.forEach(function (p, i) {
+        var d = Math.abs(p.x - pista.scrollLeft);
+        if (d < distancia) { distancia = d; mejor = i; }
+      });
+      return mejor;
     }
 
     function actualizar() {
-      var actual = paginaActual();
+      var actual = paradaActual();
 
       flechas.forEach(function (b) {
         b.disabled = Number(b.dataset.ir) < 0 ? pista.scrollLeft <= 1 : alFinal();
@@ -294,32 +315,42 @@
         function (b, i) { b.setAttribute('aria-current', String(i === actual)); });
     }
 
-    function irA(x) {
-      pista.scrollTo({ left: x, behavior: reduceMotion ? 'auto' : 'smooth' });
+    function irA(i) {
+      i = Math.max(0, Math.min(paradas.length - 1, i));
+      destino = i;
+      /* Mientras dura el desplazamiento la parada actual todavía es la de
+         salida: un segundo clic seguido cuenta desde el destino, no desde ahí. */
+      clearTimeout(reposo);
+      reposo = setTimeout(function () { destino = null; }, 700);
+      pista.scrollTo({ left: paradas[i].x, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
+    function paso(dir) {
+      irA((destino !== null ? destino : paradaActual()) + dir);
     }
 
     flechas.forEach(function (b) {
-      b.addEventListener('click', function () {
-        irA(pista.scrollLeft + Number(b.dataset.ir) * desplazamiento());
-      });
+      b.addEventListener('click', function () { paso(Number(b.dataset.ir)); });
     });
 
     if (puntos) {
       puntos.addEventListener('click', function (e) {
         var b = e.target.closest('.carrusel__punto');
         if (!b) return;
-        irA(Number(b.dataset.pagina) * desplazamiento());
+        irA(Number(b.dataset.parada));
       });
     }
 
     pista.addEventListener('keydown', function (e) {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       e.preventDefault();
-      irA(pista.scrollLeft + (e.key === 'ArrowRight' ? 1 : -1) * desplazamiento());
+      paso(e.key === 'ArrowRight' ? 1 : -1);
     });
 
     var esperando = false;
     pista.addEventListener('scroll', function () {
+      clearTimeout(reposo);
+      reposo = setTimeout(function () { destino = null; }, 160);
       if (esperando) return;
       esperando = true;
       requestAnimationFrame(function () { actualizar(); esperando = false; });
@@ -481,7 +512,7 @@
 
 
   /* ============================================================
-     Sobre mí: el lema y los pasos del método
+     Sobre mí: el trazo del título y los pasos del método
      ------------------------------------------------------------
      Dos gestos, los dos con sentido: el trazo bajo «puente» se
      dibuja de izquierda a derecha, que es lo que la frase dice; y
@@ -495,11 +526,24 @@
   var sobreMi = document.querySelector('#sobre-mi .about__body');
 
   if (motion && sobreMi && !reduceMotion) {
-    var trazo = sobreMi.querySelector('.lema__puente');
+    /* «puente» está en el título, que en móvil queda lejos del cuerpo (el
+       retrato va en medio): el trazo se dibuja cuando asoma el título, y los
+       pasos cuando asoma el cuerpo. */
+    var titulo = document.getElementById('sobre-mi-titulo');
+    var trazo = titulo && titulo.querySelector('.lema__puente');
     var pasos = Array.prototype.slice.call(sobreMi.querySelectorAll('.metodo__lista li'));
     var visto = false;
+    var trazado = false;
 
-    if (trazo) trazo.style.setProperty('--trazo', '0');
+    if (trazo) {
+      trazo.style.setProperty('--trazo', '0');
+      motion.inView(titulo, function () {
+        if (trazado || !titulo.offsetParent) return;
+        trazado = true;
+        motion.animate(trazo, { '--trazo': [0, 1] },
+          { duration: 0.65, delay: 0.25, ease: [0.2, 0, 0, 1] });
+      }, { amount: 0.6 });
+    }
     pasos.forEach(function (paso) {
       paso.style.opacity = '0';
       paso.style.setProperty('--rail', '0');
@@ -509,10 +553,6 @@
       if (visto || !sobreMi.offsetParent) return;
       visto = true;
 
-      if (trazo) {
-        motion.animate(trazo, { '--trazo': [0, 1] },
-          { duration: 0.65, delay: 0.15, ease: [0.2, 0, 0, 1] });
-      }
       if (pasos.length) {
         motion.animate(pasos,
           { opacity: [0, 1], transform: ['translateY(10px)', 'none'] },
@@ -685,7 +725,7 @@
         // la malla se aparta de ellos. Así el hueco se ajusta solo a cualquier
         // ancho de pantalla y a cualquier longitud de titular.
         zonas = [];
-        hero.querySelectorAll('.hero__status, .hero__title, .hero__sub, .hero__actions')
+        hero.querySelectorAll('.hero__status, .hero__title, .hero__sub, .hero__actions, .hero__arte')
           .forEach(function (el) {
             var c = el.getBoundingClientRect();
             zonas.push({
@@ -1004,4 +1044,161 @@
   window.addEventListener('load', pedir);
   if (esRail.addEventListener) esRail.addEventListener('change', pedir);
   ajustar();
+})();
+
+/* ============================================================
+   El arte de la portada responde al cursor
+   ------------------------------------------------------------
+   Tres cosas, todas con el cursor y ninguna necesaria para entender la página:
+   1) Paralaje. La «M» y sus figuras son capas (.arte__capa) que se desplazan un
+      poco con el cursor, cada una a su ritmo, para que la composición tenga
+      profundidad. Aquí solo se mide dónde está el cursor dentro del hero y se
+      escribe como --px y --py (de -1 a 1) en .hero__arte; cuánto se mueve cada
+      capa lo decide el CSS. También de ahí sale hacia dónde cae el fondo de la
+      letra en 3D.
+   2) El cursor de Marc va hacia el tuyo mientras lo tienes sobre la composición
+      (--dx y --dy: cuánto se aleja de su sitio), como en un archivo compartido.
+   3) Cada vez que tu cursor entra, el brillo vuelve a cruzar la letra.
+   Sin cursor (táctil) o con movimiento reducido no hace nada.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var arte = document.querySelector('[data-arte]');
+  var hero = document.getElementById('inicio');
+  if (!arte || !hero) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var dibujo = arte.querySelector('.arte');
+  var VB_W = 640;
+  var VB_H = 620;
+  /* Dónde está el cursor de Marc en reposo (la punta de la flecha). */
+  var REPOSO_X = 566;
+  var REPOSO_Y = 160;
+
+  var px = 0;
+  var py = 0;
+  var dx = 0;
+  var dy = 0;
+  var pendiente = false;
+  /* Cuenta desde la carga: el brillo de la entrada (2,7 s) no lo pisa el del cursor. */
+  var ultimoBrillo = Date.now();
+
+  function pintar() {
+    pendiente = false;
+    arte.style.setProperty('--px', px.toFixed(3));
+    arte.style.setProperty('--py', py.toFixed(3));
+    arte.style.setProperty('--dx', dx.toFixed(1));
+    arte.style.setProperty('--dy', dy.toFixed(1));
+  }
+  function pedir() {
+    if (pendiente) return;
+    pendiente = true;
+    window.requestAnimationFrame(pintar);
+  }
+  function limitar(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+  hero.addEventListener('pointermove', function (e) {
+    if (e.pointerType === 'touch') return;
+    var r = hero.getBoundingClientRect();
+    px = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+
+    /* El cursor de Marc solo sigue al tuyo si lo tienes sobre la composición
+       (o justo al lado); lejos, vuelve a su sitio. Se coloca un poco por
+       detrás y por debajo del tuyo, para no taparlo. */
+    if (dibujo) {
+      var d = dibujo.getBoundingClientRect();
+      var sx = (e.clientX - d.left) / d.width * VB_W;
+      var sy = (e.clientY - d.top) / d.height * VB_H;
+      if (sx > -70 && sx < VB_W + 70 && sy > -70 && sy < VB_H + 70) {
+        dx = limitar(sx + 26, 40, 556) - REPOSO_X;
+        dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
+      } else {
+        dx = 0;
+        dy = 0;
+      }
+    }
+    pedir();
+  }, { passive: true });
+
+  hero.addEventListener('pointerleave', function () {
+    px = 0;
+    py = 0;
+    dx = 0;
+    dy = 0;
+    pedir();
+  });
+
+  /* El brillo: se relanza quitando y poniendo la clase, con una lectura del
+     layout entre medias para que el navegador vea el cambio. No más de una vez
+     cada cinco segundos, para que sea un detalle y no un tic. */
+  if (dibujo) {
+    arte.addEventListener('pointerenter', function (e) {
+      if (e.pointerType === 'touch') return;
+      var ahora = Date.now();
+      if (ahora - ultimoBrillo < 5000) return;
+      ultimoBrillo = ahora;
+      dibujo.classList.remove('arte--brilla');
+      void dibujo.getBoundingClientRect();
+      dibujo.classList.add('arte--brilla');
+    });
+    dibujo.addEventListener('animationend', function (e) {
+      if (e.animationName === 'arte-brillo-2') dibujo.classList.remove('arte--brilla');
+    });
+  }
+})();
+
+/* ============================================================
+   La medida de la selección cuenta hasta su valor
+   ------------------------------------------------------------
+   La etiqueta «480 × 364» de la caja de selección sale en la entrada y sus
+   números suben desde cero, como cuando se arrastra un asa. Empieza cuando el
+   hero recibe .overture (la etiqueta aparece a los 2,1 s). Sin JS o con menos
+   movimiento se queda con su valor final, que es el que trae el HTML.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var etiqueta = document.querySelector('.arte__medida text');
+  var hero = document.getElementById('inicio');
+  if (!etiqueta || !hero) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var final = etiqueta.textContent;
+  var cifras = final.match(/(\d+)\s*×\s*(\d+)/);
+  if (!cifras) return;
+  var ancho = parseInt(cifras[1], 10);
+  var alto = parseInt(cifras[2], 10);
+
+  etiqueta.textContent = '0 × 0';
+
+  var contado = false;
+  function contar() {
+    if (contado) return;
+    contado = true;
+    var inicio = null;
+    var duracion = 950;
+    function paso(t) {
+      if (inicio === null) inicio = t;
+      var k = Math.min(1, (t - inicio) / duracion);
+      var e = 1 - Math.pow(1 - k, 3);
+      etiqueta.textContent = Math.round(ancho * e) + ' × ' + Math.round(alto * e);
+      if (k < 1) window.requestAnimationFrame(paso);
+      else etiqueta.textContent = final;
+    }
+    window.requestAnimationFrame(paso);
+  }
+
+  function arrancar() { window.setTimeout(contar, 2150); }
+  if (hero.classList.contains('overture')) {
+    arrancar();
+  } else {
+    var vigia = new MutationObserver(function () {
+      if (hero.classList.contains('overture')) { vigia.disconnect(); arrancar(); }
+    });
+    vigia.observe(hero, { attributes: true, attributeFilter: ['class'] });
+    /* Por si la clase nunca llega: a los 6 s se deja el valor final. */
+    window.setTimeout(function () { vigia.disconnect(); contar(); }, 6000);
+  }
 })();

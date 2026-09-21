@@ -91,7 +91,8 @@ dist/                            Lo que genera el build. Es lo que se sube al ho
 _anterior/                       El sitio antes de Astro y activos que ya no se usan. Se puede borrar. No se sube a GitHub.
 ```
 
-Retratos en `public/assets/`: `marc.webp` (1200×1600, el de la portada),
+Retratos en `public/assets/`: `marc.webp` (1200×1600, el de «Sobre mí» y, si se enciende
+`retratoHero`, el de la portada),
 `marc.jpg` (750×1000, para los datos estructurados), `marc-560.jpg` (420×560,
 foto del contacto e icono en iOS) y `marc-og.jpg` (1200×628, al compartir el
 enlace).
@@ -159,7 +160,37 @@ De **Material Design 3** vienen:
 ## Las animaciones
 
 - **Obertura del hero**: el titular sube línea a línea desde detrás de su
-  máscara, el resto entra escalonado y el retrato pasa de desenfocado a nítido.
+  máscara y el resto entra escalonado.
+- **La «M» de la portada** (`.hero__arte` en `index.astro` y la sección «6 bis» de
+  `styles.css`): una mesa de trabajo de diseño. Una «M» de módulo serif, dibujada a
+  mano como un único trazado —sin fuente ni imagen, y sin costuras: la caja de
+  selección coincide con la cara al píxel— sobre un lienzo girado con rejilla, con
+  guías, la caja de selección y sus ocho asas, la medida («480 × 364»), el cursor
+  de quien la toca con su nombre y un interruptor. Es el oficio hecho imagen:
+  la letra como una pieza que se diseña. Es decoración (`aria-hidden`).
+  - **Volumen.** La letra es un sólido: una cara con degradado, 16 copias detrás
+    (`.arte__lado`) que forman el fondo extruido —del violeta pleno a uno más
+    apagado— y su sombra difuminada. El lienzo tiene degradado, reflejo, filo claro
+    y una sombra que lo eleva; detrás hay un halo de luz. Las sombras son filtros
+    SVG (no CSS) porque los CSS sobre piezas sueltas de un SVG no los pintan todos
+    los navegadores.
+  - **Con el cursor.** Cada grupo es una capa (`.arte__capa`) que `main.js`
+    desplaza un poco (`--px` y `--py`, de -1 a 1), cada una a su ritmo. De esos
+    mismos números sale hacia dónde cae el fondo de la letra: si el cursor va a la
+    derecha, la cara se adelanta y el fondo queda a su izquierda. El cursor de Marc
+    va hacia el tuyo (`--dx` y `--dy`) mientras lo tienes sobre la composición, y
+    cada vez que entras el brillo vuelve a cruzar la letra (no más de una vez cada
+    cinco segundos).
+  - **Entrada.** En cascada con el titular: el lienzo cae girando y el halo se
+    enciende, las guías cruzan, la letra sube y saca su fondo con un pequeño
+    rebote (`--prof`, un número registrado con `@property`), la caja se dibuja, las
+    asas saltan una a una, la medida cuenta hasta «480 × 364», el interruptor se
+    enciende, el cursor llega volando y, al final, el brillo cruza la letra. Después
+    el cursor se mece despacio.
+  - **Tema y accesibilidad.** Los colores salen de `--portada-arte-*`
+    (`tokens.css`) y cambian con el tema. El estado base es la composición
+    terminada: sin JavaScript se ve completa, con volumen y quieta, y con
+    `prefers-reduced-motion` no se anima ni responde al cursor.
 - **Malla de puntos** (`<canvas id="malla">` + `mallaDePuntos()` en `main.js`):
   un retículo que pesa en los márgenes y respira con una onda diagonal
   lentísima. Nunca pisa el texto: `medir()` toma las cajas reales del
@@ -175,9 +206,13 @@ De **Material Design 3** vienen:
 - **Carrusel del portafolio**: la fila de proyectos es un scroller nativo con
   `scroll-snap`, así que el dedo, el trackpad y la rueda ya funcionan sin
   JavaScript; el script solo añade las flechas, los puntos y las teclas de
-  dirección, y mantiene su estado. Se ven una, dos o tres tarjetas según el
-  ancho, y en móvil el número no es entero a propósito: asoma un trozo de la
-  siguiente para que se vea que la fila continúa. En pantallas táctiles las
+  dirección, y mantiene su estado. Cada tarjeta es una parada obligatoria
+  (`scroll-snap-stop`) y las flechas, los puntos y las teclas avanzan de una en
+  una: hay un punto por cada posición a la que se puede llegar. Caben una, dos o
+  tres tarjetas en la caja de la página según el ancho, y la pista llega hasta
+  el borde derecho de la ventana, así que la siguiente siempre asoma por ahí
+  (las tarjetas se miden contra la caja, `100cqw`, no contra la pista). En
+  móvil el número tampoco es entero a propósito. En pantallas táctiles las
   flechas desaparecen —se arrastra con el dedo y además chocarían con el botón
   flotante de contacto— y quedan solo los puntos; con ratón y una ventana
   estrecha pasan a una segunda fila. La pista lleva relleno por dentro y margen
@@ -254,12 +289,30 @@ su texto en `src/data/alt-textos.js`; el build avisa de las que faltan.
 
 ### Los interruptores
 
-`src/lib/ajustes.js` tiene `salidasExternas`. Con `false` (como está ahora) no se
-pintan los enlaces a Behance, Medium ni LinkedIn, ni el del producto del cliente,
-pero se conserva el contenido que los acompañaba (las estadísticas de Behance, la
-nota del producto). Un proyecto con `forzarSitio: true` enseña su enlace al
-producto aunque el interruptor esté apagado: es lo que hacen los dos portales del
-Notariado, porque ahí el producto en producción es la prueba del trabajo.
+`src/lib/ajustes.js` tiene cinco interruptores:
+
+- `estadoHero`: con `false` (como está ahora) no se pinta la píldora «Barcelona ·
+  Diseñador de Producto Digital (UX/UI)» que iba encima del titular de la
+  portada. Con `true` vuelve tal cual.
+- `retratoHero`: con `false` (como está ahora) no se pinta el retrato con su
+  tarjeta que iba junto a las cifras de la portada, y las cuatro cifras pasan a
+  una sola fila en pantalla ancha. El retrato vive en «Sobre mí». Con `true`
+  vuelve a la portada, y el de «Sobre mí» se queda.
+- `botonesHero`: con `false` (como está ahora) no se pintan «Ver portafolio» y
+  «Contactar» en la portada; el camino sigue abierto por el menú, «Hablemos» y el
+  botón flotante. Con `true` vuelven, con sus esquinas en hoja.
+- `sobreMiCompleto`: con `false` (como está ahora) «Sobre mí» se queda en lo
+  esencial: el retrato con su tarjeta (nombre y oficio), el título, la presentación, «Cómo
+  trabajo», las tres tarjetas de áreas de trabajo y una línea con herramientas y
+  metodologías. Con `true` vuelve lo que se quitó: la nota sobre documentar el
+  proceso, «Proyectos destacados» (tres filas con enlace a su caso) y las
+  herramientas y metodologías en píldoras.
+- `salidasExternas`: con `false` (como está ahora) no se pintan los enlaces a
+  Behance, Medium ni LinkedIn, ni el del producto del cliente, pero se conserva
+  el contenido que los acompañaba (las estadísticas de Behance, la nota del
+  producto). Un proyecto con `forzarSitio: true` enseña su enlace al producto
+  aunque el interruptor esté apagado: es lo que hacen los dos portales del
+  Notariado, porque ahí el producto en producción es la prueba del trabajo.
 
 ## Accesibilidad
 

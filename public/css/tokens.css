@@ -208,6 +208,25 @@
   --portada-halo:    none;
   --portada-em-base: var(--color-accent);
   --portada-em-luz:  var(--color-accent);
+  /* El arte de la portada (la «M» y sus figuras). En claro, un lila tonal con la
+     letra en tinta profunda; en oscuro, un violeta hundido con la letra clara. */
+  --portada-arte-lienzo:  color-mix(in oklab, var(--color-accent) 22%, var(--color-bg));
+  --portada-arte-tinta:   color-mix(in oklab, var(--color-text) 72%, #000);
+  /* Volumen: el lienzo pasa de un lila claro (donde da la luz, arriba a la
+     izquierda) a uno más hondo; la letra tiene cara, con un degradado suave, y
+     un fondo extruido en violeta que se apaga hacia atrás; y debajo, su sombra. */
+  --portada-arte-lienzo-a:   color-mix(in oklab, var(--color-accent) 12%, var(--color-bg));
+  --portada-arte-lienzo-b:   color-mix(in oklab, var(--color-accent) 32%, var(--color-bg));
+  --portada-arte-tinta-alta: color-mix(in oklab, var(--portada-arte-tinta) 74%, var(--color-accent));
+  --portada-arte-tinta-baja: var(--portada-arte-tinta);
+  --portada-arte-lado-cerca: var(--color-accent);
+  --portada-arte-lado-lejos: color-mix(in oklab, var(--color-accent) 62%, var(--portada-arte-lienzo));
+  --portada-arte-sombra:      rgba(38 10 104 / 0.34);
+  --portada-arte-sombra-hoja: rgba(70 24 170 / 0.30);
+  --portada-arte-halo:        color-mix(in oklab, var(--color-accent) 28%, transparent);
+  --portada-arte-brillo:      #fff;
+  --portada-arte-gloss:       0.5;
+  --portada-arte-borde:       rgba(255 255 255 / 0.7);
 
   color-scheme: light;
 }
@@ -258,6 +277,20 @@
     --portada-halo:    0 14px 44px rgba(157 107 255 / 0.36), 0 0 0 1px rgba(157 107 255 / 0.28);
     --portada-em-base: var(--color-violet-300);
     --portada-em-luz:  #e6d8ff;
+    --portada-arte-lienzo:  color-mix(in oklab, var(--color-accent) 40%, var(--color-bg));
+    --portada-arte-tinta:   var(--color-text);
+    --portada-arte-lienzo-a:   color-mix(in oklab, var(--color-accent) 50%, var(--color-bg));
+    --portada-arte-lienzo-b:   color-mix(in oklab, var(--color-accent) 28%, var(--color-bg));
+    --portada-arte-tinta-alta: var(--portada-arte-tinta);
+    --portada-arte-tinta-baja: color-mix(in oklab, var(--portada-arte-tinta) 80%, var(--color-accent));
+    --portada-arte-lado-cerca: var(--color-accent);
+    --portada-arte-lado-lejos: color-mix(in oklab, var(--color-accent) 58%, var(--portada-arte-lienzo));
+    --portada-arte-sombra:      rgba(0 0 0 / 0.6);
+    --portada-arte-sombra-hoja: rgba(0 0 0 / 0.55);
+    --portada-arte-halo:        color-mix(in oklab, var(--color-accent) 40%, transparent);
+    --portada-arte-brillo:      color-mix(in oklab, var(--color-accent) 60%, #fff);
+    --portada-arte-gloss:       0.16;
+    --portada-arte-borde:       rgba(255 255 255 / 0.22);
 
     color-scheme: dark;
   }
@@ -307,6 +340,20 @@
   --portada-halo:    0 14px 44px rgba(157 107 255 / 0.36), 0 0 0 1px rgba(157 107 255 / 0.28);
   --portada-em-base: var(--color-violet-300);
   --portada-em-luz:  #e6d8ff;
+  --portada-arte-lienzo:  color-mix(in oklab, var(--color-accent) 40%, var(--color-bg));
+  --portada-arte-tinta:   var(--color-text);
+  --portada-arte-lienzo-a:   color-mix(in oklab, var(--color-accent) 50%, var(--color-bg));
+  --portada-arte-lienzo-b:   color-mix(in oklab, var(--color-accent) 28%, var(--color-bg));
+  --portada-arte-tinta-alta: var(--portada-arte-tinta);
+  --portada-arte-tinta-baja: color-mix(in oklab, var(--portada-arte-tinta) 80%, var(--color-accent));
+  --portada-arte-lado-cerca: var(--color-accent);
+  --portada-arte-lado-lejos: color-mix(in oklab, var(--color-accent) 58%, var(--portada-arte-lienzo));
+  --portada-arte-sombra:      rgba(0 0 0 / 0.6);
+  --portada-arte-sombra-hoja: rgba(0 0 0 / 0.55);
+  --portada-arte-halo:        color-mix(in oklab, var(--color-accent) 40%, transparent);
+  --portada-arte-brillo:      color-mix(in oklab, var(--color-accent) 60%, #fff);
+  --portada-arte-gloss:       0.16;
+  --portada-arte-borde:       rgba(255 255 255 / 0.22);
 
   color-scheme: dark;
 }

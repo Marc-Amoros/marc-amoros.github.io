@@ -6,7 +6,15 @@
    que ahora apuntan a las rutas nuevas. */
 import Base from '../layouts/Base.astro';
 import Contacto from '../components/Contacto.astro';
-import { salidasExternas } from '../lib/ajustes.js';
+import { salidasExternas, estadoHero, retratoHero, botonesHero, sobreMiCompleto } from '../lib/ajustes.js';
+
+/* La «M» del arte de la portada: un único trazado (sin fuente). Se declara una vez
+   y se reutiliza para la cara, para su fondo extruido, para su sombra y para el
+   recorte del brillo. */
+const letraM = 'M46 30H194L306.1 292.2L426 30H574V38Q574 46 566 46H534Q520 46 520 62V388Q520 414 546 414H553Q560 414 560 421V430H400V421Q400 414 407 414H414Q440 414 440 388V56.2L269 430L124 90.8V388Q124 414 150 414H157Q164 414 164 421V430H58V421Q58 414 65 414H72Q98 414 98 388V62Q98 46 84 46H54Q46 46 46 38Z';
+/* Las 16 capas del fondo, de la más lejana (k = 1) a la más cercana a la cara. */
+const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
+
 ---
 
 <Base
@@ -23,42 +31,186 @@ import { salidasExternas } from '../lib/ajustes.js';
     <canvas class="hero__malla" id="malla" aria-hidden="true"></canvas>
 
     <div class="hero__inner">
-      <p class="hero__status enter" style="--delay:120ms">
-        <span class="hero__dot" aria-hidden="true">💻</span>
-        <span>Barcelona · Diseñador de Producto Digital (UX/UI)</span>
-      </p>
+      <div class="hero__texto">
+        {estadoHero && (
+          <p class="hero__status enter" style="--delay:120ms">
+            <span class="hero__dot" aria-hidden="true">💻</span>
+            <span>Barcelona · Diseñador de Producto Digital (UX/UI)</span>
+          </p>
+        )}
 
-      <h1 class="hero__title" id="inicio-titulo">
-        <span class="line"><span>Diseño interfaces</span></span>
-        <span class="line"><span>que <em>se entienden solas</em></span></span>
-      </h1>
+        <h1 class="hero__title" id="inicio-titulo">
+          <span class="line"><span>Diseño interfaces</span></span>
+          <span class="line"><span>que <em>se entienden solas</em></span></span>
+        </h1>
 
-      <div class="hero__sub enter" style="--delay:260ms">
-        <p>
-          Hola, soy Marc Amorós. Creo productos digitales con impacto real, equilibrando
-          las necesidades de las personas con las metas de negocio.
-        </p>
-        <p>
-          Aplico metodologías UX y herramientas UI para guiar cada etapa, de la
-          investigación al prototipo funcional, respaldando cada decisión con una
-          documentación transparente y orientada a resultados.
-        </p>
+        <div class="hero__sub enter" style="--delay:260ms">
+          <p>
+            Hola, soy Marc Amorós. Creo productos digitales con impacto real, equilibrando
+            las necesidades de las personas con las metas de negocio.
+          </p>
+          <p>
+            Aplico metodologías UX y herramientas UI para guiar cada etapa, de la
+            investigación al prototipo funcional, respaldando cada decisión con una
+            documentación transparente y orientada a resultados.
+          </p>
+        </div>
+
+        {botonesHero && (
+          <div class="hero__actions enter" style="--delay:340ms">
+            <a class="btn btn--primary btn--lg btn--hoja" href="#portafolio">Ver portafolio</a>
+            <a class="btn btn--ghost btn--lg btn--hoja" href="#contacto">Contactar</a>
+          </div>
+        )}
       </div>
 
-      <div class="hero__actions enter" style="--delay:340ms">
-        <a class="btn btn--primary btn--lg" href="#portafolio">Ver portafolio</a>
-        <a class="btn btn--ghost btn--lg" href="#contacto">Contactar</a>
+      <!-- El arte de la portada: una mesa de trabajo de diseño. Una «M» de módulo serif,
+           dibujada a mano como un único trazado (sin fuente, sin descarga), en edición:
+           sobre su lienzo con rejilla, con guías, la caja de selección con sus asas, la
+           medida y el cursor de quien la está tocando, con su nombre. Es decoración: va
+           oculta a los lectores de pantalla. Cada grupo es una capa (arte__capa) que
+           main.js desplaza un poco con el cursor, y los colores salen de los tokens
+           --portada-arte-*, así que sigue al tema. -->
+      <div class="hero__arte" data-arte>
+        <svg class="arte" viewBox="0 0 640 620" aria-hidden="true" focusable="false">
+          <defs>
+            <pattern id="arte-rejilla" width="44" height="44" patternUnits="userSpaceOnUse">
+              <path d="M44 0H0V44" fill="none"/>
+            </pattern>
+            <clipPath id="arte-recorte"><rect x="60" y="100" width="520" height="470" rx="46"/></clipPath>
+            <path id="arte-m" d={letraM}/>
+            <clipPath id="arte-clip-m"><use href="#arte-m"/></clipPath>
+            <linearGradient id="arte-lienzo-grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" class="arte__lz-a"/>
+              <stop offset="1" class="arte__lz-b"/>
+            </linearGradient>
+            <linearGradient id="arte-gloss" x1="0" y1="0" x2="0.55" y2="1">
+              <stop offset="0" class="arte__gloss-a"/>
+              <stop offset="0.55" class="arte__gloss-b"/>
+            </linearGradient>
+            <linearGradient id="arte-tinta-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" class="arte__tinta-a"/>
+              <stop offset="1" class="arte__tinta-b"/>
+            </linearGradient>
+            <linearGradient id="arte-brillo" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" class="arte__br-0"/>
+              <stop offset="0.5" class="arte__br-1"/>
+              <stop offset="1" class="arte__br-0"/>
+            </linearGradient>
+            <!-- Las sombras son filtros SVG y no filtros CSS: los CSS sobre piezas
+                 sueltas de un SVG no los pintan todos los navegadores. -->
+            <filter id="arte-desenfoque" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur stdDeviation="9"/>
+            </filter>
+            <filter id="arte-elevacion" x="-12%" y="-12%" width="124%" height="140%" color-interpolation-filters="sRGB">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+              <feOffset dy="26" result="s"/>
+              <feFlood class="arte__flood-hoja"/>
+              <feComposite in2="s" operator="in" result="sombra"/>
+              <feMerge><feMergeNode in="sombra"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="arte-elevacion-ui" x="-30%" y="-40%" width="160%" height="230%" color-interpolation-filters="sRGB">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+              <feOffset dy="5" result="s"/>
+              <feFlood class="arte__flood-ui"/>
+              <feComposite in2="s" operator="in" result="sombra"/>
+              <feMerge><feMergeNode in="sombra"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Atrás del todo: el lienzo, girado, con su copia de puntos detrás. -->
+          <g class="arte__capa arte__capa--lienzo">
+            <g transform="rotate(3 306 320)">
+              <rect class="arte__marco2" x="46" y="86" width="520" height="470" rx="46"/>
+            </g>
+            <g transform="rotate(-4 320 335)">
+              <g class="arte__hoja" filter="url(#arte-elevacion)">
+                <rect class="arte__lienzo" x="60" y="100" width="520" height="470" rx="46"/>
+                <g clip-path="url(#arte-recorte)">
+                  <rect class="arte__rejilla" x="60" y="100" width="520" height="470"/>
+                </g>
+                <rect class="arte__gloss" x="60" y="100" width="520" height="470" rx="46"/>
+                <rect class="arte__borde" x="60.6" y="100.6" width="518.8" height="468.8" rx="45.4"/>
+              </g>
+            </g>
+          </g>
+
+          <g class="arte__capa arte__capa--guias">
+            <line class="arte__guia" pathLength="100" x1="18" y1="150.2" x2="622" y2="150.2"/>
+            <line class="arte__guia" pathLength="100" x1="18" y1="513.8" x2="622" y2="513.8"/>
+          </g>
+
+          <g class="arte__capa arte__capa--interruptor">
+            <g class="arte__pop">
+              <g class="arte__sombra-ui" filter="url(#arte-elevacion-ui)" transform="translate(24 98)">
+                <rect class="arte__pista" width="62" height="34" rx="17"/>
+                <circle class="arte__bola" cx="45" cy="17" r="13"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- La «M» como un sólido: su sombra, el fondo (16 capas que se desplazan
+               un poco con el cursor, y eso es lo que da la profundidad), la cara y
+               un brillo que la cruza. Debajo, la selección con sus asas y su medida. -->
+          <g class="arte__capa arte__capa--m">
+            <g transform="translate(38.2 122.9) scale(0.90909)">
+              <g class="arte__solido">
+                <use href="#arte-m" class="arte__sombra-m" filter="url(#arte-desenfoque)"/>
+                {capasLado.map((k) => <use href="#arte-m" class="arte__lado" style={`--k:${k}`}/>)}
+                <use href="#arte-m" class="arte__letra"/>
+                <g clip-path="url(#arte-clip-m)">
+                  <rect class="arte__brillo" x="0" y="0" width="110" height="470"/>
+                </g>
+              </g>
+            </g>
+            <g class="arte__seleccion">
+              <rect class="arte__marco" pathLength="100" x="80" y="150.2" width="480" height="363.6"/>
+              <g class="arte__asas">
+              <rect style="--i:0" x="75" y="145.2" width="10" height="10"/>
+              <rect style="--i:1" x="315" y="145.2" width="10" height="10"/>
+              <rect style="--i:2" x="555" y="145.2" width="10" height="10"/>
+              <rect style="--i:3" x="555" y="327.0" width="10" height="10"/>
+              <rect style="--i:4" x="555" y="508.8" width="10" height="10"/>
+              <rect style="--i:5" x="315" y="508.8" width="10" height="10"/>
+              <rect style="--i:6" x="75" y="508.8" width="10" height="10"/>
+              <rect style="--i:7" x="75" y="327.0" width="10" height="10"/>
+              </g>
+              <g class="arte__medida">
+                <g class="arte__sombra-ui" filter="url(#arte-elevacion-ui)">
+                  <rect x="264" y="529" width="112" height="30" rx="8"/>
+                  <text x="320" y="549.2">480 × 364</text>
+                </g>
+              </g>
+            </g>
+          </g>
+
+          <!-- Delante del todo: el cursor de quien la toca, con su nombre. En escritorio
+               sigue a tu cursor (arte__sigue); llega volando y luego se mece. -->
+          <g class="arte__capa arte__capa--cursor">
+            <g class="arte__sigue">
+              <g class="arte__vuelo">
+                <g class="arte__sombra-ui" filter="url(#arte-elevacion-ui)" transform="translate(566 160)">
+                  <path class="arte__flecha" d="M0 0L0 22L6 16.8L9.8 26L13.8 24.3L10 15.4L17.5 15.4Z"/>
+                  <rect class="arte__etiqueta" x="16" y="26" width="68" height="30" rx="9"/>
+                  <text class="arte__nombre" x="50" y="45.6">Marc</text>
+                </g>
+              </g>
+            </g>
+          </g>
+        </svg>
       </div>
 
-      <div class="hero__stage">
-        <figure class="portrait">
-          <img src="/assets/marc.webp" alt="Retrato de Marc Amorós" width="1200" height="1600"
-               fetchpriority="high" decoding="async">
-          <figcaption class="portrait__plate">
-            <span class="portrait__name">Marc Amorós</span>
-            <span class="portrait__role">El diseño como puente entre el usuario y el producto</span>
-          </figcaption>
-        </figure>
+      <div class={retratoHero ? 'hero__stage' : 'hero__stage hero__stage--sola'}>
+        {retratoHero && (
+          <figure class="portrait">
+            <img src="/assets/marc.webp" alt="Retrato de Marc Amorós" width="1200" height="1600"
+                 fetchpriority="high" decoding="async">
+            <figcaption class="portrait__plate">
+              <span class="portrait__name">Marc Amorós</span>
+              <span class="portrait__role">El diseño como puente entre el usuario y el producto</span>
+            </figcaption>
+          </figure>
+        )}
 
         <div class="stat-stack enter" style="--delay:480ms">
           <div class="stat">
@@ -109,13 +261,20 @@ import { salidasExternas } from '../lib/ajustes.js';
     <div class="container about__grid">
       <div class="section-head rise">
         <span class="eyebrow">Sobre mí</span>
-        <h2 id="sobre-mi-titulo">Mi mejor aptitud es mi actitud</h2>
-        <p class="section-head__rol">Diseñador UX/UI</p>
+        <h2 id="sobre-mi-titulo">El diseño como <span class="lema__puente">puente</span> entre el usuario y el producto</h2>
+        <!-- El retrato con su tarjeta: el nombre y, debajo, el oficio. Ya no está en
+             la portada: retratoHero, en src/lib/ajustes.js, lo devuelve allí. -->
+        <figure class="portrait">
+          <img src="/assets/marc.webp" alt="Retrato de Marc Amorós" width="1200" height="1600"
+               loading="lazy" decoding="async">
+          <figcaption class="portrait__plate">
+            <span class="portrait__name">Marc Amorós</span>
+            <span class="portrait__role">Diseñador UX/UI</span>
+          </figcaption>
+        </figure>
       </div>
 
       <div class="about__body rise" style="--delay:80ms">
-        <p class="lema">El diseño como <span class="lema__puente">puente</span> entre el usuario y el producto.</p>
-
         <p>
           Soy diseñador de producto UX/UI y vengo del diseño gráfico y la identidad de marca.
           Entiendo el diseño como una herramienta para resolver necesidades reales, no solo para
@@ -123,23 +282,51 @@ import { salidasExternas } from '../lib/ajustes.js';
         </p>
 
         <div class="metodo">
-          <p class="metodo__k">Cómo trabajo</p>
-          <ul class="metodo__lista">
+          <p class="about__k" id="metodo-titulo">Cómo trabajo</p>
+          <ul class="metodo__lista" aria-labelledby="metodo-titulo">
             <li>Investigación previa antes de tocar Figma.</li>
             <li>Definición clara del problema.</li>
             <li>Validación con usuarios reales mediante prototipo.</li>
           </ul>
         </div>
 
-        <p>
-          <strong>Proyectos destacados:</strong> cuadro de instrumentos del CUPRA Born (EDAG) y
-          los portales del Centro Tecnológico del Notariado.
-        </p>
-        <p>
-          Documento mi proceso en abierto (tests, storyboards y descartes) porque el valor del
-          diseño está en las decisiones, no solo en el resultado visual.
-        </p>
+        <!-- Versión completa (sobreMiCompleto, en src/lib/ajustes.js): la nota sobre
+             documentar el proceso y los proyectos destacados, con enlace a cada caso. -->
+        {sobreMiCompleto && (
+          <>
+            <p>
+              Documento mi proceso en abierto (tests, storyboards y descartes) porque el valor del
+              diseño está en las decisiones, no solo en el resultado visual.
+            </p>
 
+            <!-- Los mismos tres proyectos que abren el portafolio. -->
+            <div class="destacados">
+              <p class="about__k" id="destacados-titulo">Proyectos destacados</p>
+              <ul class="destacados__lista" aria-labelledby="destacados-titulo">
+                <li>
+                  <a class="destacado" href="/proyecto/cupra-born/">
+                    <span class="destacado__t">CUPRA Born</span>
+                    <span class="destacado__d">Cuadro de instrumentos · EDAG</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="destacado" href="/proyecto/portal-estadistico-notariado/">
+                    <span class="destacado__t">Portal Estadístico del Notariado</span>
+                    <span class="destacado__d">Producto de datos · Centro Tecnológico del Notariado</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="destacado" href="/proyecto/portal-notarial-ciudadano/">
+                    <span class="destacado__t">Portal Notarial del Ciudadano</span>
+                    <span class="destacado__d">Administración electrónica · Centro Tecnológico del Notariado</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </>
+        )}
+
+        <!-- Las tres áreas de trabajo: se quedan en las dos versiones. -->
         <div class="skills">
           <article class="skill">
             <h3>Investigación</h3>
@@ -155,12 +342,31 @@ import { salidasExternas } from '../lib/ajustes.js';
           </article>
         </div>
 
-        <ul class="toolbar" aria-label="Herramientas y metodologías">
-          <li>Accesibilidad</li><li>Adobe XD</li><li>Agile · Kanban</li><li>Agile · Scrum</li><li>CSS</li><li>Design Sprint</li>
-          <li>Design Thinking</li><li>Figma</li><li>Flinto</li><li>HTML</li><li>IA</li>
-          <li>Illustrator</li><li>InDesign</li><li>Lean UX</li><li>Photoshop</li><li>Principle</li>
-          <li>Sketch</li><li>Zeplin</li>
-        </ul>
+        <!-- Versión corta: cierra con dos líneas de texto. Versión completa: las
+             mismas herramientas y metodologías en píldoras, con su rótulo. -->
+        {sobreMiCompleto ? (
+          <div class="herramientas">
+            <div class="herramientas__grupo">
+              <p class="about__k" id="herramientas-titulo">Herramientas</p>
+              <ul class="toolbar" aria-labelledby="herramientas-titulo">
+                <li>Adobe XD</li><li>CSS</li><li>Figma</li><li>Flinto</li><li>HTML</li><li>IA</li>
+                <li>Illustrator</li><li>InDesign</li><li>Photoshop</li><li>Principle</li><li>Sketch</li><li>Zeplin</li>
+              </ul>
+            </div>
+            <div class="herramientas__grupo">
+              <p class="about__k" id="metodologias-titulo">Metodologías</p>
+              <ul class="toolbar" aria-labelledby="metodologias-titulo">
+                <li>Accesibilidad</li><li>Agile · Kanban</li><li>Agile · Scrum</li><li>Design Sprint</li>
+                <li>Design Thinking</li><li>Lean UX</li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <div class="oficio-texto">
+            <p><strong>Herramientas:</strong> Figma, Sketch, Adobe XD, Illustrator, Photoshop, InDesign, Principle, Flinto, Zeplin, HTML, CSS e IA.</p>
+            <p><strong>Metodologías:</strong> Design Thinking, Design Sprint, Lean UX, Agile (Scrum y Kanban) y accesibilidad.</p>
+          </div>
+        )}
       </div>
     </div>
   </section>
@@ -646,8 +852,8 @@ import { salidasExternas } from '../lib/ajustes.js';
       <div class="section-head rise">
         <span class="eyebrow">Artículos</span>
         <h2 id="articulos-titulo">El proceso, escrito</h2>
-        <p class="lead">Escribí cada reto de principio a fin: qué pregunté, qué probé y qué tuve
-          que rehacer. Se leen aquí, íntegros, sin salir de la web.</p>
+        <p class="lead">Sin atajos ni versiones resumidas: qué pregunté, qué falló y cómo lo
+          resolví. La trastienda de cada proyecto, al descubierto.</p>
       </div>
 
       <div class="articles rise" id="articles" style="--delay:80ms">
