@@ -163,7 +163,7 @@ const urlEmbed = (url) => {
       <header class="caso__head">
         <span class="eyebrow">{proyecto.tipo}</span>
         <h1 class="caso__title">{proyecto.titulo}</h1>
-        <p class="caso__claim">{proyecto.claim}</p>
+        <p class="caso__claim" lang={proyecto.claimIdioma}>{proyecto.claim}</p>
         {proyecto.resumen && <p class="caso__lead">{proyecto.resumen}</p>}
         <ul class="caso__tags">
           {/* capitalize pone en mayuscula la inicial de cada palabra. Con una
