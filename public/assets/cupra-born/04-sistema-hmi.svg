@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" role="img" aria-label="Piezas del sistema de diseño HMI: escala tipográfica, color por estado y estados de componente">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1430"/>
+      <stop offset="1" stop-color="#0e0a1a"/>
+    </linearGradient>
+    <radialGradient id="halo">
+      <stop offset="0" stop-color="#9d6bff" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#9d6bff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="critico" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c9a9ff"/>
+      <stop offset="1" stop-color="#9d6bff"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .t  { font-family: Inter, system-ui, sans-serif; fill: #f4f2f8; }
+    .h  { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s  { font-size: 21px; fill: #a79fb8; }
+    .c  { font-size: 18px; font-weight: 600; }
+    .m  { font-size: 15px; fill: #a79fb8; }
+    .k  { font-size: 14px; fill: #8b81a3; letter-spacing: 2px; }
+
+    /* Cada bloque entra en el orden en que se lee, y el estado de foco
+       respira: es el único que llama sin que lo toques. */
+    .col { animation: sube 700ms cubic-bezier(0.2, 0, 0, 1) both; }
+    .col-2 { animation-delay: 160ms; }
+    .col-3 { animation-delay: 320ms; }
+    .foco { animation: late 2.8s ease-in-out 900ms infinite; }
+    @keyframes sube { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes late { 0%, 100% { stroke-opacity: 1; } 50% { stroke-opacity: 0.35; } }
+    @media (prefers-reduced-motion: reduce) {
+      .col, .foco { animation: none; opacity: 1; transform: none; stroke-opacity: 1; }
+    }
+  </style>
+
+  <rect width="1200" height="750" fill="url(#fondo)"/>
+  <ellipse cx="600" cy="700" rx="620" ry="300" fill="url(#halo)"/>
+
+  <text class="t k" x="80" y="86">04 · RESULTADOS</text>
+  <text class="t h" x="80" y="140">El sistema, no la pantalla</text>
+  <text class="t s" x="80" y="182">Lo que se entregó a ingeniería: reglas que se implementan igual la primera vez y la número cien.</text>
+
+  <line x1="80" y1="226" x2="1120" y2="226" stroke="#2c2246" stroke-width="2"/>
+
+  <!-- escala tipografica -->
+  <g transform="translate(80 226)"><g class="col">
+    <text class="t c" x="0" y="48">Escala legible a distancia</text>
+    <text class="t" x="0" y="126" font-size="58" font-weight="700" fill="#b48fff">88</text>
+    <text class="t m" x="96" y="126">Dato primario</text>
+    <text class="t" x="0" y="184" font-size="32" font-weight="600">Autonomía</text>
+    <text class="t m" x="184" y="184">Secundario</text>
+    <text class="t" x="0" y="230" font-size="20">Etiqueta de apoyo</text>
+    <text class="t m" x="184" y="230">Terciario</text>
+    <text class="t m" x="0" y="278">Tres niveles y ni uno más: en movimiento,</text>
+    <text class="t m" x="0" y="300">una escala larga se lee como ruido.</text>
+  </g></g>
+
+  <!-- color por estado: la urgencia sube con la luz, no con el tono, y cada
+       nivel lleva además su propia forma -->
+  <g transform="translate(500 226)"><g class="col col-2">
+    <text class="t c" x="0" y="48">Color por estado</text>
+    <g>
+      <rect x="0" y="76" width="52" height="52" rx="14" fill="url(#critico)"/>
+      <g fill="#17102a"><rect x="24" y="88" width="4" height="18" rx="2"/><circle cx="26" cy="114" r="3"/></g>
+      <text class="t m" x="70" y="98" fill="#f4f2f8" font-size="17" font-weight="600">Crítico</text>
+      <text class="t m" x="70" y="120">Exige actuar ahora</text>
+
+      <rect x="0" y="150" width="52" height="52" rx="14" fill="#8a76b5"/>
+      <path d="M26 162 L38 184 H14 Z" fill="none" stroke="#17102a" stroke-width="3" stroke-linejoin="round"/>
+      <text class="t m" x="70" y="172" fill="#f4f2f8" font-size="17" font-weight="600">Aviso</text>
+      <text class="t m" x="70" y="194">Conviene mirarlo pronto</text>
+
+      <rect x="0" y="224" width="52" height="52" rx="14" fill="#4a3e63"/>
+      <rect x="14" y="248" width="24" height="4" rx="2" fill="#c9c2d8"/>
+      <text class="t m" x="70" y="246" fill="#f4f2f8" font-size="17" font-weight="600">Neutro</text>
+      <text class="t m" x="70" y="268">Información en curso</text>
+    </g>
+    <text class="t m" x="0" y="322">El color nunca es el único portador:</text>
+    <text class="t m" x="0" y="344">siempre va con forma, icono o posición.</text>
+  </g></g>
+
+  <!-- estados de componente -->
+  <g transform="translate(880 226)"><g class="col col-3">
+    <text class="t c" x="0" y="48">Estados de componente</text>
+    <g>
+      <rect x="0" y="76" width="200" height="46" rx="12" fill="#261d40"/>
+      <text class="t m" x="16" y="105">Reposo</text>
+
+      <rect class="foco" x="0" y="136" width="200" height="46" rx="12" fill="#2f2450" stroke="#9d6bff" stroke-width="2"/>
+      <text class="t m" x="16" y="165" fill="#d6c7ff">Foco</text>
+
+      <rect x="0" y="196" width="200" height="46" rx="12" fill="#9d6bff"/>
+      <text class="t m" x="16" y="225" fill="#17102a" font-weight="600">Activo</text>
+
+      <rect x="0" y="256" width="200" height="46" rx="12" fill="#1d1633" stroke="#2c2246" stroke-width="2"/>
+      <text class="t m" x="16" y="285" fill="#5b4b87">No disponible</text>
+    </g>
+    <text class="t m" x="0" y="344">Cada estado, definido y nombrado</text>
+    <text class="t m" x="0" y="366">antes de llegar a desarrollo.</text>
+  </g></g>
+
+  <text class="t m" x="80" y="706">Esquema propio hecho para explicar el método. No reproduce el sistema de diseño real del proyecto.</text>
+</svg>

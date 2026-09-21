@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 888" width="1200" height="888" role="img" aria-label="El acceso partido en dos actos: primero el registro con un formulario, que ya deja usar el portal, y después la acreditación de identidad por Cl@ve PIN, certificado electrónico o visita a una notaría, con el estado a medias visible en el perfil, en el escritorio y en el menú">
+  <style>
+    .t { font-family: Inter, system-ui, sans-serif; fill: #263238; }
+    .h { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s { font-size: 21px; fill: #6B7A8C; }
+    .m { font-size: 18px; fill: #546E7A; }
+    .k { font-size: 14px; fill: #8D99A5; letter-spacing: 2px; }
+    .e { font-size: 12px; fill: #8D99A5; letter-spacing: 2px; font-weight: 700; }
+    .a { font-size: 26px; font-weight: 700; }
+    .p { font-size: 15px; fill: #546E7A; }
+    .il { font-size: 16px; font-weight: 600; }
+    .is { font-size: 13px; fill: #546E7A; }
+    .ct { font-size: 17px; font-weight: 700; }
+    .cs { font-size: 13.5px; fill: #546E7A; }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#94A6B4"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="888" fill="#F6F8FA"/>
+
+  <text class="t k" x="80" y="86">03 · LA SOLUCIÓN</text>
+  <text class="t h" x="80" y="140">La cuenta se abre en dos actos</text>
+  <text class="t s" x="80" y="182">Registrarte cuesta un formulario. Acreditar quién eres viene después, cuando el trámite lo pide.</text>
+
+  <!-- acto 1: el registro -->
+  <rect x="80" y="236" width="420" height="340" rx="16" fill="#FFFFFF" stroke="#DCE5EC" stroke-width="2"/>
+  <text class="t e" x="112" y="278" fill="#0176AE">ACTO 1 · NADA MÁS LLEGAR</text>
+  <text class="t a" x="112" y="320">Te registras</text>
+  <text class="t p" x="112" y="350">Un formulario y ya estás dentro.</text>
+
+  <g fill="#EAF6FD">
+    <rect x="112" y="372" width="356" height="54" rx="10"/>
+    <rect x="112" y="436" width="356" height="54" rx="10"/>
+    <rect x="112" y="500" width="356" height="54" rx="10"/>
+  </g>
+  <g class="t il">
+    <text x="132" y="395">Buscar notaría</text>
+    <text x="132" y="459">Ver qué pide cada trámite</text>
+    <text x="132" y="523">Seguir lo que ya has abierto</text>
+  </g>
+  <g class="t is">
+    <text x="132" y="415">por municipio o código postal</text>
+    <text x="132" y="479">antes de decidir si empiezas</text>
+    <text x="132" y="543">los trámites en curso</text>
+  </g>
+
+  <!-- paso de un acto al otro -->
+  <path d="M508 406 H556" fill="none" stroke="#94A6B4" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar)"/>
+
+  <!-- acto 2: la acreditacion -->
+  <rect x="564" y="236" width="556" height="340" rx="16" fill="#FFFFFF" stroke="#E2BE85" stroke-width="2"/>
+  <text class="t e" x="596" y="278" fill="#8A5A0A">ACTO 2 · CUANDO EL TRÁMITE LO PIDE</text>
+  <text class="t a" x="596" y="320">Acreditas quién eres</text>
+  <text class="t p" x="596" y="350">La ley lo exige para la mayoría de los trámites.</text>
+
+  <g fill="#FDF3E3">
+    <rect x="596" y="372" width="492" height="54" rx="10"/>
+    <rect x="596" y="436" width="492" height="54" rx="10"/>
+    <rect x="596" y="500" width="492" height="54" rx="10"/>
+  </g>
+  <g class="t il">
+    <text x="616" y="395">Cl@ve PIN</text>
+    <text x="616" y="459">Certificado electrónico cualificado</text>
+    <text x="616" y="523">Ir a cualquier notaría</text>
+  </g>
+  <g class="t is">
+    <text x="616" y="415">el sistema de identificación del Estado</text>
+    <text x="616" y="479">si ya lo tienes instalado</text>
+    <text x="616" y="543">gratis, y sin instalar nada</text>
+  </g>
+
+  <!-- el estado a medias -->
+  <text class="t k" x="80" y="632">EL ESTADO A MEDIAS SE CUENTA EN TRES SITIOS A LA VEZ</text>
+
+  <g fill="#FFFFFF" stroke="#DCE5EC" stroke-width="2">
+    <rect x="80" y="656" width="336" height="112" rx="14"/>
+    <rect x="432" y="656" width="336" height="112" rx="14"/>
+    <rect x="784" y="656" width="336" height="112" rx="14"/>
+  </g>
+  <g class="t ct">
+    <text x="108" y="700">Etiqueta en el perfil</text>
+    <text x="460" y="700">Aviso en el escritorio</text>
+    <text x="812" y="700">El menú se apaga</text>
+  </g>
+  <g class="t cs">
+    <text x="108" y="728">Dice si tu documento</text>
+    <text x="108" y="747">está validado.</text>
+    <text x="460" y="728">Recuerda qué trámites</text>
+    <text x="460" y="747">lo exigen.</text>
+    <text x="812" y="728">Lo que aún no puedes hacer</text>
+    <text x="812" y="747">sigue a la vista, en gris.</text>
+  </g>
+
+  <text class="t m" x="80" y="816">Así nadie se topa con el requisito legal antes de haber visto para qué sirve el sitio: el trámite más caro</text>
+  <text class="t m" x="80" y="840">se pide más tarde, cuando ya hay un motivo para completarlo.</text>
+</svg>

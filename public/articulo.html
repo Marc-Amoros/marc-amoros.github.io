@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Redirigiendo…</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="/#articulos">
+<!-- Los artículos vivían en articulo.html?a=slug y ahora están en
+     /articulo/slug. Misma razón que en proyecto.html: la interrogación no la
+     ve el hosting, así que la redirección se hace aquí. -->
+<script>
+  (function () {
+    var slug = new URLSearchParams(location.search).get('a');
+    location.replace(slug ? '/articulo/' + encodeURIComponent(slug) + '/' : '/#articulos');
+  })();
+</script>
+</head>
+<body>
+<p>Esta página se ha mudado. <a href="/#articulos">Ir a los artículos</a>.</p>
+</body>
+</html>

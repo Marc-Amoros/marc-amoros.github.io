@@ -1,0 +1,312 @@
+@charset "UTF-8";
+/* ============================================================
+   tokens.css — fuente única de verdad
+   Sistema basado en "base-diseno-web.md" (v1.0)
+   Lenguaje visual: Apple HIG (retícula, tipografía, cristal, píldoras)
+                    + Material Design 3 (elevación tonal, capas de estado,
+                      curvas «emphasized» y feedback por ripple)
+   Cárgalo SIEMPRE antes que styles.css
+   ============================================================ */
+
+/* ---------- Inter (variable, subconjunto latino) ----------
+   Un solo archivo cubre los pesos 100→900: el navegador interpola el que
+   pidamos, así que --weight-* sigue funcionando igual que con SF Pro.
+   No se carga la cursiva porque el sitio no usa ninguna; si algún día hace
+   falta, el navegador la inclina él mismo (font-synthesis por defecto).
+   Licencia: SIL Open Font License 1.1 (ver Inter/OFL.txt).                */
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/inter-var.woff2") format("woff2");
+  font-weight: 100 900;          /* rango del eje wght */
+  font-style: normal;
+  font-display: swap;            /* el texto se lee desde el primer frame */
+  unicode-range: U+0000-024F, U+0259, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0300-0304, U+0308, U+0327, U+0329, U+2000-206F, U+2074,
+                 U+20A0-20BF, U+2122, U+2190-2199, U+2212, U+2215,
+                 U+25A0-25CF, U+FEFF, U+FFFD;
+}
+
+:root {
+
+  /* ================= TIPOGRAFÍA ================= */
+  /* Inter variable, servida desde el propio dominio (assets/fonts). Cero
+     peticiones a CDNs externos. Detrás va el stack del sistema como red de
+     seguridad: métricas parecidas, así que el salto apenas se nota. */
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", "Segoe UI", system-ui, Roboto, Arial, sans-serif;
+
+  /* Escala fluida (Utopia · anclas 320→1240px) */
+  --text-2xs:  clamp(0.694rem, 0.686rem + 0.044vw, 0.720rem);
+  --text-xs:   clamp(0.833rem, 0.810rem + 0.116vw, 0.900rem);
+  --text-sm:   clamp(0.900rem, 0.878rem + 0.109vw, 0.963rem);
+  --text-base: clamp(1.000rem, 0.957rem + 0.217vw, 1.125rem);
+  --text-lg:   clamp(1.200rem, 1.128rem + 0.359vw, 1.406rem);
+  --text-xl:   clamp(1.440rem, 1.329rem + 0.553vw, 1.758rem);
+  --text-2xl:  clamp(1.728rem, 1.565rem + 0.816vw, 2.197rem);
+  --text-3xl:  clamp(2.074rem, 1.840rem + 1.170vw, 2.747rem);
+  --text-4xl:  clamp(2.488rem, 2.160rem + 1.643vw, 3.433rem);
+  /* Titular de hero: registro "landing de producto" de Apple */
+  --text-5xl:  clamp(2.600rem, 1.765rem + 4.174vw, 5.000rem);
+
+  --leading-tight:  1.06;
+  --leading-snug:   1.22;
+  --leading-normal: 1.6;
+
+  /* Tracking calibrado para Inter. Su eje óptico (opsz 14→32) ya afina el
+     interletrado solo, así que necesita menos mano que SF Pro: se conserva la
+     jerarquía —titulares apretados, cuerpo neutro, etiquetas abiertas— pero
+     con valores algo más suaves para que no se junten las letras. */
+  --tracking-display: -0.022em;
+  --tracking-title:   -0.014em;
+  --tracking-body:    -0.003em;
+  --tracking-label:    0.06em;
+
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+  --weight-bold:    700;
+
+  /* ================= ESPACIADO ================= */
+  --spacing-3xs: clamp(0.250rem, 0.239rem + 0.054vw, 0.281rem);
+  --spacing-2xs: clamp(0.500rem, 0.478rem + 0.109vw, 0.563rem);
+  --spacing-xs:  clamp(0.750rem, 0.717rem + 0.163vw, 0.844rem);
+  --spacing-s:   clamp(1.000rem, 0.957rem + 0.217vw, 1.125rem);
+  --spacing-m:   clamp(1.500rem, 1.435rem + 0.326vw, 1.688rem);
+  --spacing-l:   clamp(2.000rem, 1.913rem + 0.435vw, 2.250rem);
+  --spacing-xl:  clamp(3.000rem, 2.870rem + 0.652vw, 3.375rem);
+  --spacing-2xl: clamp(4.000rem, 3.826rem + 0.870vw, 4.500rem);
+  --spacing-3xl: clamp(6.000rem, 5.739rem + 1.304vw, 6.750rem);
+
+  /* ================= DIMENSIONES DE COMPONENTE ================= */
+  --measure:        65ch;
+  --measure-narrow: 46ch;
+  --container-max:  75rem;   /* 1200px — ancho de las landings de Apple */
+  --container-wide: 90rem;   /* 1440px — para rejillas full-bleed */
+  --section-block:  clamp(3.5rem, 12vh, 7.5rem);
+  --section-inline: clamp(1.25rem, 6vw, 5rem);
+  --nav-height:     3.75rem; /* 60px en reposo; al bajar se condensa a 52px */
+
+  --radius-s:  0.625rem;
+  --radius-m:  1.125rem;  /* 18px */
+  --radius-l:  1.5rem;    /* 24px */
+  --radius-xl: 2rem;
+  --radius-pill: 980px;   /* el valor literal de los botones de Apple */
+
+  --ease-out:  cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-soft: cubic-bezier(0.28, 0.11, 0.32, 1);
+  --dur-fast:  180ms;
+  --dur-mid:   320ms;
+  --dur-slow:  700ms;
+
+  /* ================= COLOR — capa 1: primitivos =================
+     Paleta 60 / 30 / 10:
+       60 % dominante  #ffffff  — el fondo, el aire de la página
+       30 % secundario #473960  — la tinta y las superficies oscuras
+       10 % acento     #5a13d2  — CTA, enlaces y todo lo accionable
+     El neutro no es gris puro: toda la rampa lleva el sesgo violeta del
+     secundario, para que blanco, tinta y acento se lean como una familia. */
+
+  /* Secundario (30 %) y sus tintes */
+  --color-plum-500: #473960;     /* el color tal cual: tinta de la web */
+  --color-plum-400: #6b5a8a;
+  --color-plum-300: #8a76b5;     /* acento secundario en oscuro */
+
+  /* Acento (10 %) y sus tintes */
+  --color-violet-600: #4a0fb0;
+  --color-violet-500: #5a13d2;   /* el color tal cual: acento en claro */
+  --color-violet-450: #6b21e8;   /* hover en claro */
+  --color-violet-400: #9d6bff;   /* acento en oscuro (sube para contrastar) */
+  --color-violet-300: #b48fff;   /* hover en oscuro */
+
+  /* Neutros (60 %) tintados con el secundario */
+  --color-neutral-0:   #ffffff;  /* el dominante */
+  --color-neutral-25:  #fbfafd;
+  --color-neutral-50:  #f4f2f8;  /* fondo hundido de sección */
+  --color-neutral-100: #e7e3ee;
+  --color-neutral-200: #d3ccdf;  /* separadores en claro */
+  --color-neutral-400: #8b81a3;  /* texto terciario sobre fondo oscuro */
+  --color-neutral-450: #6f6489;  /* texto terciario en claro (AA) */
+  --color-neutral-500: #584c72;  /* texto secundario en claro (AA) */
+  --color-neutral-700: #4a3e63;
+  --color-neutral-800: #2f2743;  /* superficie elevada en oscuro */
+  --color-neutral-850: #1c1629;  /* tarjeta en oscuro */
+  --color-neutral-900: var(--color-plum-500);  /* tinta: 10.4:1 sobre blanco */
+  --color-neutral-1000: #000000; /* fondo en oscuro: negro puro */
+
+  --color-success-500: #34c759;
+  --color-danger-500:  #ff3b30;
+
+  /* ================= COLOR — capa 2: semánticos ================= */
+  --color-bg:            var(--color-neutral-0);
+  --color-bg-alt:        var(--color-neutral-50);
+  --color-surface:       var(--color-neutral-0);
+  --color-surface-sunk:  var(--color-neutral-50);
+  --color-text:          var(--color-neutral-900);
+  --color-text-muted:    var(--color-neutral-500);
+  --color-text-subtle:   var(--color-neutral-450);
+  --color-border:        var(--color-neutral-200);
+  --color-border-soft:   var(--color-neutral-100);
+  --color-accent:        var(--color-violet-500);
+  --color-accent-hover:  var(--color-violet-450);
+  --color-accent-soft:   rgba(90 19 210 / 0.10);
+  --color-on-accent:     var(--color-neutral-0);
+  --color-focus-ring:    var(--color-violet-500);
+
+  /* Cristal esmerilado y sombras difusas */
+  --glass-bg:     rgba(255 255 255 / 0.72);
+  --glass-solid:  rgba(255 255 255 / 0.96);
+  --glass-border: rgba(0 0 0 / 0.08);
+  --glass-blur:   saturate(180%) blur(20px);
+
+  --shadow-s:  0 1px 2px rgba(0 0 0 / 0.04), 0 2px 8px rgba(0 0 0 / 0.05);
+  --shadow-m:  0 2px 6px rgba(0 0 0 / 0.05), 0 12px 32px rgba(0 0 0 / 0.08);
+  --shadow-l:  0 4px 12px rgba(0 0 0 / 0.06), 0 28px 64px rgba(0 0 0 / 0.11);
+
+  /* ================= MATERIAL — elevación, tinte y estado =================
+     Material 3 sube una superficie de dos maneras a la vez: con sombra
+     (elevación física) y con un tinte del color primario mezclado en el
+     propio fondo (elevación tonal). Aquí conviven con la sombra difusa de
+     Apple: sombras muy suaves y un tinte casi imperceptible. */
+  --elev-1: 0 1px 2px rgba(0 0 0 / 0.05), 0 1px 3px 1px rgba(0 0 0 / 0.04);
+  --elev-2: 0 1px 2px rgba(0 0 0 / 0.05), 0 3px 8px 2px rgba(0 0 0 / 0.06);
+  --elev-3: 0 2px 4px rgba(0 0 0 / 0.05), 0 8px 20px 3px rgba(0 0 0 / 0.08);
+  --elev-4: 0 3px 6px rgba(0 0 0 / 0.06), 0 16px 36px 4px rgba(0 0 0 / 0.10);
+  --elev-5: 0 4px 10px rgba(0 0 0 / 0.07), 0 28px 64px 8px rgba(0 0 0 / 0.13);
+
+  /* Superficies tonales: el mismo fondo con 3 %, 6 % y 9 % del acento */
+  --surface-1: color-mix(in oklab, var(--color-surface) 97%, var(--color-accent));
+  --surface-2: color-mix(in oklab, var(--color-surface) 94%, var(--color-accent));
+  --surface-3: color-mix(in oklab, var(--color-surface) 91%, var(--color-accent));
+
+  /* Capas de estado (state layers) de Material sobre cualquier superficie */
+  --state-hover: 0.06;
+  --state-focus: 0.10;
+  --state-press: 0.12;
+  --ripple-color: var(--color-accent);
+
+  /* Curvas «emphasized» de Material 3: arranque lento, salida muy rápida */
+  --ease-emphasized:       cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized-decel: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-emphasized-accel: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --ease-spring:           cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-emphasized: 520ms;
+
+  /* Acento secundario: el 30 % de la paleta haciendo de «secondary» de
+     Material — superficies tonales y estados destacados. */
+  --color-accent-2:      var(--color-plum-500);
+  --color-accent-2-soft: rgba(71 57 96 / 0.12);
+
+  /* ---------- Portada: piezas que solo existen sobre negro ----------
+     La aurora, la viñeta y el halo del botón solo tienen sentido en oscuro.
+     En claro se apagan desde aquí (opacidad 0, sombra none) para que el CSS
+     del hero se escriba una sola vez y no haya que duplicar selectores por
+     tema. El `em` del titular se queda plano, como estaba. */
+  --portada-aurora:  0;
+  --portada-vineta:  0;
+  --portada-halo:    none;
+  --portada-em-base: var(--color-accent);
+  --portada-em-luz:  var(--color-accent);
+
+  color-scheme: light;
+}
+
+/* ---------- Oscuro por preferencia del sistema ----------
+   Se anula si la persona ha elegido claro con el interruptor. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg:            var(--color-neutral-1000);
+    --color-bg-alt:        #14101d;
+    --color-surface:       var(--color-neutral-850);
+    --color-surface-sunk:  #171223;
+    --color-text:          var(--color-neutral-50);
+    --color-text-muted:    #a79fb8;
+    --color-text-subtle:   var(--color-neutral-400);
+    --color-border:        #3a3350;
+    --color-border-soft:   #2b2540;
+    --color-accent:        var(--color-violet-400);
+    --color-accent-hover:  var(--color-violet-300);
+    --color-accent-soft:   rgba(157 107 255 / 0.16);
+    --color-on-accent:     #17102a;
+    --color-focus-ring:    var(--color-violet-400);
+
+    --glass-bg:     rgba(28 22 41 / 0.72);
+    --glass-solid:  rgba(0 0 0 / 0.94);
+    --glass-border: rgba(255 255 255 / 0.10);
+
+    --shadow-s:  0 1px 2px rgba(0 0 0 / 0.5);
+    --shadow-m:  0 2px 6px rgba(0 0 0 / 0.45), 0 12px 32px rgba(0 0 0 / 0.55);
+    --shadow-l:  0 4px 12px rgba(0 0 0 / 0.5), 0 28px 64px rgba(0 0 0 / 0.6);
+
+    --elev-1: 0 1px 2px rgba(0 0 0 / 0.5);
+    --elev-2: 0 1px 2px rgba(0 0 0 / 0.5), 0 3px 8px 2px rgba(0 0 0 / 0.45);
+    --elev-3: 0 2px 4px rgba(0 0 0 / 0.5), 0 8px 20px 3px rgba(0 0 0 / 0.5);
+    --elev-4: 0 3px 6px rgba(0 0 0 / 0.55), 0 16px 36px 4px rgba(0 0 0 / 0.55);
+    --elev-5: 0 4px 10px rgba(0 0 0 / 0.6), 0 28px 64px 8px rgba(0 0 0 / 0.6);
+    --surface-1: color-mix(in oklab, var(--color-surface) 95%, var(--color-accent));
+    --surface-2: color-mix(in oklab, var(--color-surface) 90%, var(--color-accent));
+    --surface-3: color-mix(in oklab, var(--color-surface) 85%, var(--color-accent));
+    --state-hover: 0.10;
+    --state-focus: 0.14;
+    --state-press: 0.18;
+    --color-accent-2:      var(--color-plum-300);
+    --color-accent-2-soft: rgba(138 118 181 / 0.18);
+
+    --portada-aurora:  0.85;
+    --portada-vineta:  0.9;
+    --portada-halo:    0 14px 44px rgba(157 107 255 / 0.36), 0 0 0 1px rgba(157 107 255 / 0.28);
+    --portada-em-base: var(--color-violet-300);
+    --portada-em-luz:  #e6d8ff;
+
+    color-scheme: dark;
+  }
+}
+
+/* ---------- Oscuro elegido explícitamente con el interruptor ---------- */
+:root[data-theme="dark"] {
+  --color-bg:            var(--color-neutral-1000);
+  --color-bg-alt:        #14101d;
+  --color-surface:       var(--color-neutral-850);
+  --color-surface-sunk:  #171223;
+  --color-text:          var(--color-neutral-50);
+  --color-text-muted:    #a79fb8;
+  --color-text-subtle:   var(--color-neutral-400);
+  --color-border:        #3a3350;
+  --color-border-soft:   #2b2540;
+  --color-accent:        var(--color-violet-400);
+  --color-accent-hover:  var(--color-violet-300);
+  --color-accent-soft:   rgba(157 107 255 / 0.16);
+  --color-on-accent:     #17102a;
+  --color-focus-ring:    var(--color-violet-400);
+
+  --glass-bg:     rgba(28 22 41 / 0.72);
+  --glass-solid:  rgba(0 0 0 / 0.94);
+  --glass-border: rgba(255 255 255 / 0.10);
+
+  --shadow-s:  0 1px 2px rgba(0 0 0 / 0.5);
+  --shadow-m:  0 2px 6px rgba(0 0 0 / 0.45), 0 12px 32px rgba(0 0 0 / 0.55);
+  --shadow-l:  0 4px 12px rgba(0 0 0 / 0.5), 0 28px 64px rgba(0 0 0 / 0.6);
+
+  --elev-1: 0 1px 2px rgba(0 0 0 / 0.5);
+  --elev-2: 0 1px 2px rgba(0 0 0 / 0.5), 0 3px 8px 2px rgba(0 0 0 / 0.45);
+  --elev-3: 0 2px 4px rgba(0 0 0 / 0.5), 0 8px 20px 3px rgba(0 0 0 / 0.5);
+  --elev-4: 0 3px 6px rgba(0 0 0 / 0.55), 0 16px 36px 4px rgba(0 0 0 / 0.55);
+  --elev-5: 0 4px 10px rgba(0 0 0 / 0.6), 0 28px 64px 8px rgba(0 0 0 / 0.6);
+  --surface-1: color-mix(in oklab, var(--color-surface) 95%, var(--color-accent));
+  --surface-2: color-mix(in oklab, var(--color-surface) 90%, var(--color-accent));
+  --surface-3: color-mix(in oklab, var(--color-surface) 85%, var(--color-accent));
+  --state-hover: 0.10;
+  --state-focus: 0.14;
+  --state-press: 0.18;
+  --color-accent-2:      var(--color-plum-300);
+  --color-accent-2-soft: rgba(138 118 181 / 0.18);
+
+  --portada-aurora:  0.85;
+  --portada-vineta:  0.9;
+  --portada-halo:    0 14px 44px rgba(157 107 255 / 0.36), 0 0 0 1px rgba(157 107 255 / 0.28);
+  --portada-em-base: var(--color-violet-300);
+  --portada-em-luz:  #e6d8ff;
+
+  color-scheme: dark;
+}

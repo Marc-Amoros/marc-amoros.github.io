@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" role="img" aria-label="Diagrama del presupuesto de mirada: una consulta al volante debe resolverse en menos de dos segundos">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1430"/>
+      <stop offset="1" stop-color="#0e0a1a"/>
+    </linearGradient>
+    <radialGradient id="halo">
+      <stop offset="0" stop-color="#9d6bff" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#9d6bff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cabe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9d6bff" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#9d6bff" stop-opacity="0.12"/>
+    </linearGradient>
+    <linearGradient id="nocabe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8a76b5" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#8a76b5" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .t  { font-family: Inter, system-ui, sans-serif; fill: #f4f2f8; }
+    .h  { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s  { font-size: 21px; fill: #a79fb8; }
+    .l  { font-size: 19px; font-weight: 600; }
+    .m  { font-size: 17px; fill: #a79fb8; }
+    .k  { font-size: 14px; fill: #8b81a3; letter-spacing: 2px; }
+
+    /* Las barras crecen al entrar: se ve cuánto ocupa cada consulta antes de
+       leer una sola cifra. */
+    .barra { transform-box: fill-box; transform-origin: 0 50%;
+             animation: crece 900ms cubic-bezier(0.2, 0, 0, 1) both; }
+    .barra-2 { animation-delay: 320ms; }
+    .sube  { animation: sube 700ms cubic-bezier(0.2, 0, 0, 1) both; }
+    .sube-2 { animation-delay: 240ms; }
+    .sube-3 { animation-delay: 460ms; }
+    .linea { animation: marcha 3s linear infinite; }
+    @keyframes crece { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes sube  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @keyframes marcha { to { stroke-dashoffset: -28; } }
+    @media (prefers-reduced-motion: reduce) {
+      .barra, .sube, .linea { animation: none; opacity: 1; transform: none; }
+    }
+  </style>
+
+  <rect width="1200" height="750" fill="url(#fondo)"/>
+  <ellipse cx="1010" cy="180" rx="420" ry="300" fill="url(#halo)"/>
+
+  <text class="t k" x="80" y="86">01 · EL RETO</text>
+  <text class="t h" x="80" y="140">El presupuesto de mirada</text>
+  <text class="t s" x="80" y="182">Una consulta al volante se paga en metros recorridos sin mirar la carretera.</text>
+
+  <!-- eje -->
+  <g>
+    <line x1="80" y1="600" x2="1000" y2="600" stroke="#2c2246" stroke-width="2"/>
+    <g stroke="#2c2246" stroke-width="2">
+      <path d="M80 600v14M310 600v14M540 600v14M770 600v14M1000 600v14"/>
+    </g>
+    <g class="t m" text-anchor="middle">
+      <text x="80" y="644">0 s</text>
+      <text x="310" y="644">0,5 s</text>
+      <text x="540" y="644">1 s</text>
+      <text x="770" y="644">1,5 s</text>
+      <text x="1000" y="644">2 s</text>
+    </g>
+    <line class="linea" x1="1000" y1="248" x2="1000" y2="600" stroke="#b48fff" stroke-width="2" stroke-dasharray="7 7"/>
+    <text class="t l" x="1016" y="264" fill="#b48fff">Límite</text>
+    <text class="t m" x="1016" y="292">A 120 km/h,</text>
+    <text class="t m" x="1016" y="316">2 s son 67 m</text>
+    <text class="t m" x="1016" y="340">a ciegas.</text>
+  </g>
+
+  <!-- barra que cabe -->
+  <g class="sube sube-2">
+    <text class="t l" x="80" y="330">Una sola mirada</text>
+    <text class="t m" x="80" y="358">Velocidad, límite, siguiente maniobra.</text>
+    <rect class="barra" x="80" y="378" width="460" height="46" rx="23" fill="url(#cabe)" stroke="#9d6bff" stroke-opacity="0.75" stroke-width="2"/>
+    <circle cx="112" cy="401" r="9" fill="#9d6bff"/>
+    <text class="t m" x="140" y="408" fill="#d6c7ff">Se lee y se vuelve a la carretera</text>
+  </g>
+
+  <!-- barra que no cabe -->
+  <g class="sube sube-3">
+    <text class="t l" x="80" y="480">Consulta encadenada</text>
+    <text class="t m" x="80" y="508">Buscar, comparar, elegir, confirmar.</text>
+    <rect class="barra barra-2" x="80" y="528" width="920" height="46" rx="23" fill="url(#nocabe)" stroke="#8a76b5" stroke-opacity="0.7" stroke-width="2" stroke-dasharray="3 6"/>
+    <path d="M1000 551h150" stroke="#8a76b5" stroke-width="3" stroke-dasharray="9 9" stroke-linecap="round"/>
+    <circle cx="112" cy="551" r="9" fill="#8a76b5"/>
+    <text class="t m" x="140" y="558">No cabe conduciendo: se resuelve parado o por voz</text>
+  </g>
+
+  <text class="t m" x="80" y="702">La pregunta de diseño no es cuánta información cabe en la pantalla,</text>
+  <text class="t m" x="80" y="728">sino cuánta cabe en el hueco que el conductor puede prestar.</text>
+</svg>

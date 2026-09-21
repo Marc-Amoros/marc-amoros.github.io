@@ -1,0 +1,185 @@
+---
+import Contacto from '../components/Contacto.astro';
+import { salidasExternas } from '../lib/ajustes.js';
+import { conVersion } from '../lib/version.js';
+/* Esqueleto común de las tres clases de página. Antes la barra, el pie y el
+   botón flotante estaban copiados en index.html, proyecto.html y
+   articulo.html; ahora se escriben una vez y viajan en todas las páginas. */
+const {
+  titulo,
+  descripcion,
+  /* La portada quiere los enlaces a secciones (#sobre-mi); las fichas y los
+     artículos, que viven en otra ruta, tienen que volver a la portada. */
+  enPortada = false,
+  /* detalle.css solo lo necesitan las fichas y los artículos. */
+  hojaDetalle = false,
+  /* Motion solo lo carga la portada, que es donde está la trayectoria. */
+  conMotion = false,
+  claseMain = ''
+} = Astro.props;
+
+const raiz = enPortada ? '' : '/';
+const canonica = new URL(Astro.url.pathname, Astro.site).href;
+
+/* Quién es el autor del sitio, en el vocabulario que Google entiende. Solo
+   datos que ya están escritos en algún sitio de la web: nada que no se pueda
+   verificar leyendo la propia página. Los enlaces a LinkedIn/Behance/Medium
+   siguen el mismo interruptor que el resto del sitio: si están apagados,
+   tampoco aparecen aquí. */
+const personaJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Marc Amorós Soler',
+  url: new URL('/', Astro.site).href,
+  jobTitle: 'Diseñador UX/UI',
+  image: new URL('/assets/marc.jpg', Astro.site).href,
+  ...(salidasExternas && {
+    sameAs: [
+      'https://www.linkedin.com/in/marcamorossoler/',
+      'https://www.behance.net/marcamoros',
+      'https://medium.com/@asmarc-uxui'
+    ]
+  })
+};
+---
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{titulo}</title>
+<meta name="description" content={descripcion} />
+<meta name="author" content="Marc Amorós Soler" />
+<link rel="canonical" href={canonica} />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={titulo} />
+<meta property="og:description" content={descripcion} />
+<meta property="og:image" content={new URL('/assets/marc-og.jpg', Astro.site).href} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="628" />
+<meta property="og:url" content={canonica} />
+<meta property="og:locale" content="es_ES" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={titulo} />
+<meta name="twitter:description" content={descripcion} />
+<meta name="twitter:image" content={new URL('/assets/marc-og.jpg', Astro.site).href} />
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%235a13d2'/><text x='50' y='68' font-size='54' font-family='-apple-system,system-ui,sans-serif' font-weight='600' fill='white' text-anchor='middle'>M</text></svg>" />
+<link rel="apple-touch-icon" href="/assets/marc-560.jpg" />
+
+<script type="application/ld+json" set:html={JSON.stringify(personaJsonLd)} />
+
+<!-- Inter variable: se pide antes que el CSS para que el texto no cambie
+     de tipografía a mitad de la carga. -->
+<link rel="preload" href="/assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href={conVersion('/css/tokens.css')} />
+<link rel="stylesheet" href={conVersion('/css/styles.css')} />
+{hojaDetalle && <link rel="stylesheet" href={conVersion('/css/detalle.css')} />}
+<slot name="head" />
+
+<!-- Tema: se aplica antes de pintar para que no haya parpadeo al recargar -->
+<script is:inline>
+  (function () {
+    document.documentElement.classList.remove('no-js');
+    try {
+      var t = localStorage.getItem('tema');
+      if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  })();
+</script>
+</head>
+
+<body>
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="nav__brand" href={enPortada ? '#inicio' : '/'}>Marc Amorós</a>
+
+    <nav class="nav__nav" aria-label="Principal">
+      <ul class="nav__list" id="nav-list">
+        <li><a class="nav__link" href={`${raiz}#sobre-mi`}>Sobre mí</a></li>
+        <li><a class="nav__link" href={`${raiz}#trayectoria`}>Trayectoria</a></li>
+        <li><a class="nav__link" href={`${raiz}#portafolio`}>Portafolio</a></li>
+        <li><a class="nav__link" href={`${raiz}#articulos`}>Artículos</a></li>
+        {enPortada && <li><a class="nav__link" href="#contacto">Contacto</a></li>}
+      </ul>
+    </nav>
+
+    <div class="nav__actions">
+      <button class="theme-toggle" id="theme-toggle" type="button"
+              aria-label="Cambiar entre modo claro y oscuro">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+             stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+      </button>
+
+      <a class="btn btn--primary nav__cta" href={`${raiz}#contacto`}>Hablemos</a>
+
+      {enPortada && (
+        <button class="nav__burger" id="nav-burger" type="button"
+                aria-expanded="false" aria-controls="nav-panel" aria-label="Abrir menú">
+          <span></span><span></span>
+        </button>
+      )}
+    </div>
+  </div>
+
+  {enPortada && (
+    <div class="nav__panel" id="nav-panel" hidden>
+      <ul>
+        <li><a href="#sobre-mi">Sobre mí</a></li>
+        <li><a href="#trayectoria">Trayectoria</a></li>
+        <li><a href="#portafolio">Portafolio</a></li>
+        <li><a href="#articulos">Artículos</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </div>
+  )}
+</header>
+
+<main id="contenido" class={claseMain}>
+  <slot />
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p>© <span id="year">2026</span> Marc Amorós Soler · Diseñado y montado en Barcelona.</p>
+    <p><a href={enPortada ? '#inicio' : '/'}>{enPortada ? 'Volver arriba ↑' : 'Volver a la portada'}</a></p>
+  </div>
+</footer>
+
+<button class="fab" id="fab" type="button" aria-label="Hablemos: ir a contacto">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 6h16v12H4z"></path><path d="m4 7 8 6 8-6"></path>
+  </svg>
+  <span class="fab__label">Hablemos</span>
+</button>
+
+{!enPortada && (
+  <dialog class="contacto-modal" id="contacto-modal" aria-labelledby="contacto-modal-titulo">
+    <div class="contact">
+      <button class="contacto-modal__cerrar" type="button" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <Contacto idTitulo="contacto-modal-titulo" conFoto />
+    </div>
+  </dialog>
+)}
+
+{conMotion && <script is:inline src={conVersion('/js/vendor/motion.js')} defer></script>}
+<script is:inline src={conVersion('/js/main.js')} defer></script>
+<slot name="scripts" />
+</body>
+</html>

@@ -1,0 +1,427 @@
+---
+/* Una ficha por proyecto, generada al compilar.
+   ------------------------------------------------------------
+   Antes esto lo montaba js/proyecto.js en el navegador leyendo ?p=slug: sin
+   JavaScript no había página, y para Google tampoco. Ahora getStaticPaths
+   devuelve los slugs y Astro escribe un HTML por proyecto, cada uno con su título
+   y su meta descripción. El JavaScript que queda —el menú lateral, el
+   parallax— solo añade comportamiento sobre un HTML que ya viene hecho. */
+import Base from '../../layouts/Base.astro';
+import { PROYECTOS } from '../../data/proyectos.js';
+import { ARTICULOS } from '../../data/articulos.js';
+import { fechaLarga } from '../../lib/fecha.js';
+import { salidasExternas } from '../../lib/ajustes.js';
+import { conVersion } from '../../lib/version.js';
+
+export function getStaticPaths() {
+  return PROYECTOS.map((proyecto, i) => ({
+    params: { slug: proyecto.slug },
+    props: {
+      proyecto,
+      anterior: PROYECTOS[i - 1] ?? null,
+      siguiente: PROYECTOS[i + 1] ?? null
+    }
+  }));
+}
+
+const { proyecto, anterior, siguiente } = Astro.props;
+
+/* Secciones: la ficha, los bloques con texto y, si el proyecto tiene
+   artículos que lo documenten, el quinto. */
+const bloques = [
+  ['reto', '01', 'El reto', proyecto.reto],
+  ['investigacion', '02', 'Investigación', proyecto.investigacion],
+  ['solucion', '03', 'La solución', proyecto.solucion],
+  ['resultados', '04', 'Resultados', proyecto.resultados]
+].filter(([, , , parrafos]) => parrafos && parrafos.length);
+
+const relacionados = ARTICULOS
+  .filter((a) => a.proyecto === proyecto.slug)
+  .sort((a, b) => a.orden - b.orden);
+
+/* Las láminas se reparten entre los bloques para que texto e imágenes
+   avancen juntos, en vez de dejar una galería suelta al final. */
+const laminas = (proyecto.galeria || []).filter((l) => l.src !== proyecto.portada);
+// Una lámina con "bloque" va fija a esa sección; el resto se reparte por número.
+// El reparto tiene que ser parejo: redondeando hacia arriba, seis láminas entre
+// cuatro secciones daban 2-2-2-0 y la última se quedaba siempre vacía. Ahora el
+// resto se reparte de una en una entre las primeras, así que salen 2-2-1-1.
+const sueltas = laminas.filter((l) => !l.bloque);
+const base = Math.floor(sueltas.length / bloques.length);
+const resto = sueltas.length % bloques.length;
+let corte = 0;
+const grupos = bloques.map(([id], n) => {
+  const cuantas = base + (n < resto ? 1 : 0);
+  const trozo = sueltas.slice(corte, corte + cuantas);
+  corte += cuantas;
+  return [...trozo, ...laminas.filter((l) => l.bloque === id)];
+});
+// Una lámina con "unir" se pega a la anterior en un mismo marco, y un clip con
+// "tras" entra justo después de la lámina que nombra: así un vídeo puede quedar
+// cosido entre dos láminas como si fuera parte de la misma pieza.
+const piezas = (grupo) => grupo.reduce((acc, l) => {
+  if (l.unir && acc.length) acc[acc.length - 1].push(l); else acc.push([l]);
+  return acc;
+}, []);
+const clipsTras = (src) => (proyecto.clips || []).filter((c) => c.tras === src);
+// "fondo" deja que el clip herede el color con el que acaba la lámina: si la
+// lámina termina en negro, el vídeo no puede caer sobre una banda blanca.
+
+/* Lo que va detras de los cuatro bloques de texto se numera solo, para que
+   anadir una seccion no obligue a renumerar la siguiente a mano. */
+const extras = [
+  ...(proyecto.prototipo ? [{ id: 'prototipo', titulo: 'Prototipo navegable' }] : []),
+  ...(relacionados.length ? [{ id: 'proceso', titulo: 'El proceso, escrito' }] : [])
+].map((s, i) => ({ ...s, n: String(bloques.length + 1 + i).padStart(2, '0') }));
+const nSecc = Object.fromEntries(extras.map((s) => [s.id, s.n]));
+
+/* El pie de la ficha hace dos cosas: probar que el proyecto existe fuera de
+   este portafolio y ofrecer una salida. La prueba se mantiene siempre -las
+   estadisticas de Behance, la nota del producto- porque es lo que da
+   credibilidad; la salida solo apunta fuera si las salidas externas estan
+   encendidas, y si no, lleva al contacto. */
+const cierre = proyecto.behance
+  ? {
+      texto: `Publicado en Behance el ${fechaLarga(proyecto.fecha)} · ${proyecto.stats.vistas} vistas · ${proyecto.stats.aplausos} aplausos.`,
+      enlace: proyecto.behance,
+      rotulo: 'Ver el original en Behance'
+    }
+  : proyecto.sitio
+  ? {
+      texto: proyecto.sitioNota,
+      enlace: proyecto.sitio,
+      rotulo: proyecto.sitioTexto || 'Ver el producto'
+    }
+  : {
+      texto: 'Proyecto profesional bajo acuerdo de confidencialidad: no hay pantallas publicadas. Las láminas de esta ficha son esquemas propios hechos para explicar el método.',
+      enlace: null,
+      rotulo: null
+    };
+
+const relacionado = proyecto.proyectoRelacionado
+  ? PROYECTOS.find((p) => p.slug === proyecto.proyectoRelacionado.slug) ?? null
+  : null;
+
+const secciones = [
+  { id: 'ficha', n: '', titulo: 'Ficha del proyecto' },
+  ...bloques.map(([id, n, titulo]) => ({ id, n, titulo })),
+  ...extras
+];
+
+const ficha = [
+  ['Rol', proyecto.rol],
+  ['Metodología', proyecto.metodologia],
+  ['Duración', proyecto.duracion],
+  ['Equipo', proyecto.equipo],
+  ['Herramientas', proyecto.herramientas.join(' · ')],
+  [proyecto.behance ? 'Publicado' : 'Fecha', fechaLarga(proyecto.fecha)]
+];
+
+/* Cuánto se tarda en leer la ficha: 200 palabras por minuto y diez segundos
+   por lámina. Antes se contaba sobre el DOM ya pintado; ahora se cuenta aquí
+   sobre el mismo texto, antes de escribirlo. */
+const palabras = [
+  ...bloques.flatMap(([, , titulo, parrafos]) => [titulo, ...parrafos]),
+  ...ficha.filter(([, v]) => v).flat(),
+  ...(proyecto.prototipo ? [proyecto.prototipo.nota] : [])
+].join(' ').trim().split(/\s+/).length;
+const minutos = Math.max(1, Math.round((palabras / 200 * 60 + laminas.length * 10) / 60));
+
+/* En español solo lleva mayúscula la inicial de la etiqueta; «iOS» se respeta. */
+const etiqueta = (t) => (t === 'iOS' ? t : t.charAt(0).toLocaleUpperCase('es') + t.slice(1));
+
+const rutaImagen = (src) => (src.startsWith('http') ? src : `/${src}`);
+
+/* El enlace que da Figma al compartir sirve para abrir el prototipo en una
+   pestana; para incrustarlo hay que pedirlo al host de embeds y declarar quien
+   lo aloja. El t= que Figma anade es un testigo de sesion que caduca, asi que
+   no viaja al HTML.
+
+   hide-ui quita la barra que Figma pinta dentro del marco: ahi van el nombre
+   del archivo y el boton de pantalla completa, y los dos sacan al visitante
+   del portafolio. El prototipo se recorre igual, pulsando sus zonas activas,
+   pero sin puerta de salida. */
+const urlEmbed = (url) => {
+  const u = new URL(url);
+  u.hostname = 'embed.figma.com';
+  u.searchParams.delete('t');
+  u.searchParams.set('embed-host', 'share');
+  u.searchParams.set('hide-ui', '1');
+  return u.href;
+};
+---
+
+<Base
+  titulo={`${proyecto.titulo} · Marc Amorós`}
+  descripcion={proyecto.descripcion ?? proyecto.resumen}
+  hojaDetalle={true}
+>
+  <article class="caso" id="caso">
+    <div class="caso__inner">
+      <a class="volver" href="/#portafolio">Portafolio</a>
+
+      <header class="caso__head">
+        <span class="eyebrow">{proyecto.tipo}</span>
+        <h1 class="caso__title">{proyecto.titulo}</h1>
+        <p class="caso__claim">{proyecto.claim}</p>
+        {proyecto.resumen && <p class="caso__lead">{proyecto.resumen}</p>}
+        <ul class="caso__tags">
+          {/* capitalize pone en mayuscula la inicial de cada palabra. Con una
+              etiqueta como "iOS" eso da "IOS", asi que las que ya traen
+              mayuscula dentro y empiezan en minuscula se dejan tal cual. */}
+          {proyecto.tags.map((t) => (
+            <li class="chip">{etiqueta(t)}</li>
+          ))}
+        </ul>
+      </header>
+
+      {proyecto.video ? (
+        <figure class="caso__cine">
+          <div class="caso__cine-marco">
+            <button class="caso__play" type="button"
+                    aria-label={`Reproducir el vídeo «${proyecto.video.titulo}», de ${proyecto.video.autor}`}
+                    data-video={rutaImagen(proyecto.video.src)} data-titulo={proyecto.video.titulo}>
+              <img class="caso__cartel" alt=""
+                   src={rutaImagen(proyecto.video.poster)}
+                   width="1280" height="720" decoding="async" fetchpriority="high"
+                   style={`view-transition-name:portada-${proyecto.slug}`} />
+              <span class="caso__play-chapa">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+              </span>
+            </button>
+          </div>
+          {proyecto.video.nota && (
+            <figcaption class="caso__cine-pie">{proyecto.video.nota} Vídeo de {proyecto.video.autor}.</figcaption>
+          )}
+        </figure>
+      ) : proyecto.portada && (
+        <figure class="caso__cover">
+          <img src={rutaImagen(proyecto.portada)} alt={proyecto.portadaAlt || `Portada del proyecto ${proyecto.titulo}`}
+               fetchpriority="high" style={`view-transition-name:portada-${proyecto.slug}`} />
+        </figure>
+      )}
+
+      <aside class="menu" data-abierto="false" aria-label="Secciones de la ficha">
+        <button class="menu__tirador" type="button" aria-expanded="false"
+                aria-controls="menu-secciones" aria-label="Secciones de la ficha y avance">
+          <svg class="menu__anillo" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+            <circle class="menu__pista" cx="20" cy="20" r="17"></circle>
+            <circle class="menu__avance" cx="20" cy="20" r="17" pathLength="1"></circle>
+          </svg>
+          <span class="menu__cifra">1</span>
+        </button>
+
+        <div class="menu__panel" id="menu-secciones">
+          <div class="menu__pliegue"><div class="menu__pliegue-i">
+            <div class="menu__cab" style="--i: 0">
+              <p class="indice__k">En esta ficha</p>
+              <p class="menu__n"><strong>1</strong> de {secciones.length}</p>
+            </div>
+          </div></div>
+
+          <nav class="indice" aria-label="Secciones de la ficha" data-marca="off">
+            <ol class="indice__lista">
+              <li class="indice__marca" aria-hidden="true"></li>
+              {secciones.map((s, n) => (
+                <li>
+                  <a class="indice__a" href={`#${s.id}`} style={`--i: ${n + 1}`}>
+                    {s.n && <span class="indice__n">{s.n}</span>}
+                    <span class="indice__t">{s.titulo}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          <div class="menu__pliegue"><div class="menu__pliegue-i">
+            <div class="menu__pie" style={`--i: ${secciones.length + 1}`}>
+              <p><strong>{minutos} min</strong> de lectura</p>
+              <span class="menu__barra"><span class="menu__barra-i"></span></span>
+            </div>
+          </div></div>
+        </div>
+      </aside>
+
+      <div class="caso__cuerpo">
+        <div class="caso__main">
+          <section class="bloque rise" id="ficha" aria-labelledby="ficha-titulo">
+            <div class="bloque__head">
+              <h2 class="bloque__t" id="ficha-titulo">Ficha del proyecto</h2>
+            </div>
+            <dl class="ficha">
+              {ficha.filter(([, valor]) => valor).map(([k, valor]) => (
+                <div>
+                  <dt class="ficha__k">{k}</dt>
+                  <dd class="ficha__v">{valor}</dd>
+                </div>
+              ))}
+            </dl>
+            {proyecto.destacados && proyecto.destacados.length > 0 && (
+              <div class="cifras">
+                {proyecto.destacados.map((d) => (
+                  <div class="cifra">
+                    <span class="cifra__n">{d.n}</span>
+                    <span class="cifra__l">{d.l}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {bloques.map(([id, n, titulo, parrafos], i) => (
+            <section class="bloque rise" id={id} data-n={n} aria-labelledby={`${id}-titulo`}>
+              <div class="bloque__head">
+                <span class="bloque__n">{n}</span>
+                <h2 class="bloque__t" id={`${id}-titulo`}>{titulo}</h2>
+              </div>
+              <div class="bloque__texto">
+                {parrafos.map((p) => <p>{p}</p>)}
+              </div>
+              {grupos[i].length > 0 && (
+                <div class="laminas">
+                  {piezas(grupos[i]).map((pieza, k) => (
+                    <figure class="lamina rise" style={`--delay: ${k * 90}ms`}>
+                      {pieza.map((l) => (
+                        <>
+                          <img src={rutaImagen(l.src)} alt={l.alt || `Lámina del proyecto ${proyecto.titulo}`}
+                               loading="lazy" decoding="async"
+                               width={l.w || undefined} height={l.h || undefined} />
+                          {clipsTras(l.src).map((c) => (
+                            <div class="lamina__clip" style={c.fondo ? `background:${c.fondo}` : undefined}>
+                              {c.tipo === 'figma' ? (
+                                <div class="proto__marco proto__marco--ancho">
+                                  <button class="proto__abrir" type="button"
+                                          data-embed={urlEmbed(c.url)} data-titulo={c.titulo}>
+                                    <span class="proto__chapa" aria-hidden="true">
+                                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                                           stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                                        <path d="M5 3.5l13.5 8.2L12 12.9l-2.2 6.6z" />
+                                      </svg>
+                                    </span>
+                                    <span class="proto__rotulo">Abrir el prototipo</span>
+                                    <span class="proto__aviso">Se carga desde Figma al pulsar</span>
+                                  </button>
+                                </div>
+                              ) : (
+                                <video src={rutaImagen(c.src)} poster={c.poster && rutaImagen(c.poster)}
+                                       controls controlslist="nodownload" playsinline preload="none"
+                                       width={c.w || undefined} height={c.h || undefined}
+                                       aria-label={c.titulo}>
+                                  {c.subtitulos && <track kind="subtitles" srclang="es" label="Español" src={rutaImagen(c.subtitulos)} default />}
+                                </video>
+                              )}
+                              {c.credito && (
+                                <p class="lamina__credito">
+                                  <span class="lamina__credito-et">Vídeo</span>
+                                  <span>{c.credito.texto}</span>
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </>
+                      ))}
+                      {pieza.map((l) => l.pie).filter(Boolean).map((p) => <figcaption>{p}</figcaption>)}
+                    </figure>
+                  ))}
+                </div>
+              )}
+              {(proyecto.clips || []).filter((c) => c.bloque === id).map((c) => (
+                <figure class="lamina clip rise">
+                  <video src={rutaImagen(c.src)} poster={c.poster && rutaImagen(c.poster)}
+                         controls controlslist="nodownload" playsinline preload="none"
+                         width={c.w || undefined} height={c.h || undefined}
+                         aria-label={`${c.titulo} de ${proyecto.titulo}`}>
+                    {c.subtitulos && <track kind="subtitles" srclang="es" label="Español" src={rutaImagen(c.subtitulos)} default />}
+                  </video>
+                  {c.pie && <figcaption>{c.pie}</figcaption>}
+                </figure>
+              ))}
+            </section>
+          ))}
+
+          {proyecto.prototipo && (
+            <section class="bloque rise" id="prototipo" data-n={nSecc.prototipo} aria-labelledby="prototipo-titulo">
+              <div class="bloque__head">
+                <span class="bloque__n">{nSecc.prototipo}</span>
+                <h2 class="bloque__t" id="prototipo-titulo">Prototipo navegable</h2>
+              </div>
+              <div class="bloque__texto">
+                <p>{proyecto.prototipo.nota}</p>
+              </div>
+              <figure class="proto">
+                <div class="proto__marco">
+                  <button class="proto__abrir" type="button"
+                          data-embed={urlEmbed(proyecto.prototipo.url)}
+                          data-titulo={proyecto.prototipo.titulo}>
+                    <span class="proto__chapa" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                           stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                        <path d="M5 3.5l13.5 8.2L12 12.9l-2.2 6.6z" />
+                      </svg>
+                    </span>
+                    <span class="proto__rotulo">Abrir el prototipo</span>
+                    <span class="proto__aviso">Se carga desde Figma al pulsar</span>
+                  </button>
+                </div>
+                <figcaption class="proto__pie">
+                  {proyecto.prototipo.titulo}. Se recorre pulsando las zonas activas de cada pantalla.
+                </figcaption>
+              </figure>
+            </section>
+          )}
+
+          {relacionados.length > 0 && (
+            <section class="bloque rise" id="proceso" data-n={nSecc.proceso} aria-labelledby="proceso-titulo">
+              <div class="bloque__head">
+                <span class="bloque__n">{nSecc.proceso}</span>
+                <h2 class="bloque__t" id="proceso-titulo">El proceso, escrito</h2>
+              </div>
+              <div class="relacionados">
+                {relacionados.map((a) => (
+                  <a class="rel" href={`/articulo/${a.slug}/`}>
+                    <p class="rel__meta">{a.fechaLarga} · {a.minutos} min</p>
+                    <p class="rel__t">{a.titulo}</p>
+                    <span class="link-arrow">Leer aquí</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+
+      <div class="work-more rise">
+        <p>{cierre.texto}</p>
+        <div class="work-more__acciones">
+          {relacionado && (
+            <a class="btn btn--ghost" href={`/proyecto/${relacionado.slug}/`}>{proyecto.proyectoRelacionado.texto}</a>
+          )}
+          {(salidasExternas || proyecto.forzarSitio) && cierre.enlace ? (
+            <a class="btn btn--ghost" href={cierre.enlace} target="_blank" rel="noopener">{cierre.rotulo}</a>
+          ) : (
+            <a class="btn btn--ghost" href="/#contacto">Hablemos del proyecto</a>
+          )}
+        </div>
+      </div>
+
+      {(anterior || siguiente) && (
+        <nav class="pares" aria-label="Otros proyectos">
+          {anterior && (
+            <a class="par" href={`/proyecto/${anterior.slug}/`}>
+              <span class="par__k">‹ Anterior</span>
+              <span class="par__t">{anterior.titulo}</span>
+            </a>
+          )}
+          {siguiente && (
+            <a class="par par--next" href={`/proyecto/${siguiente.slug}/`}>
+              <span class="par__k">Siguiente ›</span>
+              <span class="par__t">{siguiente.titulo}</span>
+            </a>
+          )}
+        </nav>
+      )}
+    </div>
+  </article>
+
+  <script is:inline slot="scripts" src={conVersion('/js/caso.js')} defer></script>
+</Base>

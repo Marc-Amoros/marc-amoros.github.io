@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 804" width="1200" height="804" role="img" aria-label="El préstamo hipotecario repartido en tres carriles: lo que hace el usuario desde casa, lo que hace el notario y la firma presencial en la notaría, con el plazo legal de diez días hábiles marcado">
+  <style>
+    .t { font-family: Inter, system-ui, sans-serif; fill: #263238; }
+    .h { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s { font-size: 21px; fill: #6B7A8C; }
+    .k { font-size: 14px; fill: #8D99A5; letter-spacing: 2px; }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#94A6B4"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="804" fill="#F6F8FA"/>
+
+  <text class="t k" x="80" y="86">03 · LA SOLUCIÓN</text>
+  <text class="t h" x="80" y="140">Empieza en casa, acaba en la notaría</text>
+  <text class="t s" x="80" y="182">Cada paso dice quién lo hace: tú, el notario o una visita que la ley sigue exigiendo.</text>
+
+  <text class="t k" x="80" y="236" style="font-size:12px">EJEMPLO · PRÉSTAMO HIPOTECARIO</text>
+
+  <rect x="80" y="260" width="1040" height="104" rx="14" fill="#EAF6FD"/>
+  <rect x="80" y="376" width="1040" height="104" rx="14" fill="#F1F4F7"/>
+  <rect x="80" y="492" width="1040" height="104" rx="14" fill="#FDF3E3"/>
+
+  <text x="112" y="306" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:15px; letter-spacing:1px; fill:#0176AE">TÚ</text>
+  <text x="112" y="328" style="font-family:Inter, system-ui, sans-serif; font-size:12px; fill:#8D99A5">desde casa</text>
+  <text x="112" y="422" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:15px; letter-spacing:1px; fill:#546E7A">EL NOTARIO</text>
+  <text x="112" y="444" style="font-family:Inter, system-ui, sans-serif; font-size:12px; fill:#8D99A5">por su lado</text>
+  <text x="112" y="538" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:15px; letter-spacing:1px; fill:#8A5A0A">EN LA NOTARÍA</text>
+  <text x="112" y="560" style="font-family:Inter, system-ui, sans-serif; font-size:12px; fill:#8D99A5">presencial, obligatorio</text>
+
+  <g fill="none" stroke="#94A6B4" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar)">
+    <path d="M248 312 H270"/>
+    <path d="M463 312 H570 Q582 312 582 324 V388"/>
+    <path d="M675 428 H783 Q795 428 795 416 V352"/>
+    <path d="M888 312 H995 Q1007 312 1007 324 V504"/>
+  </g>
+
+  <rect x="702" y="216" width="186" height="30" rx="15" fill="#FDF3D9"/>
+  <text x="795" y="236" text-anchor="middle" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:12px; fill:#8A5A0A">10 días hábiles por ley</text>
+  <path d="M795 246 V274" stroke="#8A5A0A" stroke-width="2" stroke-dasharray="4 4"/>
+
+  <rect x="277" y="274" width="186" height="76" rx="12" fill="#FFFFFF" stroke="#DCE5EC" stroke-width="2"/>
+  <text x="295" y="299" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:11px; letter-spacing:1px; fill:#009AE5">01</text>
+  <text x="295" y="321" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">Inicias la solicitud</text>
+  <text x="295" y="339" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">desde casa</text>
+
+  <rect x="489" y="390" width="186" height="76" rx="12" fill="#FFFFFF" stroke="#DCE5EC" stroke-width="2"/>
+  <text x="507" y="415" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:11px; letter-spacing:1px; fill:#546E7A">02</text>
+  <text x="507" y="437" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">Revisa los papeles</text>
+  <text x="507" y="455" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">que manda el banco</text>
+
+  <rect x="702" y="274" width="186" height="76" rx="12" fill="#FFFFFF" stroke="#DCE5EC" stroke-width="2"/>
+  <text x="720" y="299" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:11px; letter-spacing:1px; fill:#009AE5">03</text>
+  <text x="720" y="321" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">Pides cita para</text>
+  <text x="720" y="339" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">la firma</text>
+
+  <rect x="914" y="506" width="186" height="76" rx="12" fill="#FFFFFF" stroke="#E2BE85" stroke-width="2"/>
+  <text x="932" y="531" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:11px; letter-spacing:1px; fill:#8A5A0A">04</text>
+  <text x="932" y="553" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">Firmas ante</text>
+  <text x="932" y="571" style="font-family:Inter, system-ui, sans-serif; font-size:13px; fill:#263238">el notario</text>
+
+  <rect x="80" y="628" width="1040" height="126" rx="16" fill="#263238"/>
+  <text x="112" y="672" style="font-family:Inter, system-ui, sans-serif; font-weight:700; font-size:19px; fill:#FFFFFF">El plazo no lo pone el usuario, lo pone la ley</text>
+  <text x="112" y="702" style="font-family:Inter, system-ui, sans-serif; font-size:16px; fill:#B4BFC9">En el préstamo hipotecario hay diez días hábiles para pedir cita desde que el notario revisa la documentación del banco.</text>
+  <text x="112" y="728" style="font-family:Inter, system-ui, sans-serif; font-size:16px; fill:#B4BFC9">Por eso el plazo se enseña donde se pide la cita, y no en una nota legal al final.</text>
+</svg>

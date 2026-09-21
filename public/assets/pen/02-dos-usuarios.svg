@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 808" width="1200" height="808" role="img" aria-label="Los dos perfiles de usuario del portal y lo que necesita cada uno">
+  <style>
+    .t { font-family: Inter, system-ui, sans-serif; fill: #1B2430; }
+    .h { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s { font-size: 21px; fill: #6B7A8C; }
+    .l { font-size: 22px; font-weight: 700; }
+    .c { font-size: 18px; }
+    .m { font-size: 17px; fill: #6B7A8C; }
+    .k { font-size: 14px; fill: #8496A8; letter-spacing: 2px; }
+  </style>
+  <rect width="1200" height="808" fill="#F6F9FC"/>
+
+  <text class="t k" x="80" y="86">02 · INVESTIGACIÓN</text>
+  <text class="t h" x="80" y="140">Dos usuarios en la misma web</text>
+  <text class="t s" x="80" y="182">Diseñar solo para uno rompe al otro. La salida fue por capas, no por dos productos.</text>
+
+  <!-- particular -->
+  <g>
+    <rect x="80" y="230" width="490" height="446" rx="18" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+    <circle cx="134" cy="276" r="22" fill="#FDEDD9"/>
+    <path d="M124 282 l10 -12 10 12 z" fill="#D9451F"/>
+    <text class="t l" x="112" y="334">Quien compra su casa</text>
+    <text class="t m" x="112" y="368">Entra una vez, con una pregunta concreta.</text>
+
+    <g class="t c">
+      <text x="136" y="414">Quiere una cifra que entienda</text>
+      <text x="136" y="456">Piensa en barrios, no en códigos postales</text>
+      <text x="136" y="498">No sabe qué es la tasa de esfuerzo</text>
+      <text x="136" y="540">Necesita saber si le llega para pagarla</text>
+    </g>
+    <g fill="#D9451F">
+      <circle cx="117" cy="408" r="5"/><circle cx="117" cy="450" r="5"/>
+      <circle cx="117" cy="492" r="5"/><circle cx="117" cy="534" r="5"/>
+    </g>
+
+    <rect x="112" y="576" width="426" height="76" rx="12" fill="#FDEDD9"/>
+    <text class="t c" x="136" y="608" font-weight="600" fill="#A33417">Decisión de diseño</text>
+    <text class="t m" x="136" y="634" fill="#A33417" style="font-size:16px">La consulta empieza en el mapa, no en un formulario.</text>
+  </g>
+
+  <!-- profesional -->
+  <g>
+    <rect x="610" y="230" width="490" height="446" rx="18" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+    <circle cx="664" cy="276" r="22" fill="#E7EEF6"/>
+    <g fill="#16407A">
+      <rect x="654" y="270" width="6" height="12" rx="3"/>
+      <rect x="662" y="264" width="6" height="18" rx="3"/>
+      <rect x="670" y="274" width="6" height="8" rx="3"/>
+    </g>
+    <text class="t l" x="642" y="334">Quien trabaja con el dato</text>
+    <text class="t m" x="642" y="368">Vuelve cada semana y compara.</text>
+
+    <g class="t c">
+      <text x="666" y="414">Filtra por tipo de finca y construcción</text>
+      <text x="666" y="456">Compara zonas y series mensuales</text>
+      <text x="666" y="498">Quiere la tabla, no solo el gráfico</text>
+      <text x="666" y="540">Necesita volver a la consulta de ayer</text>
+    </g>
+    <g fill="#16407A">
+      <circle cx="647" cy="408" r="5"/><circle cx="647" cy="450" r="5"/>
+      <circle cx="647" cy="492" r="5"/><circle cx="647" cy="534" r="5"/>
+    </g>
+
+    <rect x="642" y="576" width="426" height="76" rx="12" fill="#E7EEF6"/>
+    <text class="t c" x="666" y="608" font-weight="600" fill="#16407A">Decisión de diseño</text>
+    <text class="t m" x="666" y="634" fill="#16407A" style="font-size:16px">Los detalles llegan a un clic, sin estorbar al primero.</text>
+  </g>
+
+  <text class="t m" x="80" y="730">El vocabulario del sector (€/m², tipo de finca, años de renta necesaria) se explica donde se usa,</text>
+  <text class="t m" x="80" y="754">no en una página de ayuda que nadie abre.</text>
+</svg>

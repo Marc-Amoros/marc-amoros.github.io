@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Redirigiendo…</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="/#portafolio">
+<!-- Las fichas vivían en proyecto.html?p=slug y ahora están en /proyecto/slug.
+     Un hosting estático no puede redirigir mirando la parte de la URL que va
+     tras la interrogación, así que esta página se queda para hacerlo desde el
+     navegador. Sirve para los enlaces ya publicados en Behance o LinkedIn. -->
+<script>
+  (function () {
+    var slug = new URLSearchParams(location.search).get('p');
+    location.replace(slug ? '/proyecto/' + encodeURIComponent(slug) + '/' : '/#portafolio');
+  })();
+</script>
+</head>
+<body>
+<p>Esta página se ha mudado. <a href="/#portafolio">Ir al portafolio</a>.</p>
+</body>
+</html>

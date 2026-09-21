@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 968" width="1200" height="968" role="img" aria-label="La tarjeta de indicador anotada y las cinco estadísticas del panel que la reutilizan">
+  <style>
+    .t { font-family: Inter, system-ui, sans-serif; fill: #1B2430; }
+    .h { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s { font-size: 21px; fill: #56657A; }
+    .m { font-size: 19px; fill: #56657A; }
+    .n { font-size: 16px; font-weight: 700; fill: #FFFFFF; }
+    .k { font-size: 14px; fill: #6B7A8C; letter-spacing: 2px; }
+  </style>
+  <defs>
+    <symbol id="ico-info" viewBox="0 0 28 28">
+      <circle cx="14" cy="14" r="12" fill="#FFFFFF" stroke="#16407A" stroke-width="2"/>
+      <circle cx="14" cy="8.6" r="1.9" fill="#16407A"/>
+      <rect x="12.6" y="12" width="2.8" height="9" rx="1.4" fill="#16407A"/>
+    </symbol>
+  </defs>
+  <rect width="1200" height="968" fill="#F6F9FC"/>
+
+  <text class="t k" x="80" y="86">04 · RESULTADOS</text>
+  <text class="t h" x="80" y="140">Una pieza, todo el panel</text>
+  <text class="t s" x="80" y="182">La tarjeta de indicador se resuelve una vez y se reutiliza en cada estadística.</text>
+  <rect x="80" y="226" width="560" height="430" rx="18" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+  <text class="t" x="112" y="282" font-size="24" font-weight="700">Precio medio por m²</text>
+  <use href="#ico-info" x="386" y="259" width="28" height="28"/>
+  <text class="t" x="112" y="368" font-size="56" font-weight="700">1.995 €/m²</text>
+  <rect x="488" y="330" width="82" height="38" rx="19" fill="#FDEDD9"/>
+  <path d="M503 357 L516 343 M507 343 H516 V352" fill="none" stroke="#A33417" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="526" y="345" width="30" height="8" rx="4" fill="#A33417" opacity="0.35"/>
+  <rect x="112" y="392" width="226" height="36" rx="18" fill="#E7EEF6"/>
+  <text class="t" x="133" y="416" font-size="20" font-weight="600" style="fill:#16407A">Últimos 12 meses</text>
+  <line x1="112" y1="462" x2="570" y2="462" stroke="#DCE5EF" stroke-width="1.5"/>
+  <line x1="112" y1="512" x2="570" y2="512" stroke="#DCE5EF" stroke-width="1.5"/>
+  <line x1="112" y1="562" x2="570" y2="562" stroke="#DCE5EF" stroke-width="1.5"/>
+  <path d="M112.0,562 L112.0,552.8 L153.6,546.4 L195.3,551.0 L236.9,537.2 L278.5,541.8 L320.2,525.2 L361.8,530.7 L403.5,514.2 L445.1,519.7 L486.7,501.3 L528.4,506.8 L570.0,484.7 L570.0,562 Z" fill="#FDEDD9"/>
+  <polyline points="112.0,552.8 153.6,546.4 195.3,551.0 236.9,537.2 278.5,541.8 320.2,525.2 361.8,530.7 403.5,514.2 445.1,519.7 486.7,501.3 528.4,506.8 570.0,484.7" fill="none" stroke="#D9451F" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="570.0" cy="484.7" r="7" fill="#FFFFFF" stroke="#D9451F" stroke-width="3.5"/>
+  <rect x="112" y="594" width="232" height="42" rx="21" fill="#E7EEF6"/>
+  <rect x="116" y="598" width="112" height="34" rx="17" fill="#16407A"/>
+  <text class="t" x="172" y="621" text-anchor="middle" font-size="19" font-weight="600" style="fill:#FFFFFF">Gráfico</text>
+  <text class="t" x="288" y="621" text-anchor="middle" font-size="19" font-weight="600" style="fill:#16407A">Tabla</text>
+  <line x1="424" y1="274" x2="586" y2="274" stroke="#D9451F" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 7"/>
+  <circle cx="608" cy="274" r="15" fill="#D9451F"/><text class="t n" x="608" y="280" text-anchor="middle">1</text>
+  <circle cx="608" cy="349" r="15" fill="#D9451F"/><text class="t n" x="608" y="355" text-anchor="middle">2</text>
+  <line x1="352" y1="410" x2="586" y2="410" stroke="#D9451F" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 7"/>
+  <circle cx="608" cy="410" r="15" fill="#D9451F"/><text class="t n" x="608" y="416" text-anchor="middle">3</text>
+  <line x1="358" y1="615" x2="586" y2="615" stroke="#D9451F" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 7"/>
+  <circle cx="608" cy="615" r="15" fill="#D9451F"/><text class="t n" x="608" y="621" text-anchor="middle">4</text>
+  <circle cx="704" cy="274" r="15" fill="#D9451F"/><text class="t n" x="704" y="280" text-anchor="middle">1</text>
+  <text class="t" x="734" y="281" font-size="23" font-weight="700">Definición a un clic</text>
+  <text class="t m" x="734" y="312">Cada término se explica donde</text>
+  <text class="t m" x="734" y="338">aparece, sin páginas de ayuda.</text>
+  <circle cx="704" cy="379" r="15" fill="#D9451F"/><text class="t n" x="704" y="385" text-anchor="middle">2</text>
+  <text class="t" x="734" y="386" font-size="23" font-weight="700">La cifra, con su tendencia</text>
+  <text class="t m" x="734" y="417">El dato que resuelve la consulta</text>
+  <text class="t m" x="734" y="443">y hacia dónde va, de un vistazo.</text>
+  <circle cx="704" cy="484" r="15" fill="#D9451F"/><text class="t n" x="704" y="490" text-anchor="middle">3</text>
+  <text class="t" x="734" y="491" font-size="23" font-weight="700">El periodo, siempre visible</text>
+  <text class="t m" x="734" y="522">Nadie saca conclusiones de un</text>
+  <text class="t m" x="734" y="548">dato sin saber qué meses cubre.</text>
+  <circle cx="704" cy="589" r="15" fill="#D9451F"/><text class="t n" x="704" y="595" text-anchor="middle">4</text>
+  <text class="t" x="734" y="596" font-size="23" font-weight="700">Gráfico o tabla</text>
+  <text class="t m" x="734" y="627">Porque no todo el mundo lee</text>
+  <text class="t m" x="734" y="653">un dato de la misma manera.</text>
+  <text class="t" x="80" y="714" font-size="23" font-weight="700">La misma pieza en todo el panel de estadísticas</text>
+  <rect x="80" y="738" width="191" height="152" rx="14" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+  <text class="t" x="96" y="768" font-size="19" font-weight="700">Evolución</text>
+  <text class="t" x="96" y="792" font-size="19" font-weight="700">mensual</text>
+  <use href="#ico-info" x="233" y="750" width="22" height="22"/>
+  <path d="M96.0,848 L96.0,844.0 L110.5,840.0 L124.9,842.4 L139.4,835.2 L153.8,837.6 L168.3,830.4 L182.7,832.8 L197.2,824.0 L211.6,826.4 L226.1,816.8 L240.5,820.0 L255.0,811.2 L255.0,848 Z" fill="#FDEDD9"/><polyline points="96.0,844.0 110.5,840.0 124.9,842.4 139.4,835.2 153.8,837.6 168.3,830.4 182.7,832.8 197.2,824.0 211.6,826.4 226.1,816.8 240.5,820.0 255.0,811.2" fill="none" stroke="#D9451F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="255.0" cy="811.2" r="4.5" fill="#FFFFFF" stroke="#D9451F" stroke-width="3"/>
+  <rect x="96" y="862" width="64" height="13" rx="6.5" fill="#E7EEF6"/>
+  <rect x="207" y="858" width="48" height="20" rx="10" fill="#E7EEF6"/>
+  <rect x="209" y="860" width="24" height="16" rx="8" fill="#16407A"/>
+  <rect x="287" y="738" width="191" height="152" rx="14" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+  <text class="t" x="303" y="768" font-size="19" font-weight="700">Nueva frente</text>
+  <text class="t" x="303" y="792" font-size="19" font-weight="700">a segunda mano</text>
+  <use href="#ico-info" x="440" y="750" width="22" height="22"/>
+  <rect x="303" y="823.8" width="15" height="24.2" rx="3" fill="#D9451F"/><rect x="321" y="813.7" width="15" height="34.3" rx="3" fill="#16407A"/><rect x="344" y="820.7" width="15" height="27.3" rx="3" fill="#D9451F"/><rect x="362" y="815.4" width="15" height="32.6" rx="3" fill="#16407A"/><rect x="385" y="826.9" width="15" height="21.1" rx="3" fill="#D9451F"/><rect x="403" y="817.2" width="15" height="30.8" rx="3" fill="#16407A"/><rect x="426" y="817.2" width="15" height="30.8" rx="3" fill="#D9451F"/><rect x="444" y="811.9" width="15" height="36.1" rx="3" fill="#16407A"/>
+  <rect x="303" y="862" width="64" height="13" rx="6.5" fill="#E7EEF6"/>
+  <rect x="414" y="858" width="48" height="20" rx="10" fill="#E7EEF6"/>
+  <rect x="416" y="860" width="24" height="16" rx="8" fill="#16407A"/>
+  <rect x="494" y="738" width="191" height="152" rx="14" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+  <text class="t" x="510" y="768" font-size="19" font-weight="700">Superficie</text>
+  <text class="t" x="510" y="792" font-size="19" font-weight="700">media</text>
+  <use href="#ico-info" x="647" y="750" width="22" height="22"/>
+  <rect x="510" y="808" width="104" height="24" rx="7" fill="#16407A"/><rect x="510" y="838" width="64" height="9" rx="4.5" fill="#B9C7D8"/>
+  <rect x="510" y="862" width="64" height="13" rx="6.5" fill="#E7EEF6"/>
+  <rect x="621" y="858" width="48" height="20" rx="10" fill="#E7EEF6"/>
+  <rect x="623" y="860" width="24" height="16" rx="8" fill="#16407A"/>
+  <rect x="701" y="738" width="191" height="152" rx="14" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+  <text class="t" x="717" y="768" font-size="19" font-weight="700">Número de</text>
+  <text class="t" x="717" y="792" font-size="19" font-weight="700">compraventas</text>
+  <use href="#ico-info" x="854" y="750" width="22" height="22"/>
+  <rect x="717.0" y="829.5" width="9.5" height="18.5" rx="2.5" fill="#16407A"/><rect x="730.5" y="823.8" width="9.5" height="24.2" rx="2.5" fill="#16407A"/><rect x="744.0" y="826.9" width="9.5" height="21.1" rx="2.5" fill="#16407A"/><rect x="757.5" y="819.0" width="9.5" height="29.0" rx="2.5" fill="#16407A"/><rect x="771.0" y="821.6" width="9.5" height="26.4" rx="2.5" fill="#16407A"/><rect x="784.5" y="815.4" width="9.5" height="32.6" rx="2.5" fill="#16407A"/><rect x="798.0" y="825.1" width="9.5" height="22.9" rx="2.5" fill="#16407A"/><rect x="811.5" y="812.8" width="9.5" height="35.2" rx="2.5" fill="#16407A"/><rect x="825.0" y="817.2" width="9.5" height="30.8" rx="2.5" fill="#16407A"/><rect x="838.5" y="809.3" width="9.5" height="38.7" rx="2.5" fill="#16407A"/><rect x="852.0" y="820.7" width="9.5" height="27.3" rx="2.5" fill="#16407A"/><rect x="865.5" y="805.8" width="9.5" height="42.2" rx="2.5" fill="#16407A"/>
+  <rect x="717" y="862" width="64" height="13" rx="6.5" fill="#E7EEF6"/>
+  <rect x="828" y="858" width="48" height="20" rx="10" fill="#E7EEF6"/>
+  <rect x="830" y="860" width="24" height="16" rx="8" fill="#16407A"/>
+  <rect x="908" y="738" width="191" height="152" rx="14" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+  <text class="t" x="924" y="768" font-size="19" font-weight="700">Indicadores</text>
+  <text class="t" x="924" y="792" font-size="19" font-weight="700">del comprador</text>
+  <use href="#ico-info" x="1061" y="750" width="22" height="22"/>
+  <rect x="924" y="810" width="159" height="12" rx="6" fill="#E7EEF6"/><rect x="924" y="810" width="114" height="12" rx="6" fill="#16407A"/><rect x="924" y="832" width="159" height="12" rx="6" fill="#E7EEF6"/><rect x="924" y="832" width="73" height="12" rx="6" fill="#D9451F"/>
+  <rect x="924" y="862" width="64" height="13" rx="6.5" fill="#E7EEF6"/>
+  <rect x="1035" y="858" width="48" height="20" rx="10" fill="#E7EEF6"/>
+  <rect x="1037" y="860" width="24" height="16" rx="8" fill="#16407A"/>
+  <text class="t m" x="80" y="934">Esquema propio: reconstruye la pieza y su reutilización, no es una captura del portal.</text>
+</svg>

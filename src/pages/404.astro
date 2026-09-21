@@ -1,0 +1,29 @@
+---
+/* Sin esto, un enlace roto o una URL mal escrita cae en el 404 genérico del
+   hosting: sin la barra, sin el tema, sin salida. Astro la sirve sola en
+   cualquier ruta que no exista. */
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  titulo="Página no encontrada · Marc Amorós"
+  descripcion="Esta página no existe o se ha movido."
+  claseMain="pagina-404"
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-head rise" style="text-align:center; max-inline-size: 40rem; margin-inline: auto;">
+        <span class="eyebrow">Error 404</span>
+        <h1>Esta página no existe</h1>
+        <p class="lead">
+          Puede que el enlace esté roto o que la ficha haya cambiado de sitio.
+          Desde el portafolio o los artículos llegarás a todo lo demás.
+        </p>
+        <div class="work-more__acciones" style="justify-content:center; margin-block-start: var(--spacing-l);">
+          <a class="btn btn--primary" href="/#portafolio">Ver el portafolio</a>
+          <a class="btn btn--ghost" href="/#articulos">Ver los artículos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

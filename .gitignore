@@ -1,0 +1,28 @@
+# Dependencias y carpetas que se generan solas al compilar.
+# GitHub las vuelve a crear en cada despliegue, no hace falta subirlas.
+node_modules/
+dist/
+.astro/
+
+# Sistema y ajustes locales de tu Mac
+.DS_Store
+.claude/
+
+# Originales de trabajo de la raíz (capturas, exportaciones, vídeos en bruto).
+# La web usa las copias optimizadas de public/assets, no estos archivos.
+# AWARDS.mov pesa 169 MB y GitHub rechaza cualquier archivo de más de 100 MB.
+/*.png
+/*.jpg
+/*.jpeg
+/*.mov
+/*.mp4
+
+# Restos de trabajo que no forman parte de la web: la versión anterior a Astro
+# (el README dice que se puede borrar) y un prompt guardado.
+/_anterior/
+/gemini-code-*.txt
+
+# Descarga de la tipografía: la web sirve su propia copia desde public/assets/fonts.
+# Se conserva solo la licencia, que el CSS cita.
+/Inter/*
+!/Inter/OFL.txt

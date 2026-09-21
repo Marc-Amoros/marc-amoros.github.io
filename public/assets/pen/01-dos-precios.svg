@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" role="img" aria-label="Comparación entre el precio anunciado y el precio de escritura, y el límite del dato agregado">
+  <style>
+    .t { font-family: Inter, system-ui, sans-serif; fill: #1B2430; }
+    .h { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s { font-size: 21px; fill: #6B7A8C; }
+    .l { font-size: 20px; font-weight: 600; }
+    .m { font-size: 17px; fill: #6B7A8C; }
+    .k { font-size: 14px; fill: #8496A8; letter-spacing: 2px; }
+  </style>
+  <rect width="1200" height="750" fill="#F6F9FC"/>
+
+  <text class="t k" x="80" y="86">01 · EL RETO</text>
+  <text class="t h" x="80" y="140">Hay dos precios y solo se ve uno</text>
+  <text class="t s" x="80" y="182">El que pide el vendedor está en todas partes. El que se firma ante notario no lo veía nadie.</text>
+
+  <!-- precio anunciado -->
+  <g>
+    <rect x="80" y="240" width="480" height="190" rx="18" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="2"/>
+    <text class="t l" x="112" y="288">Precio anunciado</text>
+    <text class="t m" x="112" y="318">Lo que el vendedor pide. Visible, abundante</text>
+    <text class="t m" x="112" y="342">y sin obligación de parecerse al real.</text>
+    <rect x="112" y="368" width="416" height="34" rx="8" fill="#E7EEF6"/>
+    <rect x="112" y="368" width="416" height="34" rx="8" fill="#B9C7D8"/>
+    <text class="t" x="128" y="392" font-size="19" font-weight="700" fill="#41576E">Portales, carteles, anuncios</text>
+  </g>
+
+  <!-- precio de escritura -->
+  <g>
+    <rect x="620" y="240" width="480" height="190" rx="18" fill="#FFFFFF" stroke="#D9451F" stroke-width="2"/>
+    <text class="t l" x="652" y="288">Precio de escritura</text>
+    <text class="t m" x="652" y="318">Lo que realmente se paga. Existe, está en</text>
+    <text class="t m" x="652" y="342">las notarías y no llegaba al comprador.</text>
+    <rect x="652" y="368" width="416" height="34" rx="8" fill="#D9451F"/>
+    <text class="t" x="668" y="392" font-size="19" font-weight="700" style="fill:#FFFFFF">Compraventas firmadas</text>
+  </g>
+
+  <path d="M572 335 L608 335" stroke="#8496A8" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
+
+  <!-- el limite -->
+  <g>
+    <rect x="80" y="482" width="1020" height="176" rx="18" fill="#16407A"/>
+    <text class="t l" x="120" y="534" style="fill:#FFFFFF">Y un límite que no se negocia</text>
+    <text class="t m" x="120" y="572" style="fill:#FFFFFF">El dato es agregado y anónimo por obligación: la interfaz enseña la media de una zona,</text>
+    <text class="t m" x="120" y="600" style="fill:#FFFFFF">nunca la operación de una casa concreta. Contarlo bien es parte del diseño, no una nota legal</text>
+    <text class="t m" x="120" y="628" style="fill:#FFFFFF">escondida al final de la página.</text>
+  </g>
+</svg>

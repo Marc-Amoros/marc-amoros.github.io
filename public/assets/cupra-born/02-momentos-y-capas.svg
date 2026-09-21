@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" role="img" aria-label="Matriz de los momentos de uso del coche frente a las tres capas de interfaz">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1430"/>
+      <stop offset="1" stop-color="#0e0a1a"/>
+    </linearGradient>
+    <radialGradient id="halo">
+      <stop offset="0" stop-color="#9d6bff" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#9d6bff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="brillo">
+      <stop offset="0" stop-color="#b48fff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#b48fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <style>
+    .t  { font-family: Inter, system-ui, sans-serif; fill: #f4f2f8; }
+    .h  { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s  { font-size: 21px; fill: #a79fb8; }
+    .c  { font-size: 18px; font-weight: 600; }
+    .m  { font-size: 16px; fill: #a79fb8; }
+    .k  { font-size: 14px; fill: #8b81a3; letter-spacing: 2px; }
+
+    /* Los puntos caen columna a columna: primero dónde va lo principal. */
+    .p { transform-box: fill-box; transform-origin: 50% 50%;
+         animation: aparece 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .c1 { animation-delay: 120ms; } .c2 { animation-delay: 260ms; } .c3 { animation-delay: 400ms; }
+    .f2 { animation-delay: 200ms; } .f3 { animation-delay: 280ms; } .f4 { animation-delay: 360ms; }
+    @keyframes aparece { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .p { animation: none; opacity: 1; transform: none; } }
+  </style>
+
+  <rect width="1200" height="750" fill="url(#fondo)"/>
+  <ellipse cx="180" cy="120" rx="420" ry="280" fill="url(#halo)"/>
+
+  <text class="t k" x="80" y="86">02 · INVESTIGACIÓN</text>
+  <text class="t h" x="80" y="140">Qué hace falta en cada momento</text>
+  <text class="t s" x="80" y="182">El reparto entre las tres capas no se decide por pantalla, se decide por momento de conducción.</text>
+
+  <!-- cabeceras de columna -->
+  <g class="t c" text-anchor="middle">
+    <text x="596" y="256" fill="#b48fff">Head-up display</text>
+    <text x="796" y="256" fill="#9d6bff">Cuadro</text>
+    <text x="996" y="256" fill="#8a76b5">Infotainment</text>
+  </g>
+  <g class="t m" text-anchor="middle" font-size="14">
+    <text x="596" y="280">sin desviar la vista</text>
+    <text x="796" y="280">de reojo</text>
+    <text x="996" y="280">parado o por voz</text>
+  </g>
+
+  <line x1="80" y1="300" x2="1120" y2="300" stroke="#2c2246" stroke-width="2"/>
+
+  <!-- filas -->
+  <g>
+    <g class="t">
+      <text class="c" x="80" y="352">Arrancar</text>
+      <text class="m" x="80" y="378">Estado del coche, autonomía disponible</text>
+      <text class="c" x="80" y="444">Circular</text>
+      <text class="m" x="80" y="470">Velocidad, límite, asistencias</text>
+      <text class="c" x="80" y="536">Navegar</text>
+      <text class="m" x="80" y="562">Siguiente maniobra, tiempo restante</text>
+      <text class="c" x="80" y="628">Cargar</text>
+      <text class="m" x="80" y="654">Puntos de carga, tiempo, planificación</text>
+    </g>
+
+    <g stroke="#241b3a" stroke-width="1">
+      <path d="M80 396H1120M80 488H1120M80 580H1120"/>
+    </g>
+
+    <!-- halo bajo la capa principal de cada momento -->
+    <g>
+      <circle cx="796" cy="360" r="34" fill="url(#brillo)"/>
+      <circle cx="596" cy="452" r="34" fill="url(#brillo)"/>
+      <circle cx="596" cy="544" r="34" fill="url(#brillo)"/>
+      <circle cx="996" cy="636" r="34" fill="url(#brillo)"/>
+    </g>
+
+    <!-- puntos: relleno = capa principal, aro = capa secundaria, vacío = no aplica -->
+    <g>
+      <!-- arrancar -->
+      <circle class="p c1" cx="596" cy="360" r="13" fill="none" stroke="#3a2f56" stroke-width="2"/>
+      <circle class="p c2" cx="796" cy="360" r="13" fill="#9d6bff"/>
+      <circle class="p c3" cx="996" cy="360" r="13" fill="none" stroke="#8a76b5" stroke-width="3"/>
+      <!-- circular -->
+      <circle class="p c1 f2" cx="596" cy="452" r="13" fill="#b48fff"/>
+      <circle class="p c2 f2" cx="796" cy="452" r="13" fill="none" stroke="#9d6bff" stroke-width="3"/>
+      <circle class="p c3 f2" cx="996" cy="452" r="13" fill="none" stroke="#3a2f56" stroke-width="2"/>
+      <!-- navegar -->
+      <circle class="p c1 f3" cx="596" cy="544" r="13" fill="#b48fff"/>
+      <circle class="p c2 f3" cx="796" cy="544" r="13" fill="none" stroke="#9d6bff" stroke-width="3"/>
+      <circle class="p c3 f3" cx="996" cy="544" r="13" fill="none" stroke="#8a76b5" stroke-width="3"/>
+      <!-- cargar -->
+      <circle class="p c1 f4" cx="596" cy="636" r="13" fill="none" stroke="#3a2f56" stroke-width="2"/>
+      <circle class="p c2 f4" cx="796" cy="636" r="13" fill="none" stroke="#9d6bff" stroke-width="3"/>
+      <circle class="p c3 f4" cx="996" cy="636" r="13" fill="#8a76b5"/>
+    </g>
+  </g>
+
+  <g class="t m" font-size="15">
+    <circle cx="88" cy="705" r="8" fill="#a79fb8"/>
+    <text x="106" y="711">capa principal</text>
+    <circle cx="264" cy="705" r="8" fill="none" stroke="#a79fb8" stroke-width="3"/>
+    <text x="282" y="711">apoyo</text>
+    <circle cx="382" cy="705" r="8" fill="none" stroke="#3a2f56" stroke-width="2"/>
+    <text x="400" y="711">fuera de esa capa</text>
+  </g>
+</svg>

@@ -1,0 +1,707 @@
+---
+/* La portada. El cuerpo viene tal cual del index.html original: las tarjetas
+   están escritas a mano una a una porque su copy —la insignia, el resumen
+   corto, las tres etiquetas que se enseñan— está redactado para la tarjeta y
+   no coincide con el de la ficha. Lo único que ha cambiado son los enlaces,
+   que ahora apuntan a las rutas nuevas. */
+import Base from '../layouts/Base.astro';
+import Contacto from '../components/Contacto.astro';
+import { salidasExternas } from '../lib/ajustes.js';
+---
+
+<Base
+  titulo="Marc Amorós · Diseñador UX/UI"
+  descripcion="Marc Amorós, diseñador UX/UI y gráfico en Barcelona. Investigación, prototipado y diseño de interfaces. Portafolio de proyectos y artículos de proceso."
+  enPortada={true}
+  conMotion={true}
+>
+  <!-- ============================================================
+       Hero
+       ============================================================ -->
+  <section class="hero" id="inicio" aria-labelledby="inicio-titulo">
+    <!-- Malla de puntos: el único adorno de la portada. La dibuja main.js -->
+    <canvas class="hero__malla" id="malla" aria-hidden="true"></canvas>
+
+    <div class="hero__inner">
+      <p class="hero__status enter" style="--delay:120ms">
+        <span class="hero__dot" aria-hidden="true">💻</span>
+        <span>Barcelona · Diseñador de Producto Digital (UX/UI)</span>
+      </p>
+
+      <h1 class="hero__title" id="inicio-titulo">
+        <span class="line"><span>Diseño interfaces</span></span>
+        <span class="line"><span>que <em>se entienden solas</em></span></span>
+      </h1>
+
+      <div class="hero__sub enter" style="--delay:260ms">
+        <p>
+          Hola, soy Marc Amorós. Creo productos digitales con impacto real, equilibrando
+          las necesidades de las personas con las metas de negocio.
+        </p>
+        <p>
+          Aplico metodologías UX y herramientas UI para guiar cada etapa, de la
+          investigación al prototipo funcional, respaldando cada decisión con una
+          documentación transparente y orientada a resultados.
+        </p>
+      </div>
+
+      <div class="hero__actions enter" style="--delay:340ms">
+        <a class="btn btn--primary btn--lg" href="#portafolio">Ver portafolio</a>
+        <a class="btn btn--ghost btn--lg" href="#contacto">Contactar</a>
+      </div>
+
+      <div class="hero__stage">
+        <figure class="portrait">
+          <img src="/assets/marc.webp" alt="Retrato de Marc Amorós" width="1200" height="1600"
+               fetchpriority="high" decoding="async">
+          <figcaption class="portrait__plate">
+            <span class="portrait__name">Marc Amorós</span>
+            <span class="portrait__role">El diseño como puente entre el usuario y el producto</span>
+          </figcaption>
+        </figure>
+
+        <div class="stat-stack enter" style="--delay:480ms">
+          <div class="stat">
+            <span class="stat__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </span>
+            <span class="stat__num" data-count="6">6</span>
+            <span class="stat__label">Equipos y estudios por los que he pasado</span>
+          </div>
+          <div class="stat">
+            <span class="stat__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+            </span>
+            <span class="stat__num" data-count="10">10</span>
+            <span class="stat__label">Años diseñando experiencias</span>
+          </div>
+          <div class="stat">
+            <span class="stat__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.969 16.927a2.561 2.561 0 0 0 1.901.677 2.501 2.501 0 0 0 1.531-.475c.362-.235.636-.584.779-.99h2.585a5.091 5.091 0 0 1-1.9 2.896 5.292 5.292 0 0 1-3.091.88 5.839 5.839 0 0 1-2.284-.433 4.871 4.871 0 0 1-1.723-1.211 5.657 5.657 0 0 1-1.08-1.874 7.057 7.057 0 0 1-.383-2.393c-.005-.8.129-1.595.396-2.349a5.313 5.313 0 0 1 5.088-3.604 4.87 4.87 0 0 1 2.376.563c.661.362 1.231.87 1.668 1.485a6.2 6.2 0 0 1 .943 2.133c.194.821.263 1.666.205 2.508h-7.699c-.063.79.184 1.574.688 2.187ZM6.947 4.084a8.065 8.065 0 0 1 1.928.198 4.29 4.29 0 0 1 1.49.638c.418.303.748.711.958 1.182.241.579.357 1.203.341 1.83a3.506 3.506 0 0 1-.506 1.961 3.726 3.726 0 0 1-1.503 1.287 3.588 3.588 0 0 1 2.027 1.437c.464.747.697 1.615.67 2.494a4.593 4.593 0 0 1-.423 2.032 3.945 3.945 0 0 1-1.163 1.413 5.114 5.114 0 0 1-1.683.807 7.135 7.135 0 0 1-1.928.259H0V4.084h6.947Zm-.235 12.9c.308.004.616-.029.916-.099a2.18 2.18 0 0 0 .766-.332c.228-.158.411-.371.534-.619.142-.317.208-.663.191-1.009a2.08 2.08 0 0 0-.642-1.715 2.618 2.618 0 0 0-1.696-.505h-3.54v4.279h3.471Zm13.635-5.967a2.13 2.13 0 0 0-1.654-.619 2.336 2.336 0 0 0-1.163.259 2.474 2.474 0 0 0-.738.62 2.359 2.359 0 0 0-.396.792c-.074.239-.12.485-.137.734h4.769a3.239 3.239 0 0 0-.679-1.785l-.002-.001Zm-13.813-.648a2.254 2.254 0 0 0 1.423-.433c.399-.355.607-.88.56-1.413a1.916 1.916 0 0 0-.178-.891 1.298 1.298 0 0 0-.495-.533 1.851 1.851 0 0 0-.711-.274 3.966 3.966 0 0 0-.835-.073H3.241v3.631h3.293v-.014ZM21.62 5.122h-5.976v1.527h5.976V5.122Z"/></svg>
+            </span>
+            <span class="stat__num" data-count="9">9</span>
+            <span class="stat__label">Proyectos publicados en Behance</span>
+          </div>
+          <div class="stat">
+            <span class="stat__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4.21 0A4.201 4.201 0 0 0 0 4.21v15.58A4.201 4.201 0 0 0 4.21 24h15.58A4.201 4.201 0 0 0 24 19.79v-1.093c-.137.013-.278.02-.422.02-2.577 0-4.027-2.146-4.09-4.832a7.592 7.592 0 0 1 .022-.708c.093-1.186.475-2.241 1.105-3.022a3.885 3.885 0 0 1 1.395-1.1c.468-.237 1.127-.367 1.664-.367h.023c.101 0 .202.004.303.01V4.211A4.201 4.201 0 0 0 19.79 0Zm.198 5.583h4.165l3.588 8.435 3.59-8.435h3.864v.146l-.019.004c-.705.16-1.063.397-1.063 1.254h-.003l.003 10.274c.06.676.424.885 1.063 1.03l.02.004v.145h-4.923v-.145l.019-.005c.639-.144.994-.353 1.054-1.03V7.267l-4.745 11.15h-.261L6.15 7.569v9.445c0 .857.358 1.094 1.063 1.253l.02.004v.147H4.405v-.147l.019-.004c.705-.16 1.065-.397 1.065-1.253V6.987c0-.857-.358-1.094-1.064-1.254l-.018-.004zm19.25 3.668c-1.086.023-1.733 1.323-1.813 3.124H24V9.298a1.378 1.378 0 0 0-.342-.047Zm-1.862 3.632c-.1 1.756.86 3.239 2.204 3.634v-3.634z"/></svg>
+            </span>
+            <span class="stat__num" data-count="5">5</span>
+            <span class="stat__label">Artículos de proceso en Medium</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Sobre mí
+       ============================================================ -->
+  <section class="section section--sunk" id="sobre-mi" aria-labelledby="sobre-mi-titulo">
+    <div class="container about__grid">
+      <div class="section-head rise">
+        <span class="eyebrow">Sobre mí</span>
+        <h2 id="sobre-mi-titulo">Mi mejor aptitud es mi actitud</h2>
+        <p class="section-head__rol">Diseñador UX/UI</p>
+      </div>
+
+      <div class="about__body rise" style="--delay:80ms">
+        <p class="lema">El diseño como <span class="lema__puente">puente</span> entre el usuario y el producto.</p>
+
+        <p>
+          Soy diseñador de producto UX/UI y vengo del diseño gráfico y la identidad de marca.
+          Entiendo el diseño como una herramienta para resolver necesidades reales, no solo para
+          crear interfaces atractivas.
+        </p>
+
+        <div class="metodo">
+          <p class="metodo__k">Cómo trabajo</p>
+          <ul class="metodo__lista">
+            <li>Investigación previa antes de tocar Figma.</li>
+            <li>Definición clara del problema.</li>
+            <li>Validación con usuarios reales mediante prototipo.</li>
+          </ul>
+        </div>
+
+        <p>
+          <strong>Proyectos destacados:</strong> cuadro de instrumentos del CUPRA Born (EDAG) y
+          los portales del Centro Tecnológico del Notariado.
+        </p>
+        <p>
+          Documento mi proceso en abierto (tests, storyboards y descartes) porque el valor del
+          diseño está en las decisiones, no solo en el resultado visual.
+        </p>
+
+        <div class="skills">
+          <article class="skill">
+            <h3>Investigación</h3>
+            <p>Benchmarking, persona, mapa de empatía, user journey y evaluación heurística, hasta dar con el hallazgo que cambia una decisión.</p>
+          </article>
+          <article class="skill">
+            <h3>Interfaz y sistema</h3>
+            <p>Arquitectura de la información, jerarquía y estados, resueltos como componentes reutilizables en Figma para que la siguiente pantalla no empiece de cero.</p>
+          </article>
+          <article class="skill">
+            <h3>Prototipo y validación</h3>
+            <p>Storyboard, wireframes y prototipo interactivo, probados con usuarios para corregir lo que falla antes de que llegue a desarrollo.</p>
+          </article>
+        </div>
+
+        <ul class="toolbar" aria-label="Herramientas y metodologías">
+          <li>Accesibilidad</li><li>Adobe XD</li><li>Agile · Kanban</li><li>Agile · Scrum</li><li>CSS</li><li>Design Sprint</li>
+          <li>Design Thinking</li><li>Figma</li><li>Flinto</li><li>HTML</li><li>IA</li>
+          <li>Illustrator</li><li>InDesign</li><li>Lean UX</li><li>Photoshop</li><li>Principle</li>
+          <li>Sketch</li><li>Zeplin</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Trayectoria
+       ============================================================ -->
+  <section class="section" id="trayectoria" aria-labelledby="trayectoria-titulo">
+    <div class="container">
+      <div class="section-head rise">
+        <span class="eyebrow">Trayectoria</span>
+        <h2 id="trayectoria-titulo">Diez años diseñando, seis de producto digital</h2>
+        <p class="lead">De un estudio gráfico propio a las pantallas de un coche y a las apps de una notaría.</p>
+      </div>
+
+      <!-- Pestañas Material: el indicador se desplaza al cambiar de panel -->
+      <div class="rise" style="--delay:80ms">
+        <div class="tabs" role="tablist" aria-label="Trayectoria">
+          <button class="tab" id="tab-exp" type="button" role="tab"
+                  aria-selected="true" aria-controls="panel-exp">Experiencia</button>
+          <button class="tab" id="tab-for" type="button" role="tab"
+                  aria-selected="false" aria-controls="panel-for" tabindex="-1">Formación</button>
+          <button class="tab" id="tab-idi" type="button" role="tab"
+                  aria-selected="false" aria-controls="panel-idi" tabindex="-1">Idiomas</button>
+          <span class="tabs__indicator" aria-hidden="true"></span>
+        </div>
+
+        <div class="tabpanel" id="panel-exp" role="tabpanel" aria-labelledby="tab-exp" tabindex="0">
+          <div class="track">
+            <ol class="track__list">
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-1">
+              <span class="job__role">Diseñador UX/UI&nbsp;<span class="job__org">· Centro Tecnológico del Notariado</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">Feb 2022 – actualidad</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-1">
+            <div class="job__fold-i">
+              <p class="job__text">Diseño y adaptación de interfaces web y móviles responsive, alineadas con la identidad corporativa. Creación y mantenimiento del sistema de diseño que unifica componentes, patrones y estilos en todos los productos. Wireframes, flujos de usuario y definición de pantallas junto a analistas y desarrolladores. Mantenimiento de la imagen de marca, newsletters, materiales de comunicación y artes finales, dentro de las políticas de seguridad de la información de la empresa.</p>
+              <ul class="job__tags"><li class="chip">Sector notarial</li><li class="chip">Sistema de diseño</li><li class="chip">Identidad corporativa</li><li class="chip">Newsletters</li><li class="chip">Artes finales</li></ul>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-2">
+              <span class="job__role">Diseñador UX/UI&nbsp;<span class="job__org">· Kubyka</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">Ago – Nov 2021</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-2">
+            <div class="job__fold-i">
+              <p class="job__text">Conceptualización y diseño de interfaces web y productos digitales alineados con la estrategia de digital branding. Wireframes, user flows y prototipos interactivos para validar la usabilidad junto a los equipos de estrategia y desarrollo. Creación y mantenimiento de sistemas de diseño e identidades digitales multidispositivo, en coordinación con branding, contenidos y desarrollo técnico para traducir objetivos de negocio en productos escalables.</p>
+              <ul class="job__tags"><li class="chip">Branding digital</li><li class="chip">Prototipado</li><li class="chip">Validación de usabilidad</li><li class="chip">Producto escalable</li><li class="chip">Coordinación interdepartamental</li></ul>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-3">
+              <span class="job__role">Diseñador UX/UI (HMI)&nbsp;<span class="job__org">· EDAG Engineering Spain</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">Feb – Sep 2021</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-3">
+            <div class="job__fold-i">
+              <p class="job__text">Diseño de interfaz y experiencia de usuario (UX/UI) para sistemas de infoentretenimiento (IVI) y cuadros de mando digitales de marca de automoción (SEAT CUPRA), garantizando la seguridad visual y la reducción de la carga cognitiva durante la conducción. Arquitectura de la información, wireframes, user flows y prototipos interactivos para pantallas táctiles y head-up displays (HUD). Creación de sistemas de diseño HMI y coordinación con ingeniería de software y ergonomía.</p>
+              <ul class="job__tags"><li class="chip">Automoción</li><li class="chip">HMI</li><li class="chip">Infoentretenimiento</li><li class="chip">Cuadros de mando digitales</li><li class="chip">Prototipado</li><li class="chip">Sistemas de diseño</li></ul>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-4">
+              <span class="job__role">Diseñador UX/UI y gráfico&nbsp;<span class="job__org">· Fundación Claror</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">2019 – 2020</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-4">
+            <div class="job__fold-i">
+              <p class="job__text">Diseño UX/UI y definición del look &amp; feel del ecosistema digital de la fundación, web y app móvil. Wireframes, user flows y prototipos ajustados a las necesidades de los usuarios. Desarrollo y mantenimiento de la identidad visual mediante sistemas de diseño e interfaces responsive. Coordinación con marketing e IT para el soporte publicitario (banners, flyers, roll-ups y presentaciones), con coherencia gráfica en canales digitales e impresos.</p>
+              <ul class="job__tags"><li class="chip">Web y App</li><li class="chip">Flujos de usuario</li><li class="chip">Lenguaje visual</li><li class="chip">Diseño responsive</li><li class="chip">Digital e Impreso</li></ul>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-5">
+              <span class="job__role">Visual designer y gráfico&nbsp;<span class="job__org">· Soria Natural</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">2018 – 2019</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-5">
+            <div class="job__fold-i">
+              <p class="job__text">Diseño UX/UI de las plataformas digitales de la compañía, web corporativa y e-commerce. Wireframes, user flows y prototipos para optimizar la navegación y la información de producto. Identidad visual corporativa aplicada tanto al entorno digital como al packaging y el etiquetado. Soporte publicitario online y offline junto a marketing y comunicación (banners, flyers, roll-ups, revistas y punto de venta), con el cumplimiento normativo del sector.</p>
+              <ul class="job__tags"><li class="chip">Web y E-commerce</li><li class="chip">Wireframes</li><li class="chip">Consistencia de marca</li><li class="chip">Packaging y etiquetado</li><li class="chip">Punto de venta</li><li class="chip">Publicidad</li></ul>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-6">
+              <span class="job__role">Diseñador UX/UI y gráfico · cofundador&nbsp;<span class="job__org">· Concepte 111 Disseny</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">2016 – 2018</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-6">
+            <div class="job__fold-i">
+              <p class="job__text">Cofundador de un estudio de diseño cooperativo, liderando tanto la estrategia de negocio como la ejecución creativa. Diseño y desarrollo de identidades de marca y plataformas web, garantizando soluciones visuales alineadas con las necesidades del cliente. Captación de clientes, gestión de redes sociales y organización de eventos para posicionar la cooperativa en el sector.</p>
+              <ul class="job__tags"><li class="chip">Cofundación</li><li class="chip">Estrategia de negocio</li><li class="chip">Branding</li><li class="chip">Plataformas web</li><li class="chip">Captación de clientes</li><li class="chip">Redes sociales</li><li class="chip">Gestión de eventos</li></ul>
+            </div>
+          </div>
+        </li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="tabpanel" id="panel-for" role="tabpanel" aria-labelledby="tab-for" tabindex="0" hidden>
+          <div class="track">
+            <ol class="track__list">
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-12">
+              <span class="job__role">Curso de Hotjar (18&nbsp;h)&nbsp;<span class="job__org">· Formadores IT</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">May – Jun 2026</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-12">
+            <div class="job__fold-i">
+              <p class="job__text">Analítica cualitativa de comportamiento con mapas de calor, grabaciones de sesión y análisis de embudo, más encuestas y widgets de feedback para completar lo que el dato numérico no explica. El complemento cualitativo a la investigación de usuarios: ver dónde se atasca alguien, no solo que se ha ido.</p>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-11">
+              <span class="job__role">Curso de Accesibilidad Web (20&nbsp;h)&nbsp;<span class="job__org">· Formadores IT</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">Mar 2026</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-11">
+            <div class="job__fold-i">
+              <p class="job__text">Los catorce temas de las WCAG aplicados a la práctica: contenido alternativo, formularios y tablas accesibles, navegación por teclado, WAI-ARIA y JavaScript accesible, con evaluación final del cumplimiento. Base directa del trabajo de accesibilidad aplicado en el Portal Notarial del Ciudadano.</p>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-7">
+              <span class="job__role">Máster en Design Thinking y diseño UX/UI&nbsp;<span class="job__org">· Barreira arte+diseño</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">Ene – Sep 2021</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-7">
+            <div class="job__fold-i">
+              <p class="job__text">Especialización en el ciclo completo del diseño de producto digital: Design Thinking, investigación (UX Research), arquitectura de la información, diseño de interfaz en Figma y documentación del sistema visual. Cerrado con Besmie como proyecto final, de la investigación a la guía de estilo.</p>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-8">
+              <span class="job__role">Bootcamp UX/UI Design (432&nbsp;h)&nbsp;<span class="job__org">· Neoland</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">2020</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-8">
+            <div class="job__fold-i">
+              <p class="job__text">Especialización en la creación de productos digitales end-to-end: UX Research, arquitectura de la información, diseño visual (UI Design), creación de sistemas de diseño y prototipado avanzado con Figma, Marvel e InVision. Realización y defensa de proyectos basados en Design Thinking, doble diamante y Design Sprint.</p>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-9">
+              <span class="job__role">Diplomatura en diseño gráfico&nbsp;<span class="job__org">· BAU · Centre Universitari de Disseny de Barcelona</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">2018 – 2021</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-9">
+            <div class="job__fold-i">
+              <p class="job__text">Formación práctica y teórica en el ciclo completo del diseño: creación de identidades de marca (branding), estudio avanzado de la tipografía y la composición visual, proyectos editoriales e introducción al diseño web y entornos digitales.</p>
+            </div>
+          </div>
+        </li>
+        <li class="job">
+          <h3 class="job__h">
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-10">
+              <span class="job__role">Cursos online&nbsp;<span class="job__org">· Pack Adobe · After Effects</span><span class="visually-hidden">. </span></span>
+              <span class="job__meta">
+                <span class="job__date">2015</span>
+                <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+          </h3>
+          <div class="job__fold" id="job-10">
+            <div class="job__fold-i">
+              <p class="job__text">Capacitación técnica en el ecosistema Adobe: Illustrator para vectores e identidades de marca, Photoshop para retoque fotográfico y fotomontaje, InDesign para maquetación editorial y artes finales de imprenta, y After Effects para piezas de vídeo promocional.</p>
+            </div>
+          </div>
+        </li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="tabpanel" id="panel-idi" role="tabpanel" aria-labelledby="tab-idi" tabindex="0" hidden>
+          <ul class="langs">
+        <li>
+          <p class="lang__row"><span>Catalán</span><span class="lang__level">Nativo</span></p>
+          <p class="lang__bar"><span class="lang__fill" style="--pct:100%"></span></p>
+        </li>        <li>
+          <p class="lang__row"><span>Castellano</span><span class="lang__level">Nativo</span></p>
+          <p class="lang__bar"><span class="lang__fill" style="--pct:100%"></span></p>
+        </li>        <li>
+          <p class="lang__row"><span>Inglés</span><span class="lang__level">B1</span></p>
+          <p class="lang__bar"><span class="lang__fill" style="--pct:55%"></span></p>
+        </li>        <li>
+          <p class="lang__row"><span>Alemán</span><span class="lang__level">A2</span></p>
+          <p class="lang__bar"><span class="lang__fill" style="--pct:35%"></span></p>
+        </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Portafolio — carrusel con proyectos de Behance
+       ============================================================ -->
+  <section class="section section--sunk" id="portafolio" aria-labelledby="portafolio-titulo">
+    <div class="container">
+      <div class="section-head rise">
+        <span class="eyebrow">Portafolio</span>
+        <h2 id="portafolio-titulo">Proyectos seleccionados</h2>
+        <p class="lead">Doce casos: los dos portales del Notariado, el trabajo de automoción en EDAG y los nueve
+          proyectos publicados en Behance. Cada tarjeta abre la ficha completa aquí mismo, con las láminas y el proceso.</p>
+      </div>
+
+      <div class="carrusel rise" data-carrusel role="group"
+           aria-roledescription="carrusel" aria-label="Proyectos seleccionados">
+        <div class="carrusel__pista" data-pista tabindex="0" role="group"
+             aria-label="Proyectos, desplazable en horizontal">
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · producto de datos</span>
+              <img src="/assets/pen/portada-mockup.webp" alt="Un monitor sobre un escritorio muestra el Portal Estadístico del Notariado: un mapa de España en tonos naranjas." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-portal-estadistico-notariado">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>oct 2025</span><span class="dot-sep" aria-hidden="true">·</span><span>Centro Tecnológico del Notariado</span></p>
+              <h3 class="work__title"><a href="/proyecto/portal-estadistico-notariado/">Portal Estadístico del Notariado</a></h3>
+              <p class="work__desc">El precio real de la vivienda, el de las escrituras, abierto a cualquiera: mapa, estadísticas y utilidades para decidir con datos.</p>
+              <ul class="work__tags"><li>producto digital</li><li>datos y estadística</li><li>mapa interactivo</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · Administración electrónica</span>
+              <img src="/assets/pnc/portada-mockup.webp" alt="Un portátil muestra la página de inicio del Portal Notarial del Ciudadano, con fondo azul y capturas del portal." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-portal-notarial-ciudadano">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>mar 2022</span><span class="dot-sep" aria-hidden="true">·</span><span>Centro Tecnológico del Notariado</span></p>
+              <h3 class="work__title"><a href="/proyecto/portal-notarial-ciudadano/">Portal Notarial del Ciudadano</a></h3>
+              <p class="work__desc">Trámites, copias electrónicas y cita en notaría desde cualquier dispositivo, explicados para quien no es jurista.</p>
+              <ul class="work__tags"><li>administración electrónica</li><li>identidad verificada</li><li>multiidioma</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · HMI de automoción</span>
+              <img src="/assets/cupra-born/portada-mockup.webp" alt="Interior de un CUPRA Born de noche: volante, cuadro digital y pantalla central de infotainment." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-cupra-born">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>feb – sep 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Proyecto profesional en EDAG</span></p>
+              <h3 class="work__title"><a href="/proyecto/cupra-born/">CUPRA Born</a></h3>
+              <p class="work__desc">Cuadro de instrumentos, infotainment y head-up display del primer CUPRA 100 % eléctrico: informar sin robarle la vista a la carretera.</p>
+              <ul class="work__tags"><li>automoción</li><li>HMI</li><li>infotainment</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · Dirección de arte</span>
+              <img src="/assets/besmie/portada-mockup.webp" alt="Dos móviles sobre fondo lila con la pantalla de inicio de Besmie y el listado «Explore» de perfiles." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-besmie">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>sep 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Proyecto final de máster</span></p>
+              <h3 class="work__title"><a href="/proyecto/besmie/">Besmie</a></h3>
+              <p class="work__desc">App para encontrar con quién compartir piso a partir de la afinidad real entre personas, no solo del precio del alquiler.</p>
+              <ul class="work__tags"><li>app design</li><li>design thinking</li><li>Figma</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UI · Dirección de arte</span>
+              <img src="/assets/de-barrio/portada-mockup.webp" alt="Una mano sostiene un móvil con la app De Barrio: comercios destacados y productos de temporada." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-de-barrio">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>ago 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Case study en equipo</span></p>
+              <h3 class="work__title"><a href="/proyecto/de-barrio/">De Barrio</a></h3>
+              <p class="work__desc">Marketplace para el comercio de barrio: recuperar el mercado de proximidad con la comodidad de comprar desde el móvil.</p>
+              <ul class="work__tags"><li>Case Study</li><li>Ecommerce</li><li>Figma</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · Design Sprint</span>
+              <img src="/assets/galactic-records/portada-mockup.webp" alt="Logotipo de Galactic Records, con un casco de astronauta de píxeles, y el texto «Metodología Design Sprint»." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-galactic-records">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>ago 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Design Sprint en pareja</span></p>
+              <h3 class="work__title"><a href="/proyecto/galactic-records/">Galactic Records</a></h3>
+              <p class="work__desc">Identidad y app para el concurso y festival anual de talentos musicales emergentes de la productora Galactic Records.</p>
+              <ul class="work__tags"><li>Design Sprint</li><li>Figma</li><li>graphic design</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">Daily UI Challenge</span>
+              <img src="/assets/daily-ui/portada-mockup.webp" alt="Un portátil con la web de Mercedes-Benz y un G 550 4x4² verde en la montaña, bajo el rótulo «Daily UI 003»." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-daily-ui">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>feb 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Serie de retos de UI</span></p>
+              <h3 class="work__title"><a href="/proyecto/daily-ui/">Daily UI</a></h3>
+              <p class="work__desc">Serie de retos Daily UI resueltos en febrero de 2021: registro de SEAT Competición, pasarela de pago de Air Jordan y home de Mercedes-Benz Clase G.</p>
+              <ul class="work__tags"><li>4x4</li><li>daily UI</li><li>Diseño web</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · Design Thinking</span>
+              <img src="/assets/escudia/portada-mockup.webp" alt="Un tótem con pantalla táctil: «Pedro, ¿qué te ha pasado?» y los botones Denunciar robo, Pedir ambulancia y Bloquear tarjeta." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-escudia">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>ene 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Case study individual</span></p>
+              <h3 class="work__title"><a href="/proyecto/escudia/">Escudia · Protección Civil</a></h3>
+              <p class="work__desc">Tótem y app de Protección Civil para que una persona sorda pueda denunciar un robo, pedir una ambulancia o bloquear su tarjeta sin depender de un intérprete.</p>
+              <ul class="work__tags"><li>Case Study</li><li>design</li><li>design thinking</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UI · Design Sprint</span>
+              <img src="/assets/agrolocker/portada-mockup.webp" alt="Un móvil con la bienvenida de Agrolocker junto a hojas de albahaca y el lema «La solución digital y distribución de última milla»." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-agrolocker">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>ene 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Design Sprint en grupo</span></p>
+              <h3 class="work__title"><a href="/proyecto/agrolocker/">Agrolocker</a></h3>
+              <p class="work__desc">Marketplace de km 0 con entrega en taquillas refrigeradas: distribución de última milla para el producto agroalimentario local.</p>
+              <ul class="work__tags"><li>app</li><li>Design Sprint</li><li>digital</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · flujo de acceso</span>
+              <img src="/assets/bmw/portada-mockup.webp" alt="Un móvil con el inicio de sesión de BMW en modo oscuro, con usuario, contraseña y acceso con Google y Facebook." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-bmw">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>ene 2021</span><span class="dot-sep" aria-hidden="true">·</span><span>Case study individual</span></p>
+              <h3 class="work__title"><a href="/proyecto/bmw/">BMW · Log in &amp; Sign Up</a></h3>
+              <p class="work__desc">Case study del flujo de acceso y registro de BMW en móvil, incluida la recuperación de contraseña por SMS y por correo.</p>
+              <ul class="work__tags"><li>BMW</li><li>coches</li><li>design</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · Design Thinking</span>
+              <img src="/assets/teatro-tips/portada-mockup.webp" alt="Logotipo de TIPS Teatro con el mensaje de bienvenida y dos pantallas: «Ver en directo» y «Ver en streaming»." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-teatro-tips">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>oct 2020</span><span class="dot-sep" aria-hidden="true">·</span><span>Reto de Neoland en equipo</span></p>
+              <h3 class="work__title"><a href="/proyecto/teatro-tips/">Teatro TIPS</a></h3>
+              <p class="work__desc">Cómo ayudar a un sector tan físico como el de las artes escénicas en un entorno digital: una obra cuyo guion decide el público.</p>
+              <ul class="work__tags"><li>design thinking</li><li>Neoland</li><li>Prototyping</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+          <article class="work" data-tilt="">
+            <div class="work__media">
+              <span class="work__badge">UX/UI · Design Sprint</span>
+              <img src="/assets/awkward-good/portada-mockup.webp" alt="Un portátil con la web amarilla de Awkward?Good sobre una foto en blanco y negro de una manifestación y el lema «Rompe con los prejuicios»." loading="lazy" decoding="async"
+                   style="view-transition-name:portada-awkward-good">
+            </div>
+            <div class="work__body">
+              <p class="work__meta"><span>sep 2020</span><span class="dot-sep" aria-hidden="true">·</span><span>Design Sprint en equipo</span></p>
+              <h3 class="work__title"><a href="/proyecto/awkward-good/">Awkward?Good</a></h3>
+              <p class="work__desc">Plataforma multicultural nacida del movimiento Black Lives Matter: conocer perfiles de otras culturas a través del arte, la música y el activismo.</p>
+              <ul class="work__tags"><li>Design Sprint</li><li>UI</li><li>UX</li></ul>
+              <span class="work__go">Ver el caso completo</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="carrusel__controles">
+          <ol class="carrusel__puntos" data-puntos></ol>
+          <div class="carrusel__flechas">
+            <button class="carrusel__flecha" type="button" data-ir="-1" aria-label="Proyectos anteriores">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="carrusel__flecha" type="button" data-ir="1" aria-label="Proyectos siguientes">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.75"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {salidasExternas && (
+        <div class="work-more rise">
+          <p>Los proyectos también están publicados en Behance, con sus estadísticas.</p>
+          <a class="btn btn--ghost" href="https://www.behance.net/marcamoros" target="_blank" rel="noopener">
+            Ver perfil en Behance
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Artículos — el texto íntegro vive en src/data/articulos.js y cada
+       uno se lee en /articulo/SLUG/, sin salir de la web.
+       ============================================================ -->
+  <section class="section" id="articulos" aria-labelledby="articulos-titulo">
+    <div class="container">
+      <div class="section-head rise">
+        <span class="eyebrow">Artículos</span>
+        <h2 id="articulos-titulo">El proceso, escrito</h2>
+        <p class="lead">Escribí cada reto de principio a fin: qué pregunté, qué probé y qué tuve
+          que rehacer. Se leen aquí, íntegros, sin salir de la web.</p>
+      </div>
+
+      <div class="articles rise" id="articles" style="--delay:80ms">
+        <article class="article">
+          <p class="article__meta"><span>15 sep 2020</span><span class="dot-sep" aria-hidden="true">·</span><span>5 min</span></p>
+          <h3 class="article__title"><a href="/articulo/escudia-2/">Comunicación en caso de robo para personas sordas (2/2)</a></h3>
+          <p class="article__excerpt">Ideación, prototipado y testing del tótem de Protección Civil.</p>
+          <p class="article__foot"><span class="link-arrow">Leer aquí</span></p>
+        </article>
+        <article class="article">
+          <p class="article__meta"><span>13 sep 2020</span><span class="dot-sep" aria-hidden="true">·</span><span>8 min</span></p>
+          <h3 class="article__title"><a href="/articulo/escudia-1/">Comunicación en caso de robo para personas sordas (1/2)</a></h3>
+          <p class="article__excerpt">Investigación y definición del reto con Design Thinking.</p>
+          <p class="article__foot"><span class="link-arrow">Leer aquí</span></p>
+        </article>
+        <article class="article">
+          <p class="article__meta"><span>24 ago 2020</span><span class="dot-sep" aria-hidden="true">·</span><span>5 min</span></p>
+          <h3 class="article__title"><a href="/articulo/teatro-2/">Artes escénicas en un entorno digital (2/2)</a></h3>
+          <p class="article__excerpt">Ideación, prototipado y testing de TIPS Teatro.</p>
+          <p class="article__foot"><span class="link-arrow">Leer aquí</span></p>
+        </article>
+        <article class="article">
+          <p class="article__meta"><span>11 ago 2020</span><span class="dot-sep" aria-hidden="true">·</span><span>8 min</span></p>
+          <h3 class="article__title"><a href="/articulo/teatro-1/">Artes escénicas en un entorno digital (1/2)</a></h3>
+          <p class="article__excerpt">El reto de Neoland en remoto: empatizar y definir.</p>
+          <p class="article__foot"><span class="link-arrow">Leer aquí</span></p>
+        </article>
+        <article class="article">
+          <p class="article__meta"><span>17 jul 2020</span><span class="dot-sep" aria-hidden="true">·</span><span>7 min</span></p>
+          <h3 class="article__title"><a href="/articulo/awkward-good/">Case study: Design Sprint contra el racismo</a></h3>
+          <p class="article__excerpt">Cinco días de sprint para la plataforma multicultural Awkward?Good.</p>
+          <p class="article__foot"><span class="link-arrow">Leer aquí</span></p>
+        </article>
+      </div>
+
+      {salidasExternas && (
+        <div class="work-more rise">
+          <p>Los originales están publicados en Medium.</p>
+          <a class="btn btn--ghost" href="https://medium.com/@asmarc-uxui" target="_blank" rel="noopener">
+            Ver perfil en Medium
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Contacto
+       ============================================================ -->
+  <section class="section section--flush-top" id="contacto" aria-labelledby="contacto-titulo">
+    <div class="container">
+      <div class="contact rise">
+        <Contacto idTitulo="contacto-titulo" />
+      </div>
+    </div>
+  </section>
+</Base>

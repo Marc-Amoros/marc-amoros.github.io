@@ -1,0 +1,37 @@
+---
+import { salidasExternas } from '../lib/ajustes.js';
+const { idTitulo, conFoto = false } = Astro.props;
+---
+<div class="contact__inner">
+  {conFoto ? (
+    <div class="contact__quien">
+      <img class="contact__foto" src="/assets/marc-560.jpg" alt="" width="83" height="83" loading="lazy" decoding="async" />
+      <span class="contact__nombre">Marc Amorós</span>
+      <span class="contact__rol">Diseñador UX/UI · Barcelona</span>
+    </div>
+  ) : (
+    <span class="eyebrow">Contacto</span>
+  )}
+  <h2 id={idTitulo}>¿Diseñamos algo juntos?</h2>
+  <p class="lead measure-narrow">
+    Cuéntame el proyecto y te respondo con cómo lo abordaría. Sin formularios de diez campos:
+    un correo basta.
+  </p>
+  <div class="contact__correo">
+    <a class="contact__mail" href="mailto:asmarc.uxui@gmail.com?subject=Proyecto%20de%20dise%C3%B1o%20UX%2FUI">
+      <span>asmarc.uxui@gmail.com</span>
+    </a>
+    <button class="copiar-mail" type="button" data-copiar="asmarc.uxui@gmail.com" aria-label="Copiar correo">
+      <svg class="copiar-mail__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+      <svg class="copiar-mail__ok" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+      <span class="copiar-mail__texto" aria-live="polite">Copiar correo</span>
+    </button>
+  </div>
+  {salidasExternas && (
+    <ul class="socials">
+      <li><a class="social" href="https://www.linkedin.com/in/marcamorossoler/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a></li>
+      <li><a class="social" href="https://www.behance.net/marcamoros" target="_blank" rel="noopener">Behance <span aria-hidden="true">↗</span></a></li>
+      <li><a class="social" href="https://medium.com/@asmarc-uxui" target="_blank" rel="noopener">Medium <span aria-hidden="true">↗</span></a></li>
+    </ul>
+  )}
+</div>

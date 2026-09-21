@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" role="img" aria-label="Cuatro términos notariales con su explicación en lenguaje corriente al lado">
+  <style>
+    .t { font-family: Inter, system-ui, sans-serif; fill: #263238; }
+    .h { font-size: 40px; font-weight: 700; letter-spacing: -0.5px; }
+    .s { font-size: 21px; fill: #6B7A8C; }
+    .l { font-size: 20px; font-weight: 600; }
+    .m { font-size: 18px; fill: #546E7A; }
+    .k { font-size: 14px; fill: #8D99A5; letter-spacing: 2px; }
+    .w { fill: #FFFFFF; }
+  </style>
+  <rect width="1200" height="750" fill="#F6F8FA"/>
+
+  <text class="t k" x="80" y="86">01 · EL RETO</text>
+  <text class="t h" x="80" y="140">Las palabras no se pueden cambiar</text>
+  <text class="t s" x="80" y="182">Cada término notarial es preciso por ley y opaco para quien lo lee por primera vez.</text>
+
+  <g fill="#263238">
+    <rect x="80" y="248" width="360" height="76" rx="14"/>
+    <rect x="80" y="352" width="360" height="76" rx="14"/>
+    <rect x="80" y="456" width="360" height="76" rx="14"/>
+    <rect x="80" y="560" width="360" height="76" rx="14"/>
+  </g>
+  <g class="t l w">
+    <text x="112" y="293">Copia autorizada</text>
+    <text x="112" y="397">Legitimación de firma</text>
+    <text x="112" y="501">Otorgante</text>
+    <text x="112" y="605">Protocolo</text>
+  </g>
+
+  <g stroke="#009AE5" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M468 286h56M508 274l16 12-16 12"/>
+    <path d="M468 390h56M508 378l16 12-16 12"/>
+    <path d="M468 494h56M508 482l16 12-16 12"/>
+    <path d="M468 598h56M508 586l16 12-16 12"/>
+  </g>
+
+  <g fill="#FFFFFF" stroke="#DCE5EC" stroke-width="2">
+    <rect x="556" y="248" width="564" height="76" rx="14"/>
+    <rect x="556" y="352" width="564" height="76" rx="14"/>
+    <rect x="556" y="456" width="564" height="76" rx="14"/>
+    <rect x="556" y="560" width="564" height="76" rx="14"/>
+  </g>
+  <g class="t m">
+    <text x="588" y="293">El documento de tu escritura que tiene valor legal</text>
+    <text x="588" y="397">El notario certifica que esa firma es tuya</text>
+    <text x="588" y="501">La persona que firma el documento</text>
+    <text x="588" y="605">El archivo donde el notario guarda las escrituras</text>
+  </g>
+
+  <text class="t k" x="80" y="700">SE MANTIENE EL TÉRMINO LEGAL · SE AÑADE LA TRADUCCIÓN DONDE APARECE</text>
+</svg>
