@@ -57,6 +57,21 @@
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
+  /* Ver la nota junto a [data-desplazando] en styles.css: en iOS, repintar
+     el cristal de la barra en cada fotograma de la inercia del scroll (la
+     que sigue cuando ya se ha soltado el dedo) es lo que hace que se sienta
+     descontrolado. Va en su propio listener, aparte del de arriba, para no
+     marcarlo también en la llamada de inicio: solo cuenta el scroll de
+     verdad. Se quita a los 150ms sin scroll nuevo. */
+  if (nav) {
+    var quietoTras = null;
+    window.addEventListener('scroll', function () {
+      nav.dataset.desplazando = 'true';
+      clearTimeout(quietoTras);
+      quietoTras = setTimeout(function () { nav.dataset.desplazando = 'false'; }, 150);
+    }, { passive: true });
+  }
+
   /* ---------- Píldora que recorre la navegación ----------
      Un solo elemento que se mueve entre los enlaces: sigue al puntero y al
      foco, y cuando los sueltas vuelve a la sección en la que estás. Debajo

@@ -273,6 +273,26 @@ p { text-wrap: pretty; }
   box-shadow: 0 1px 28px rgba(0 0 0 / 0.06);
 }
 
+/* Repintar un desenfoque de 20px en una barra a todo lo ancho, en cada
+   fotograma, es justo lo que satura a Safari de iOS durante la inercia del
+   scroll (cuando ya no llevas el dedo encima y desliza solo, más rápido de
+   lo que el hilo principal puede seguir): el scroll se nota descontrolado o
+   directamente se cuelga un instante. Mientras se está desplazando, en
+   pantallas táctiles, se cambia el cristal por un fondo sólido -sin
+   backdrop-filter- y se restaura en cuanto se para; main.js pone y quita
+   data-desplazando. Sin transición: tiene que ser un cambio instantáneo,
+   no una animación que compita por los mismos fotogramas que se quieren
+   liberar. En puntero fino (ratón/trackpad) no hace falta: ahí no hay
+   inercia nativa que sature nada. */
+@media (pointer: coarse) {
+  .nav[data-desplazando="true"] {
+    background: var(--glass-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition: none;
+  }
+}
+
 /* Progreso de lectura: la línea que cierra la barra crece con el scroll.
    main.js escribe --progreso de 0 a 1. */
 .nav::after {
