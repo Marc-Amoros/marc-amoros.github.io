@@ -148,6 +148,15 @@ const personaJsonLd = {
   )}
 </header>
 
+<!-- Fondo oscurecido y difuminado detrás del menú, el mismo tratamiento que
+     el ::backdrop de la modal de contacto (.contacto-modal). No es un
+     <dialog>, así que aquí se pinta a mano; decorativo, por eso aria-hidden,
+     y se cierra al tocarlo, como la modal. Fuera de <header> a propósito: el
+     backdrop-filter de la barra convierte a .nav en el contenedor de sus
+     descendientes «fixed», y ahí dentro este fondo solo llegaba a cubrir los
+     60px de la barra en vez de toda la ventana. -->
+{enPortada && <div class="nav__backdrop" id="nav-backdrop" hidden aria-hidden="true"></div>}
+
 <main id="contenido" class={claseMain}>
   <slot />
 </main>

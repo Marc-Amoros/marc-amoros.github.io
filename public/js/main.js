@@ -103,12 +103,14 @@
   /* ---------- Menú de móvil ---------- */
   var burger = document.getElementById('nav-burger');
   var panel = document.getElementById('nav-panel');
+  var fondoMenu = document.getElementById('nav-backdrop');
 
   function closePanel() {
     if (!burger || !panel) return;
     burger.setAttribute('aria-expanded', 'false');
     burger.setAttribute('aria-label', 'Abrir menú');
     panel.dataset.abierto = 'false';
+    if (fondoMenu) fondoMenu.dataset.abierto = 'false';
   }
 
   if (burger && panel) {
@@ -117,12 +119,18 @@
        a mandar data-abierto, que es lo que anima la apertura y el cierre. */
     panel.hidden = false;
     panel.dataset.abierto = 'false';
+    if (fondoMenu) {
+      fondoMenu.hidden = false;
+      fondoMenu.dataset.abierto = 'false';
+      fondoMenu.addEventListener('click', closePanel);
+    }
 
     burger.addEventListener('click', function () {
       var open = burger.getAttribute('aria-expanded') === 'true';
       burger.setAttribute('aria-expanded', String(!open));
       burger.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
       panel.dataset.abierto = String(!open);
+      if (fondoMenu) fondoMenu.dataset.abierto = String(!open);
     });
 
     panel.addEventListener('click', function (e) {

@@ -2071,6 +2071,38 @@ p { text-wrap: pretty; }
   text-underline-offset: 0.2em;
 }
 
+/* El fondo detrás del menú de móvil: el mismo tratamiento que el ::backdrop
+   de la modal de contacto (color-mix con el texto al 35 % y un desenfoque de
+   6px), pintado a mano porque esto no es un <dialog>. Cubre toda la ventana
+   -incluida la propia barra, que sigue encima gracias a su z-index- y se
+   cierra al tocarlo, igual que la modal. */
+.nav__backdrop {
+  position: fixed;
+  inset: 0;
+  /* Justo por debajo de la barra (z-index 100), que es lo único que debe
+     quedar por encima: el menú (.nav__panel) sigue dentro de <header>, así
+     que también queda a salvo del oscurecido sin necesitar nada más aquí. */
+  z-index: 90;
+  background: color-mix(in oklab, var(--color-text) 35%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--dur-mid) var(--ease-out),
+              visibility 0s linear var(--dur-mid);
+}
+.nav__backdrop[hidden] { display: none; }
+.nav__backdrop[data-abierto="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav__backdrop { transition: none; }
+}
+
 /* ------------------------------------------------------------
    11 bis. Menú de móvil
    ------------------------------------------------------------ */
@@ -2152,6 +2184,7 @@ p { text-wrap: pretty; }
 @media (min-width: 48rem) {
   .nav__burger { display: none; }
   .nav__panel { display: none !important; }
+  .nav__backdrop { display: none !important; }
 }
 
 /* ------------------------------------------------------------
