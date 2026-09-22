@@ -14,13 +14,14 @@
   if (year) year.textContent = new Date().getFullYear();
 
   /* ---------- Tema claro / oscuro ----------
-     Sin elección guardada mandan las preferencias del sistema;
-     el botón fija la elección y la recuerda. */
+     Por defecto la web siempre es clara (lo fija el script is:inline del
+     <head>, antes de pintar, pase lo que pase en el sistema); el botón
+     cambia a oscura y lo recuerda para la próxima visita. */
   var toggle = document.getElementById('theme-toggle');
+  var metaTema = document.getElementById('meta-tema');
 
   function currentTheme() {
-    if (root.dataset.theme) return root.dataset.theme;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return root.dataset.theme === 'dark' ? 'dark' : 'light';
   }
 
   if (toggle) {
@@ -28,6 +29,7 @@
       var next = currentTheme() === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
       try { localStorage.setItem('tema', next); } catch (e) {}
+      if (metaTema) metaTema.content = next === 'dark' ? '#000000' : '#ffffff';
       toggle.setAttribute('aria-label',
         next === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
     });

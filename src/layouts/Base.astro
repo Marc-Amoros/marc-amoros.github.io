@@ -51,8 +51,10 @@ const personaJsonLd = {
 <meta name="description" content={descripcion} />
 <meta name="author" content="Marc Amorós Soler" />
 <link rel="canonical" href={canonica} />
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+<!-- Sin condicionar al sistema: el tema por defecto es claro (ver el script
+     de más abajo), así que la barra del navegador también parte de blanco.
+     El script la pone en negro solo si hay «dark» guardado en localStorage. -->
+<meta name="theme-color" content="#ffffff" id="meta-tema" />
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content={titulo} />
@@ -81,14 +83,21 @@ const personaJsonLd = {
 {hojaDetalle && <link rel="stylesheet" href={conVersion('/css/detalle.css')} />}
 <slot name="head" />
 
-<!-- Tema: se aplica antes de pintar para que no haya parpadeo al recargar -->
+<!-- Tema: se aplica antes de pintar para que no haya parpadeo al recargar.
+     Por defecto la web es clara pase lo que pase en el sistema operativo:
+     solo pasa a oscura si quien visita la ha puesto así antes (el botón de
+     la barra la guarda en localStorage). -->
 <script is:inline>
   (function () {
     document.documentElement.classList.remove('no-js');
+    var t = 'light';
     try {
-      var t = localStorage.getItem('tema');
-      if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+      var guardado = localStorage.getItem('tema');
+      if (guardado === 'dark') t = 'dark';
     } catch (e) {}
+    document.documentElement.dataset.theme = t;
+    var meta = document.getElementById('meta-tema');
+    if (meta) meta.content = t === 'dark' ? '#000000' : '#ffffff';
   })();
 </script>
 </head>
