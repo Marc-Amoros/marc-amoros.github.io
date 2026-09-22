@@ -8,7 +8,12 @@
 
 /* ---------- Cabecera del caso ---------- */
 .caso {
-  padding-block-start: calc(var(--nav-height) + var(--spacing-2xl));
+  /* El hueco entre la barra y el enlace «Volver» iba a --spacing-2xl, el
+     mismo que separa el titular de la portada de su barra (.hero); ahí
+     tiene delante un H1 grande que lo llena, pero aquí lo primero que hay
+     es la píldora de volver, mucho más pequeña, y ese mismo hueco se leía
+     como un vacío. Con --spacing-l se ve más la barra y menos aire suelto. */
+  padding-block-start: calc(var(--nav-height) + var(--spacing-l));
   padding-inline: var(--section-inline);
 }
 .caso__inner { max-inline-size: var(--container-max); margin-inline: auto; }
@@ -1051,9 +1056,9 @@
   .post { max-inline-size: 46rem; }
 
   .menu {
-    /* Misma altura de arranque que el contenido: el borde superior de la
-       tarjeta cae a la altura del enlace de volver. */
-    inset-block-start: calc(var(--nav-height) + var(--spacing-2xl));
+    /* Misma altura de arranque que el contenido (.caso): el borde superior
+       de la tarjeta cae a la altura del enlace de volver. */
+    inset-block-start: calc(var(--nav-height) + var(--spacing-l));
     inset-block-end: auto;
     /* Sin tarjeta, el rótulo ya no es el borde de un objeto flotante sino
        texto suelto, así que se alinea con el margen de la página: la misma
@@ -1176,9 +1181,10 @@
   }
 }
 
-/* Pantallas bajas: el índice se compacta para caber sin cortar el pie. */
+/* Pantallas bajas: el índice se compacta para caber sin cortar el pie.
+   (El inset-block-start ya no hace falta tocarlo aquí: la base pasó a
+   --spacing-l, que es justo el valor que llevaba este compacto.) */
 @media (min-width: 64rem) and (max-height: 50rem) {
-  .menu { inset-block-start: calc(var(--nav-height) + var(--spacing-l)); }
   .menu__panel {
     gap: var(--spacing-xs);
     max-block-size: min(calc(100vh - var(--nav-height) - var(--spacing-l) - var(--spacing-s)), var(--libre, 100vh));
