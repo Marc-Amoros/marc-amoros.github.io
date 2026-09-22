@@ -2102,14 +2102,36 @@ p { text-wrap: pretty; }
    backdrop-filter, y dos capas de desenfoque anidadas dejan pasar el texto de
    la página por detrás de los enlaces del menú. Comprobado: con el fondo opaco
    el menú se lee limpio. Tampoco necesita desenfoque propio, porque no deja
-   ver nada detrás. */
+   ver nada detrás.
+
+   Se abre con un fundido y un pequeño deslizamiento, no de golpe: mismo
+   patrón que el menú lateral del artículo (.menu__panel) y el botón
+   flotante, con visibility retrasada para que no se pueda tabular ni pulsar
+   mientras se desvanece. El «hidden» del HTML es el estado sin JavaScript
+   -burger sin JS tampoco abre nada-; en cuanto main.js arranca lo quita y
+   pasa a mandar el propio atributo data-abierto. */
 .nav__panel {
   background: var(--color-bg);
   border-block-end: 1px solid var(--glass-border);
   padding-inline: var(--section-inline);
   padding-block: var(--spacing-xs) var(--spacing-s);
+  transform-origin: top center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-0.6rem);
+  transition: opacity var(--dur-mid) var(--ease-emphasized),
+              transform var(--dur-mid) var(--ease-emphasized),
+              visibility 0s linear var(--dur-mid);
 }
 .nav__panel[hidden] { display: none; }
+.nav__panel[data-abierto="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition-delay: 0s;
+}
 .nav__panel ul {
   max-inline-size: var(--container-max);
   margin-inline: auto;

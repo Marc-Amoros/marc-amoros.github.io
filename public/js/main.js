@@ -108,15 +108,21 @@
     if (!burger || !panel) return;
     burger.setAttribute('aria-expanded', 'false');
     burger.setAttribute('aria-label', 'Abrir menú');
-    panel.hidden = true;
+    panel.dataset.abierto = 'false';
   }
 
   if (burger && panel) {
+    /* Sin JavaScript el botón no responde y el panel se queda oculto (el
+       «hidden» que trae del HTML); en cuanto esto se ejecuta, se quita y pasa
+       a mandar data-abierto, que es lo que anima la apertura y el cierre. */
+    panel.hidden = false;
+    panel.dataset.abierto = 'false';
+
     burger.addEventListener('click', function () {
       var open = burger.getAttribute('aria-expanded') === 'true';
       burger.setAttribute('aria-expanded', String(!open));
       burger.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
-      panel.hidden = open;
+      panel.dataset.abierto = String(!open);
     });
 
     panel.addEventListener('click', function (e) {
