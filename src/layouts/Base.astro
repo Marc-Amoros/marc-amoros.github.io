@@ -126,26 +126,28 @@ const personaJsonLd = {
 
       <a class="btn btn--primary nav__cta" href={`${raiz}#contacto`}>Hablemos</a>
 
-      {enPortada && (
-        <button class="nav__burger" id="nav-burger" type="button"
-                aria-expanded="false" aria-controls="nav-panel" aria-label="Abrir menú">
-          <span></span><span></span>
-        </button>
-      )}
+      <!-- El menú de móvil vive en todas las páginas, no solo en la
+           portada: sin JavaScript hacía falta para verlo, así que quedaba
+           gated tras enPortada por descuido, y en fichas y artículos el
+           móvil se quedaba sin ninguna forma de navegar (el «Hablemos» y
+           los enlaces del nav__list también están ocultos ahí por debajo
+           de 48rem). -->
+      <button class="nav__burger" id="nav-burger" type="button"
+              aria-expanded="false" aria-controls="nav-panel" aria-label="Abrir menú">
+        <span></span><span></span>
+      </button>
     </div>
   </div>
 
-  {enPortada && (
-    <div class="nav__panel" id="nav-panel" hidden>
-      <ul>
-        <li><a href="#sobre-mi">Sobre mí</a></li>
-        <li><a href="#trayectoria">Trayectoria</a></li>
-        <li><a href="#portafolio">Portafolio</a></li>
-        <li><a href="#articulos">Artículos</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-      </ul>
-    </div>
-  )}
+  <div class="nav__panel" id="nav-panel" hidden>
+    <ul>
+      <li><a href={`${raiz}#sobre-mi`}>Sobre mí</a></li>
+      <li><a href={`${raiz}#trayectoria`}>Trayectoria</a></li>
+      <li><a href={`${raiz}#portafolio`}>Portafolio</a></li>
+      <li><a href={`${raiz}#articulos`}>Artículos</a></li>
+      <li><a href={`${raiz}#contacto`}>Contacto</a></li>
+    </ul>
+  </div>
 </header>
 
 <!-- Fondo oscurecido y difuminado detrás del menú, el mismo tratamiento que
@@ -155,7 +157,7 @@ const personaJsonLd = {
      backdrop-filter de la barra convierte a .nav en el contenedor de sus
      descendientes «fixed», y ahí dentro este fondo solo llegaba a cubrir los
      60px de la barra en vez de toda la ventana. -->
-{enPortada && <div class="nav__backdrop" id="nav-backdrop" hidden aria-hidden="true"></div>}
+<div class="nav__backdrop" id="nav-backdrop" hidden aria-hidden="true"></div>
 
 <main id="contenido" class={claseMain}>
   <slot />
