@@ -2598,6 +2598,13 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   .fab { padding: 1.05em; }
 }
 
+/* Solo en tablet y móvil: a partir de 48rem la barra ya lleva su propio
+   «Hablemos» (.nav__cta), así que el flotante sobra y se apaga aquí, sin
+   tocar el JS que decide cuándo aparece al hacer scroll. */
+@media (min-width: 48rem) {
+  .fab { display: none; }
+}
+
 /* Transiciones de vista entre la portada y la ficha del proyecto.
    Chrome y Safari las animan; el resto navega normal. */
 @view-transition { navigation: auto; }
