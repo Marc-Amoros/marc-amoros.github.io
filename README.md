@@ -325,6 +325,9 @@ Lo que hay hecho, y lo que conviene no romper al tocar:
   viven en `src/data/alt-textos.js`.
 - Las ampliaciones a pantalla completa (prototipo y vídeos) aíslan el resto de la
   página con `inert`: el foco no se escapa a lo que queda tapado y Escape cierra.
+  El menú de móvil hace lo mismo con todo lo que no es la cabecera, y además
+  bloquea el scroll del documento (`.sin-scroll`, en `styles.css` para que
+  llegue a todas las páginas, no solo a las que cargan `detalle.css`).
 - Los puestos de la trayectoria son titulares (`<h3>`) que envuelven al botón que
   los abre, el patrón de acordeón de WAI-ARIA.
 - Contraste AA en claro y oscuro, tema recordado y `prefers-reduced-motion`
@@ -338,6 +341,25 @@ Lo que hay hecho, y lo que conviene no romper al tocar:
   con ellos) y en los puntos del carrusel, que solo crecen a lo alto porque doce
   puntos de 44 px de ancho no caben en un móvil. El hueco entre los dos círculos
   de la barra es de 12 px y no de 8 para que sus dianas no se solapen.
+
+## Rendimiento
+
+- `public/css` y `public/js` son código de mano, pensado para leerse y
+  editarse (comentarios en español incluidos): Astro los copia a `dist/` tal
+  cual, sin procesarlos. `npm run build` los deja legibles ahí y luego
+  `scripts/minificar-dist.mjs` los minifica en `dist/` con `clean-css` y
+  `terser` (el original en `public/` no se toca). Si tocas ese script,
+  compruébalo con `npm run build && npm run preview`, que sirve el resultado
+  minificado de verdad; `npm run dev` no pasa por este paso.
+- `public/js/vendor/motion.js` (la librería Motion, copiada para no pedir
+  nada a terceros) ya llega minificada de fábrica y el script la deja tal
+  cual: re-minificarla no ahorra nada y arriesga el aviso de licencia.
+- Las portadas de proyecto y el retrato de «Sobre mí» están exportados al
+  tamaño más grande en que de verdad se llegan a ver en la web (con margen
+  para pantallas retina), no al tamaño del archivo original. Si añades un
+  proyecto nuevo, exporta la portada sobre 1600 px de ancho.
+- Los vídeos (con diferencia lo más pesado del sitio) usan `preload="none"` y
+  solo se descargan si se pulsa «ampliar»: no cuentan para la carga inicial.
 
 ## Decisiones que conviene que conozcas
 
