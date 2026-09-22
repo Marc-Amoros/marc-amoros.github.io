@@ -1745,6 +1745,15 @@ p { text-wrap: pretty; }
 }
 .work-more p { font-size: var(--text-sm); color: var(--color-text-muted); }
 .work-more__acciones { display: flex; flex-wrap: wrap; gap: var(--spacing-s); }
+/* A 320px cada botón medía lo que pedía su propio texto: el de la ficha
+   ocupaba casi toda la fila y se partía en dos líneas, y el corto
+   («Abrir el portal») se quedaba mucho más estrecho al lado, como dos
+   piezas que no son del mismo juego. Apilados y a todo el ancho quedan
+   iguales entre sí. Mismo corte que ya usa .btn para pasar a dos líneas. */
+@media (max-width: 26rem) {
+  .work-more__acciones { flex-direction: column; }
+  .work-more__acciones .btn { inline-size: 100%; }
+}
 
 /* ------------------------------------------------------------
    9. Artículos
@@ -2064,6 +2073,10 @@ p { text-wrap: pretty; }
   align-items: center;
   min-block-size: 2.75rem;
   color: var(--color-accent);
+  /* El mismo peso que llevan los botones (.btn), no el regular del texto
+     del pie que lo rodea: es un enlace, no una nota al margen, y en fino se
+     leía más débil de lo que es. */
+  font-weight: var(--weight-medium);
 }
 .footer a:hover {
   color: var(--color-accent-hover);
