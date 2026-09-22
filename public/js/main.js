@@ -111,6 +111,7 @@
     burger.setAttribute('aria-label', 'Abrir menú');
     panel.dataset.abierto = 'false';
     if (fondoMenu) fondoMenu.dataset.abierto = 'false';
+    document.documentElement.classList.remove('sin-scroll');
   }
 
   if (burger && panel) {
@@ -131,6 +132,12 @@
       burger.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
       panel.dataset.abierto = String(!open);
       if (fondoMenu) fondoMenu.dataset.abierto = String(!open);
+      /* Como el panel es fijo pero no cubre siempre toda la altura, en
+         iOS un gesto que empieza sobre él a veces se cuela y mueve la
+         página de detrás en vez de quedarse quieto: por eso, igual que
+         al ampliar un vídeo, mientras está abierto se bloquea el scroll
+         del documento entero. */
+      document.documentElement.classList.toggle('sin-scroll', !open);
     });
 
     panel.addEventListener('click', function (e) {

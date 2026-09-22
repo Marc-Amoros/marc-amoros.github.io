@@ -25,6 +25,13 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Bloquea el scroll de toda la página mientras algo se muestra a pantalla
+   completa encima (el menú de móvil, un vídeo ampliado): sin esto, en iOS un
+   gesto que empieza sobre esa capa a veces se cuela y mueve la página de
+   detrás. Vive aquí, en la hoja que cargan todas las páginas, porque el menú
+   de móvil está en todas ellas, no solo en las que cargan detalle.css. */
+.sin-scroll { overflow: hidden; }
+
 body {
   font-family: var(--font-sans);
   font-size: var(--text-base);

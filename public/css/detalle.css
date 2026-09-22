@@ -333,7 +333,7 @@
   box-shadow: 0 6px 20px rgb(15 25 45 / 0.3);
 }
 .proto__marco--modal .proto__accion svg { inline-size: 1.35rem; stroke-width: 2.4; }
-.sin-scroll { overflow: hidden; }
+/* .sin-scroll vive en styles.css: la cargan todas las páginas, no solo esta. */
 /* Las láminas abren su propio contexto de apilado (z-index 1, y transform
    mientras entran): con la modal abierta se suben por encima de la cabecera y
    se les quita el transform, que encerraría al fixed dentro de la lámina. */
