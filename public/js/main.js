@@ -104,6 +104,27 @@
   var burger = document.getElementById('nav-burger');
   var panel = document.getElementById('nav-panel');
   var fondoMenu = document.getElementById('nav-backdrop');
+  var cabecera = document.getElementById('nav');
+
+  /* Con el panel abierto, todo lo que no es la cabecera queda tapado por el
+     fondo difuminado: sin esto, tabulando después del último enlace («cerrar
+     menú» incluido) el foco se escapaba a lo que hay detrás —por ejemplo el
+     «‹ Portafolio» de la ficha—, invisible bajo la capa. inert lo saca del
+     foco y del lector de pantalla mientras el menú está abierto, igual que ya
+     hace el vídeo ampliado en las fichas (ver aislar() en caso.js). */
+  var fondoAislado = [];
+  function aislarFondo() {
+    Array.prototype.forEach.call(document.body.children, function (nodo) {
+      if (nodo !== cabecera && nodo !== fondoMenu && !nodo.inert) {
+        nodo.inert = true;
+        fondoAislado.push(nodo);
+      }
+    });
+  }
+  function liberarFondo() {
+    fondoAislado.forEach(function (nodo) { nodo.inert = false; });
+    fondoAislado = [];
+  }
 
   function closePanel() {
     if (!burger || !panel) return;
@@ -112,6 +133,7 @@
     panel.dataset.abierto = 'false';
     if (fondoMenu) fondoMenu.dataset.abierto = 'false';
     document.documentElement.classList.remove('sin-scroll');
+    liberarFondo();
   }
 
   if (burger && panel) {
@@ -138,6 +160,7 @@
          al ampliar un vídeo, mientras está abierto se bloquea el scroll
          del documento entero. */
       document.documentElement.classList.toggle('sin-scroll', !open);
+      if (open) liberarFondo(); else aislarFondo();
     });
 
     panel.addEventListener('click', function (e) {
