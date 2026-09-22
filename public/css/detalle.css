@@ -458,13 +458,17 @@
   /* Todo el caso comparte una sola columna centrada, portada incluida, para
      que el menú lateral tenga su margen y nunca se cruce con el texto —y
      para que la portada no quede más ancha que el resto de imágenes del
-     cuerpo (láminas, prototipo…), que ya vivían en esta misma medida. */
+     cuerpo (láminas, prototipo…), que ya vivían en esta misma medida.
+     .caso__cine (el vídeo de portada de CUPRA Born) se había quedado fuera
+     de esta lista: a este ancho se salía a todo el contenedor y se cruzaba
+     con el menú lateral, justo lo que esta regla evita para todo lo demás. */
   /* El volver es inline-flex, así que ni el max-inline-size ni el margin auto
      lo moverían: se alinea con el filo izquierdo de la columna calculando a
      mano lo que esta deja a un lado dentro del contenedor. */
   .caso .volver { margin-inline-start: max(0px, calc((100% - 50rem) / 2)); }
   .caso__head,
   .caso__cover,
+  .caso__cine,
   .caso__cuerpo,
   .caso .work-more,
   .caso .pares {
