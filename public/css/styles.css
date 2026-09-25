@@ -99,7 +99,7 @@ p { text-wrap: pretty; }
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   transform: translateY(-200%);
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-emphasized);
 }
 .skip-link:focus-visible { transform: translateY(0); }
 
@@ -184,7 +184,7 @@ p { text-wrap: pretty; }
   transition: background var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out),
-              transform var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-emphasized),
               opacity var(--dur-fast) var(--ease-out);
 }
 /* A 320px (el ancho que WCAG toma como referencia para el reflujo) un rótulo
@@ -238,10 +238,10 @@ p { text-wrap: pretty; }
   content: "›";
   font-size: 1.25em;
   line-height: 1;
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-emphasized);
 }
 .link-arrow:hover { text-decoration: underline; text-underline-offset: 0.28em; }
-.link-arrow:hover::after { transform: translateX(0.18em); }
+.link-arrow:hover::after { transform: translateX(0.2em); }
 
 /* ------------------------------------------------------------
    5. Navegación translúcida fija
@@ -382,8 +382,8 @@ p { text-wrap: pretty; }
   transform: translateX(var(--spot-x, 0px));
   opacity: 0;
   pointer-events: none;
-  transition: transform var(--dur-mid) var(--ease-spring),
-              inline-size var(--dur-mid) var(--ease-spring),
+  transition: transform var(--dur-mid) var(--ease-emphasized),
+              inline-size var(--dur-mid) var(--ease-emphasized),
               opacity var(--dur-fast) var(--ease-out);
 }
 .nav__nav[data-spot="on"] .nav__spot { opacity: 1; }
@@ -411,7 +411,7 @@ p { text-wrap: pretty; }
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out),
-              transform var(--dur-fast) var(--ease-out);
+              transform var(--dur-fast) var(--ease-emphasized);
 }
 .theme-toggle:hover { color: var(--color-text); border-color: var(--color-text-subtle); transform: scale(1.06); }
 
@@ -593,7 +593,7 @@ p { text-wrap: pretty; }
   flex: none;
   font-size: 1.95em;
   line-height: 1;
-  transition: transform var(--dur-mid) var(--ease-spring);
+  transition: transform var(--dur-mid) var(--ease-emphasized);
 }
 
 /* ------------------------------------------------------------------
@@ -768,7 +768,8 @@ p { text-wrap: pretty; }
   margin-inline: auto;
 }
 /* Un halo de luz detrás de la composición: la mesa de trabajo brilla un poco
-   sobre la página. Sigue al cursor más despacio que nada, porque es lo más lejano. */
+   sobre la página. Es lo más lejano, así que es lo que menos se desplaza con el
+   cursor. */
 .hero__arte::before {
   content: "";
   position: absolute;
@@ -777,7 +778,6 @@ p { text-wrap: pretty; }
   pointer-events: none;
   background: radial-gradient(closest-side, var(--portada-arte-halo), transparent);
   transform: translate(calc(var(--px, 0) * -18px), calc(var(--py, 0) * -12px));
-  transition: transform 900ms var(--ease-out);
 }
 .arte { display: block; inline-size: 100%; block-size: auto; overflow: visible; }
 
@@ -831,28 +831,23 @@ p { text-wrap: pretty; }
   /* --prof: 1 aquí también, por si el navegador no registra el número (@property):
      así la letra se ve en volumen aunque no se anime. */
   --prof: 1;
-  /* --alza: cuánto se acerca la letra a ti. Con el cursor encima sale un poco más
-     de su lienzo (va aparte de --prof porque la entrada deja --prof fijado). */
-  --alza: 1;
+  /* --alza (la escribe main.js en .hero__arte): cuánto se acerca la letra a
+     ti. Con el cursor encima sale un poco más de su lienzo. Va aparte de
+     --prof porque la entrada deja --prof fijado. */
   --ex: calc(15 + var(--px, 0) * -7);
   --ey: calc(20 + var(--py, 0) * -6);
 }
 .arte__letra { fill: url(#arte-tinta-grad); }
 .arte__lado {
   fill: color-mix(in oklab, var(--portada-arte-lado-cerca) calc((1 - var(--k)) * 100%), var(--portada-arte-lado-lejos));
-  transform: translate(calc(var(--ex) * var(--prof) * var(--alza) * var(--k) * 1px),
-                       calc(var(--ey) * var(--prof) * var(--alza) * var(--k) * 1px));
-  transition: transform 700ms var(--ease-out);
+  transform: translate(calc(var(--ex) * var(--prof) * var(--alza, 1) * var(--k) * 1px),
+                       calc(var(--ey) * var(--prof) * var(--alza, 1) * var(--k) * 1px));
 }
 .arte__sombra-m {
   fill: var(--portada-arte-sombra);
   opacity: var(--prof);
-  transform: translate(calc(var(--ex) * 2.1 * var(--prof) * var(--alza) * 1px),
-                       calc(var(--ey) * 2.2 * var(--prof) * var(--alza) * 1px));
-  transition: transform 700ms var(--ease-out);
-}
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .hero__arte:hover .arte__solido { --alza: 1.45; }
+  transform: translate(calc(var(--ex) * 2.1 * var(--prof) * var(--alza, 1) * 1px),
+                       calc(var(--ey) * 2.2 * var(--prof) * var(--alza, 1) * 1px));
 }
 /* El brillo: una banda de luz en diagonal que cruza la cara de izquierda a
    derecha. Va recortada con la propia «M» (clip-path), así que solo se ve sobre
@@ -942,13 +937,14 @@ p { text-wrap: pretty; }
 }
 
 /* Y el conjunto entero se inclina hacia tu cursor, como una lámina que miras
-   de lado: con las capas ya desplazadas a distinto ritmo, se lee como un
-   objeto con fondo y no como un dibujo plano. */
+   de lado: con las capas desplazadas cada una lo suyo, se lee como un objeto
+   con fondo y no como un dibujo plano. Nada de esto lleva transición: main.js
+   suaviza el cursor una sola vez y de ahí salen todas las capas, así el
+   conjunto se mueve como una pieza y no cada capa con su retraso. */
 .arte {
   transform: perspective(1400px)
              rotateX(calc(var(--py, 0) * -7deg))
              rotateY(calc(var(--px, 0) * 9deg));
-  transition: transform 900ms var(--ease-out);
 }
 
 /* Cada grupo es una capa que se desplaza un poco con el cursor, cada una a su
@@ -959,7 +955,6 @@ p { text-wrap: pretty; }
 .arte__capa {
   transform: translate(calc(var(--px, 0) * var(--arte-x, 0) * 1px),
                        calc(var(--py, 0) * var(--arte-y, 0) * 1px));
-  transition: transform 700ms var(--ease-out);
 }
 .arte__capa--lienzo      { --arte-x: -11; --arte-y: -7; }
 .arte__capa--guias       { --arte-x: -3;  --arte-y: -2; }
@@ -969,10 +964,10 @@ p { text-wrap: pretty; }
 
 /* El cursor de Marc, además, va hacia tu cursor mientras lo tienes sobre la
    composición, como el de otra persona en un archivo compartido. main.js
-   escribe --dx y --dy (cuánto se aleja de su sitio). Llega tarde a propósito. */
+   escribe --dx y --dy (cuánto se aleja de su sitio), y lo hace llegar algo
+   más tarde que el resto, a propósito. */
 .arte__sigue {
   transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px));
-  transition: transform 620ms var(--ease-out);
 }
 
 /* Entrada: la letra se diseña delante de ti. El lienzo cae girando y el halo se
@@ -1553,7 +1548,7 @@ p { text-wrap: pretty; }
   font-size: 1.5rem;
   line-height: 1;
   color: var(--color-accent);
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-emphasized);
 }
 .destacado:hover { background: var(--color-accent-soft); }
 .destacado:hover::after { transform: translateX(0.2em); }
@@ -1769,12 +1764,12 @@ p { text-wrap: pretty; }
   border-radius: var(--radius-l);
   background: var(--color-surface);
   box-shadow: var(--shadow-s);
-  transition: transform var(--dur-mid) var(--ease-out),
-              box-shadow var(--dur-mid) var(--ease-out),
-              border-color var(--dur-mid) var(--ease-out);
+  transition: transform var(--dur-mid) var(--ease-emphasized),
+              box-shadow var(--dur-mid) var(--ease-emphasized),
+              border-color var(--dur-mid) var(--ease-emphasized);
 }
 .work:hover {
-  transform: translateY(-4px);
+  transform: translateY(var(--mov-elevar));
   box-shadow: var(--shadow-m);
   border-color: var(--color-border);
 }
@@ -1796,7 +1791,7 @@ p { text-wrap: pretty; }
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
-  transition: transform var(--dur-slow) var(--ease-soft);
+  transition: transform var(--dur-slow) var(--ease-emphasized);
 }
 .work:hover .work__media img { transform: scale(1.04); }
 .work__media img[data-failed="true"] { opacity: 0; }
@@ -1910,12 +1905,12 @@ p { text-wrap: pretty; }
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-l);
   background: var(--color-surface);
-  transition: transform var(--dur-mid) var(--ease-out),
-              box-shadow var(--dur-mid) var(--ease-out),
-              border-color var(--dur-mid) var(--ease-out);
+  transition: transform var(--dur-mid) var(--ease-emphasized),
+              box-shadow var(--dur-mid) var(--ease-emphasized),
+              border-color var(--dur-mid) var(--ease-emphasized);
 }
 .article:hover {
-  transform: translateY(-3px);
+  transform: translateY(var(--mov-elevar));
   box-shadow: var(--shadow-m);
   border-color: var(--color-border);
 }
@@ -2178,7 +2173,7 @@ p { text-wrap: pretty; }
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   font-size: var(--text-sm);
-  transition: transform var(--dur-fast) var(--ease-out),
+  transition: transform var(--dur-fast) var(--ease-emphasized),
               border-color var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out);
 }
@@ -2274,7 +2269,7 @@ p { text-wrap: pretty; }
   inline-size: 100%;
   background: var(--color-text);
   border-radius: 2px;
-  transition: transform var(--dur-fast) var(--ease-out),
+  transition: transform var(--dur-fast) var(--ease-emphasized),
               opacity var(--dur-fast) var(--ease-out);
 }
 .nav__burger[aria-expanded="true"] span:first-child { transform: translateY(3.25px) rotate(45deg); }
@@ -2358,38 +2353,40 @@ p { text-wrap: pretty; }
 .rise { opacity: 0; }
 .rise.is-in {
   opacity: 1;
-  animation: rise-entra 900ms var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
+  animation: rise-entra var(--dur-entrada) var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
 }
-.rise--grupo.is-in { animation-name: rise-fundido; animation-duration: 500ms; }
+.rise--grupo.is-in { animation-name: rise-fundido; }
 
 .palabra,
 .eyebrow__txt { display: inline-block; }
 .is-in .escalon {
-  animation: rise-entra 900ms var(--ease-emphasized-decel)
+  animation: rise-entra var(--dur-entrada) var(--ease-emphasized-decel)
              calc(var(--delay, 0ms) + var(--d, 0ms)) backwards;
 }
 .is-in .palabra {
-  animation: palabra-entra 850ms var(--ease-emphasized-decel)
+  animation: palabra-entra var(--dur-entrada) var(--ease-emphasized-decel)
              calc(var(--delay, 0ms) + var(--d, 0ms)) backwards;
 }
 .is-in .eyebrow__txt {
-  animation: eyebrow-entra 750ms var(--ease-emphasized)
+  animation: eyebrow-entra var(--dur-entrada) var(--ease-emphasized-decel)
              calc(var(--delay, 0ms) + var(--d, 0ms)) backwards;
 }
 
+/* Las láminas tardan algo más: son grandes y recorren más. Mismo arranque y
+   misma curva que todo lo demás. */
 figure.rise.is-in {
-  animation: lamina-destapa 1100ms var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
+  animation: lamina-destapa calc(var(--dur-entrada) * 1.4) var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
 }
 figure.rise.is-in img {
-  animation: lamina-asienta 1500ms var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
+  animation: lamina-asienta calc(var(--dur-entrada) * 1.8) var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
 }
 
-@keyframes rise-entra    { from { opacity: 0; translate: 0 2rem; } }
+@keyframes rise-entra    { from { opacity: 0; translate: 0 var(--mov-subida); } }
 @keyframes rise-fundido  { from { opacity: 0; } }
-@keyframes palabra-entra { from { opacity: 0; translate: 0 0.5em; filter: blur(8px); } }
+@keyframes palabra-entra { from { opacity: 0; translate: 0 0.4em; filter: blur(6px); } }
 @keyframes eyebrow-entra { from { clip-path: inset(0 100% 0 0); translate: -0.6em 0; } to { clip-path: inset(0 -0.2em 0 0); } }
 @keyframes lamina-destapa {
-  from { opacity: 0; clip-path: inset(0 0 100% 0); translate: 0 1.5rem; }
+  from { opacity: 0; clip-path: inset(0 0 100% 0); translate: 0 var(--mov-subida); }
   25%  { opacity: 1; }
   to   { clip-path: inset(0); }
 }
@@ -2484,20 +2481,20 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   border-color: transparent;
 }
 
-/* Inclinación 3D sutil: el eje lo calcula main.js. */
+/* Inclinación 3D sutil: main.js lleva la inclinación (--rx, --ry) y la
+   elevación (--tz) con su propio seguimiento suave, así que aquí la
+   transformación va sin transición: si el CSS la suavizara también, las dos
+   se pelearían y la tarjeta iría a tirones. */
 @media (hover: hover) and (pointer: fine) {
   .work[data-tilt] {
     transform:
       perspective(60rem)
       rotateX(var(--rx, 0deg))
       rotateY(var(--ry, 0deg))
-      translateZ(0);
+      translateZ(calc(var(--tz, 0) * 0.75rem));
+    transition: box-shadow var(--dur-mid) var(--ease-emphasized),
+                border-color var(--dur-mid) var(--ease-emphasized);
   }
-  .work[data-tilt]:hover { transform:
-      perspective(60rem)
-      rotateX(var(--rx, 0deg))
-      rotateY(var(--ry, 0deg))
-      translateZ(0.75rem); }
 }
 
 /* Pie de la tarjeta: la llamada a la ficha completa */
@@ -2699,7 +2696,9 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   stroke-linecap: round;
   stroke-linejoin: round;
   color: var(--color-text-subtle);
-  transition: transform var(--dur-mid) var(--ease-spring),
+  /* Gira lo mismo que tarda el pliegue en abrirse, con su misma curva: son
+     el mismo gesto. */
+  transition: transform var(--dur-emphasized) var(--ease-emphasized),
               color var(--dur-fast) var(--ease-out);
 }
 .job__head:hover .job__chev { color: var(--color-accent); }
@@ -2770,9 +2769,9 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
 
 .enter {
   opacity: 0;
-  transform: translateY(1.25rem);
-  transition: opacity 700ms var(--ease-emphasized-decel),
-              transform 700ms var(--ease-emphasized-decel);
+  transform: translateY(var(--mov-subida));
+  transition: opacity var(--dur-entrada) var(--ease-emphasized-decel),
+              transform var(--dur-entrada) var(--ease-emphasized-decel);
   transition-delay: var(--delay, 0ms);
 }
 .overture .enter { opacity: 1; transform: none; }
@@ -2830,7 +2829,7 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   transform: translateY(1.5rem) scale(0.9);
   pointer-events: none;
   transition: opacity var(--dur-mid) var(--ease-emphasized),
-              transform var(--dur-mid) var(--ease-spring),
+              transform var(--dur-mid) var(--ease-emphasized),
               box-shadow var(--dur-mid) var(--ease-emphasized),
               visibility 0s linear var(--dur-mid);
 }

@@ -193,6 +193,27 @@
   --ease-spring:           cubic-bezier(0.34, 1.56, 0.64, 1);
   --dur-emphasized: 520ms;
 
+  /* ================= MOVIMIENTO: una sola manera de moverse =================
+     Para que nada vaya a destiempo, toda la web sigue las mismas reglas:
+     - Lo que responde a ti (pasar el ratón, pulsar, desplegar) usa una sola
+       curva, --ease-emphasized, sin rebote. El rebote (--ease-spring) queda
+       para confirmaciones pequeñas, como el «copiado» del correo, y para el
+       arte de la portada.
+     - Tres tiempos según lo que cambia: --dur-fast para color, borde y
+       flechas; --dur-mid para lo que se eleva o crece; --dur-emphasized para
+       lo que se despliega. Las partes de un mismo gesto van con el mismo
+       tiempo (la flecha del acordeón gira lo que tarda el pliegue en abrirse).
+     - Lo que entra en pantalla al hacer scroll: --dur-entrada con
+       --ease-emphasized-decel, subiendo --mov-subida y con --mov-paso entre
+       pieza y pieza. main.js usa los mismos valores para lo que anima él, y
+       pone en fila las entradas para que una sección no arranque a moverse
+       mientras la anterior todavía está llegando.
+     - Al elevarse, las tarjetas suben todas --mov-elevar. */
+  --dur-entrada: 760ms;
+  --mov-subida:  1.5rem;
+  --mov-paso:    80ms;
+  --mov-elevar:  -4px;
+
   /* Acento secundario: el 30 % de la paleta haciendo de «secondary» de
      Material — superficies tonales y estados destacados. */
   --color-accent-2:      var(--color-plum-500);

@@ -200,8 +200,42 @@
   var revealables = document.querySelectorAll('.rise');
 
   var PASO_PALABRA = 38;  // ms entre palabra y palabra del titular
-  var PASO_PIEZA = 90;    // ms entre pieza y pieza de un grupo
+  var PASO_PIEZA = 80;    // ms entre pieza y pieza de un grupo (--mov-paso en tokens.css)
   var MAX_PIEZAS = 6;     // de la sexta en adelante, todas a la vez: nadie espera tanto
+
+  /* Lo que main.js anima con Motion entra igual que lo que anima el CSS: el
+     mismo tiempo (--dur-entrada), la misma curva (--ease-emphasized-decel) y
+     la misma subida (--mov-subida). */
+  var ENTRADA = { duration: 0.76, ease: [0.05, 0.7, 0.1, 1] };
+  var SUBIDA = 'translateY(24px)';
+
+  /* La fila de entradas. Lo que aparece a la vez no arranca a la vez: cada
+     bloque espera su turno, en el orden de la página, hasta que el anterior
+     ha empezado a colocar sus piezas. Así una sección se lee de arriba abajo
+     (primero el titular, luego el cuerpo) y no se mueve todo a la vez. Nadie
+     espera más de ESPERA_MAX: bajando deprisa, lo que ya está en pantalla no
+     puede quedarse en blanco. Devuelve cuántos ms le toca esperar a quien
+     llega; «largo» es cuánto tarda él en dejar paso al siguiente. */
+  var ESPERA_MAX = 600;
+  var HUECO = 120;
+  var libreDesde = 0;
+  function turno(largo) {
+    var ahora = performance.now();
+    var empieza = Math.min(Math.max(ahora, libreDesde), ahora + ESPERA_MAX);
+    libreDesde = empieza + Math.max(HUECO, largo || 0);
+    return Math.round(empieza - ahora);
+  }
+
+  /* Lo que anima Motion dentro de un bloque .rise (los puestos, los pasos
+     del método, los idiomas) no se vigila por su cuenta: entra con su
+     bloque, cuando a este le toca, y recibe el retraso que le ha dado la
+     fila. Si no hay bloque o ya ha entrado, arranca ya. */
+  function alEntrar(el, fn) {
+    var bloque = el.closest('.rise');
+    if (!bloque || bloque.classList.contains('is-in') ||
+        reduceMotion || !('IntersectionObserver' in window)) { fn(0); return; }
+    (bloque.__alEntrar = bloque.__alEntrar || []).push(fn);
+  }
 
   function retrasar(el, ms) { el.style.setProperty('--d', Math.round(ms) + 'ms'); }
 
@@ -282,7 +316,7 @@
       t = 140;
     }
     if (titulo) t = partirEnPalabras(titulo, t) + 120;
-    escalonar(hijos(el).filter(function (h) { return h !== etiqueta && h !== titulo; }), t);
+    return escalonar(hijos(el).filter(function (h) { return h !== etiqueta && h !== titulo; }), t);
   }
 
   /* Un capítulo de una ficha: su número, el titular por palabras y luego los
@@ -298,18 +332,21 @@
     ['.bloque__texto', '.ficha', '.cifras'].forEach(function (sel) {
       piezas = piezas.concat(hijos(el.querySelector(':scope > ' + sel)));
     });
-    escalonar(piezas, t);
+    return escalonar(piezas, t);
   }
 
+  /* Reparte las piezas y apunta en el bloque cuánto tarda en colocarlas
+     (__largo): es lo que el siguiente de la fila le deja. */
   function coreografiar(el) {
-    var hecho = true;
-    if (el.matches('.section-head')) revelarCabecera(el);
-    else if (el.matches('.contact') && el.querySelector('.contact__inner')) revelarCabecera(el.querySelector('.contact__inner'));
-    else if (el.matches('.bloque')) revelarCapitulo(el);
-    else if (el.matches('.articles, .about__body')) escalonar(hijos(el), 0);
-    else if (el.matches('.carrusel') && el.querySelector('.carrusel__pista')) escalonar(hijos(el.querySelector('.carrusel__pista')), 60);
-    else hecho = false;
-    if (hecho) el.classList.add('rise--grupo');
+    var largo = -1;
+    if (el.matches('.section-head')) largo = revelarCabecera(el);
+    else if (el.matches('.contact') && el.querySelector('.contact__inner')) largo = revelarCabecera(el.querySelector('.contact__inner'));
+    else if (el.matches('.bloque')) largo = revelarCapitulo(el);
+    else if (el.matches('.articles, .about__body')) largo = escalonar(hijos(el), 0);
+    else if (el.matches('.carrusel') && el.querySelector('.carrusel__pista')) largo = escalonar(hijos(el.querySelector('.carrusel__pista')), 0);
+    if (largo < 0) return;
+    el.classList.add('rise--grupo');
+    el.__largo = largo;
   }
 
   if (reduceMotion || !('IntersectionObserver' in window)) {
@@ -323,8 +360,12 @@
     var revealObserver = new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
+        /* Su turno en la fila sustituye al retraso que traía escrito. */
+        var espera = turno(entry.target.__largo);
+        entry.target.style.setProperty('--delay', espera + 'ms');
         entry.target.classList.add('is-in');
         obs.unobserve(entry.target);
+        (entry.target.__alEntrar || []).forEach(function (fn) { fn(espera); });
       });
        /* Umbral 0: un bloque más alto que la ventana nunca podría enseñar un
           porcentaje de sí mismo y se quedaba invisible para siempre. */
@@ -391,18 +432,51 @@
      Solo con ratón: en táctil no hay puntero que seguir. */
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+  /* La tarjeta no salta a cada movimiento del ratón: persigue su inclinación
+     y su elevación (--tz, de 0 a 1) fotograma a fotograma, siempre con la
+     misma suavidad, y al salir vuelve a su sitio igual. Antes cada movimiento
+     reiniciaba una transición de CSS y la tarjeta iba a tirones. */
   if (finePointer && !reduceMotion) {
     document.querySelectorAll('.work[data-tilt]').forEach(function (card) {
+      var meta = { rx: 0, ry: 0, tz: 0 };
+      var ahora = { rx: 0, ry: 0, tz: 0 };
+      var ultimo = 0;
+      var corriendo = false;
+
+      function paso(t) {
+        /* Seguimiento por tiempo y no por fotograma: igual en 60 que en 120 Hz. */
+        var k = 1 - Math.exp(-Math.min(64, t - (ultimo || t)) / 90);
+        ultimo = t;
+        var quieto = true;
+        ['rx', 'ry', 'tz'].forEach(function (c) {
+          var d = meta[c] - ahora[c];
+          if (Math.abs(d) > 0.005) { ahora[c] += d * k; quieto = false; } else { ahora[c] = meta[c]; }
+        });
+        card.style.setProperty('--rx', ahora.rx.toFixed(2) + 'deg');
+        card.style.setProperty('--ry', ahora.ry.toFixed(2) + 'deg');
+        card.style.setProperty('--tz', ahora.tz.toFixed(3));
+        if (quieto) { corriendo = false; ultimo = 0; return; }
+        requestAnimationFrame(paso);
+      }
+      function pedir() {
+        if (corriendo) return;
+        corriendo = true;
+        requestAnimationFrame(paso);
+      }
+
       card.addEventListener('pointermove', function (e) {
+        if (e.pointerType === 'touch') return;
         var r = card.getBoundingClientRect();
-        var px = (e.clientX - r.left) / r.width;
-        var py = (e.clientY - r.top) / r.height;
-        card.style.setProperty('--ry', ((px - 0.5) * 5).toFixed(2) + 'deg');
-        card.style.setProperty('--rx', ((0.5 - py) * 5).toFixed(2) + 'deg');
+        meta.ry = ((e.clientX - r.left) / r.width - 0.5) * 5;
+        meta.rx = (0.5 - (e.clientY - r.top) / r.height) * 5;
+        meta.tz = 1;
+        pedir();
       });
       card.addEventListener('pointerleave', function () {
-        card.style.setProperty('--rx', '0deg');
-        card.style.setProperty('--ry', '0deg');
+        meta.rx = 0;
+        meta.ry = 0;
+        meta.tz = 0;
+        pedir();
       });
     });
   }
@@ -660,17 +734,20 @@
          entrada se lanza también al cambiar de pestaña. */
       var entrado = false;
 
-      function entrar() {
+      /* Con el scroll entran con su bloque, justo detrás de las pestañas; al
+         elegir la pestaña, entran ya, porque responden a un clic. */
+      function entrar(retraso) {
         if (entrado || !pista.offsetParent) return;
         entrado = true;
         motion.animate(puestos,
-          { opacity: [0, 1], transform: ['translateY(16px)', 'none'] },
-          { delay: motion.stagger(0.07), duration: 0.55, ease: [0.2, 0, 0, 1] });
+          { opacity: [0, 1], transform: [SUBIDA, 'none'] },
+          { delay: motion.stagger(PASO_PIEZA / 1000, { startDelay: (retraso || 0) / 1000 }),
+            duration: ENTRADA.duration, ease: ENTRADA.ease });
       }
 
       puestos.forEach(function (puesto) { puesto.style.opacity = '0'; });
-      motion.inView(pista, entrar, { amount: 0.1 });
-      pista.__entrar = entrar;
+      alEntrar(pista, function (espera) { entrar(espera + 160); });
+      pista.__entrar = function () { entrar(0); };
 
       /* Las etiquetas caen escalonadas al abrir un puesto. Este oyente va
          después del que cambia aria-expanded, así que ya está actualizado. */
@@ -679,9 +756,10 @@
         if (!cabecera || cabecera.getAttribute('aria-expanded') !== 'true') return;
         var chips = cabecera.closest('.job').querySelectorAll('.job__fold .chip');
         if (!chips.length) return;
+        /* Caen mientras se abre el pliegue, con su misma curva. */
         motion.animate(chips,
           { opacity: [0, 1], transform: ['translateY(8px)', 'none'] },
-          { delay: motion.stagger(0.035, { startDelay: 0.12 }), duration: 0.4 });
+          { delay: motion.stagger(0.035, { startDelay: 0.12 }), duration: 0.4, ease: [0.2, 0, 0, 1] });
       });
     });
 
@@ -721,32 +799,48 @@
 
     if (trazo) {
       trazo.style.setProperty('--trazo', '0');
-      /* Con el titular entrando palabra a palabra, el trazo espera a que
-         «puente» haya llegado a su sitio. */
-      motion.inView(titulo, function () {
+      var dibujarTrazo = function (retraso) {
         if (trazado || !titulo.offsetParent) return;
         trazado = true;
         motion.animate(trazo, { '--trazo': [0, 1] },
-          { duration: 0.65, delay: 0.75, ease: [0.2, 0, 0, 1] });
-      }, { amount: 0.6 });
+          { duration: 0.65, delay: retraso, ease: [0.2, 0, 0, 1] });
+      };
+      /* Con el titular entrando palabra a palabra, el trazo se dibuja justo
+         cuando «puente» acaba de llegar a su sitio, sea cuando sea. */
+      var palabraPuente = trazo.closest('.palabra');
+      if (palabraPuente) {
+        palabraPuente.addEventListener('animationend', function (e) {
+          if (e.target === palabraPuente) dibujarTrazo(0.05);
+        });
+      } else {
+        motion.inView(titulo, function () { dibujarTrazo(0.25); }, { amount: 0.6 });
+      }
     }
     pasos.forEach(function (paso) {
       paso.style.opacity = '0';
       paso.style.setProperty('--rail', '0');
     });
 
-    motion.inView(sobreMi, function () {
+    alEntrar(sobreMi, function (espera) {
       if (visto || !sobreMi.offsetParent) return;
       visto = true;
 
       if (pasos.length) {
+        /* Detrás de la pieza que los contiene (el bloque «Cómo trabajo», que
+           entra escalonado con los párrafos); cada raíl crece cuando su paso
+           ya está llegando. */
+        var pieza = pasos[0].closest('.escalon');
+        var dPieza = pieza ? parseFloat(pieza.style.getPropertyValue('--d')) || 0 : 0;
+        espera = (espera + dPieza + 200) / 1000;
         motion.animate(pasos,
-          { opacity: [0, 1], transform: ['translateY(10px)', 'none'] },
-          { delay: motion.stagger(0.12, { startDelay: 0.35 }), duration: 0.45, ease: [0.2, 0, 0, 1] });
+          { opacity: [0, 1], transform: [SUBIDA, 'none'] },
+          { delay: motion.stagger(PASO_PIEZA / 1000, { startDelay: espera }),
+            duration: ENTRADA.duration, ease: ENTRADA.ease });
         motion.animate(pasos, { '--rail': [0, 1] },
-          { delay: motion.stagger(0.12, { startDelay: 0.45 }), duration: 0.4, ease: [0.2, 0, 0, 1] });
+          { delay: motion.stagger(PASO_PIEZA / 1000, { startDelay: espera + 0.2 }),
+            duration: ENTRADA.duration, ease: ENTRADA.ease });
       }
-    }, { amount: 0.2 });
+    });
   }
 
 
@@ -786,25 +880,28 @@
       if (!filas.length) return;
 
       var entrado = false;
-      function entrar() {
+      function entrar(retraso) {
         if (entrado || !lista.offsetParent) return;
         entrado = true;
+        var espera = (retraso || 0) / 1000;
+        var paso = PASO_PIEZA / 1000;
         motion.animate(filas,
-          { opacity: [0, 1], transform: ['translateY(10px)', 'none'] },
-          { delay: motion.stagger(0.09), duration: 0.5, ease: [0.2, 0, 0, 1] });
+          { opacity: [0, 1], transform: [SUBIDA, 'none'] },
+          { delay: motion.stagger(paso, { startDelay: espera }),
+            duration: ENTRADA.duration, ease: ENTRADA.ease });
         filas.forEach(function (fila, i) {
           var relleno = fila.querySelector('.lang__fill');
           if (!relleno) return;
           var pct = relleno.style.getPropertyValue('--pct') || '0%';
           motion.animate(relleno,
             { inlineSize: ['0%', pct] },
-            { delay: 0.09 * i + 0.2, duration: 0.85, ease: [0.16, 1, 0.3, 1] });
+            { delay: espera + paso * i + 0.2, duration: ENTRADA.duration * 1.2, ease: ENTRADA.ease });
         });
       }
 
       filas.forEach(function (fila) { fila.style.opacity = '0'; });
-      motion.inView(lista, entrar, { amount: 0.25 });
-      lista.__entrar = entrar;
+      alEntrar(lista, function (espera) { entrar(espera + 160); });
+      lista.__entrar = function () { entrar(0); };
     });
 
     document.querySelectorAll('.tab').forEach(function (boton) {
@@ -1413,46 +1510,68 @@
   var GIRO_COS = Math.cos(4 * Math.PI / 180);
   var GIRO_SIN = Math.sin(4 * Math.PI / 180);
 
-  var px = 0;
-  var py = 0;
-  var dx = 0;
-  var dy = 0;
-  var lx = 320;
-  var ly = 335;
+  /* Dónde quiere estar cada cosa (meta) y dónde está (ahora). El cursor se
+     suaviza aquí una sola vez, fotograma a fotograma, y de ahí salen todas las
+     capas: así el conjunto se mueve como una pieza. Cada valor alcanza su meta
+     con su constante de tiempo (TAU, en ms): el conjunto, todo con la misma;
+     el cursor de Marc, algo más tarde, a propósito; la luz, pegada a ti. */
+  var meta = { px: 0, py: 0, dx: 0, dy: 0, lx: 320, ly: 335, alza: 0 };
+  var ahora = { px: 0, py: 0, dx: 0, dy: 0, lx: 320, ly: 335, alza: 0 };
+  var TAU = { px: 160, py: 160, dx: 260, dy: 260, lx: 70, ly: 70, alza: 200 };
+  var UMBRAL = { px: 0.001, py: 0.001, dx: 0.1, dy: 0.1, lx: 0.2, ly: 0.2, alza: 0.002 };
+  /* Cuánto más sale la letra de su lienzo con el cursor encima. */
+  var ALZA = 0.45;
   var luz = 0;
-  var pendiente = false;
+  var corriendo = false;
+  var ultimo = 0;
   var ultimoBrillo = 0;
 
   function pintar() {
-    pendiente = false;
-    arte.style.setProperty('--px', px.toFixed(3));
-    arte.style.setProperty('--py', py.toFixed(3));
-    arte.style.setProperty('--dx', dx.toFixed(1));
-    arte.style.setProperty('--dy', dy.toFixed(1));
+    arte.style.setProperty('--px', ahora.px.toFixed(3));
+    arte.style.setProperty('--py', ahora.py.toFixed(3));
+    arte.style.setProperty('--dx', ahora.dx.toFixed(1));
+    arte.style.setProperty('--dy', ahora.dy.toFixed(1));
+    arte.style.setProperty('--alza', (1 + ahora.alza * ALZA).toFixed(3));
     arte.style.setProperty('--luz', luz);
-    if (luz) {
-      var ox = lx - 320;
-      var oy = ly - 335;
-      var cx = (320 + ox * GIRO_COS - oy * GIRO_SIN).toFixed(1);
-      var cy = (335 + ox * GIRO_SIN + oy * GIRO_COS).toFixed(1);
-      for (var i = 0; i < luces.length; i++) {
-        luces[i].setAttribute('cx', cx);
-        luces[i].setAttribute('cy', cy);
-      }
+    var ox = ahora.lx - 320;
+    var oy = ahora.ly - 335;
+    var cx = (320 + ox * GIRO_COS - oy * GIRO_SIN).toFixed(1);
+    var cy = (335 + ox * GIRO_SIN + oy * GIRO_COS).toFixed(1);
+    for (var i = 0; i < luces.length; i++) {
+      luces[i].setAttribute('cx', cx);
+      luces[i].setAttribute('cy', cy);
     }
   }
+  function paso(t) {
+    /* Por tiempo y no por fotograma: igual en 60 que en 120 Hz. */
+    var dt = Math.min(64, t - (ultimo || t));
+    ultimo = t;
+    var quieto = true;
+    for (var c in meta) {
+      var d = meta[c] - ahora[c];
+      if (Math.abs(d) > UMBRAL[c]) {
+        ahora[c] += d * (1 - Math.exp(-dt / TAU[c]));
+        quieto = false;
+      } else {
+        ahora[c] = meta[c];
+      }
+    }
+    pintar();
+    if (quieto) { corriendo = false; ultimo = 0; return; }
+    window.requestAnimationFrame(paso);
+  }
   function pedir() {
-    if (pendiente) return;
-    pendiente = true;
-    window.requestAnimationFrame(pintar);
+    if (corriendo) return;
+    corriendo = true;
+    window.requestAnimationFrame(paso);
   }
   function limitar(v, min, max) { return Math.min(max, Math.max(min, v)); }
 
   hero.addEventListener('pointermove', function (e) {
     if (e.pointerType === 'touch') return;
     var r = hero.getBoundingClientRect();
-    px = ((e.clientX - r.left) / r.width - 0.5) * 2;
-    py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+    meta.px = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    meta.py = ((e.clientY - r.top) / r.height - 0.5) * 2;
 
     /* El cursor de Marc solo sigue al tuyo si lo tienes sobre la composición
        (o justo al lado); lejos, vuelve a su sitio. Se coloca un poco por
@@ -1462,14 +1581,19 @@
       var sx = (e.clientX - d.left) / d.width * VB_W;
       var sy = (e.clientY - d.top) / d.height * VB_H;
       if (sx > -70 && sx < VB_W + 70 && sy > -70 && sy < VB_H + 70) {
-        dx = limitar(sx + 26, 40, 556) - REPOSO_X;
-        dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
-        lx = sx;
-        ly = sy;
+        meta.dx = limitar(sx + 26, 40, 556) - REPOSO_X;
+        meta.dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
+        /* La luz aparece donde estás, sin cruzar el lienzo desde el sitio
+           donde se apagó. */
+        if (!luz) { ahora.lx = sx; ahora.ly = sy; }
+        meta.lx = sx;
+        meta.ly = sy;
+        meta.alza = 1;
         luz = 1;
       } else {
-        dx = 0;
-        dy = 0;
+        meta.dx = 0;
+        meta.dy = 0;
+        meta.alza = 0;
         luz = 0;
       }
     }
@@ -1477,10 +1601,11 @@
   }, { passive: true });
 
   hero.addEventListener('pointerleave', function () {
-    px = 0;
-    py = 0;
-    dx = 0;
-    dy = 0;
+    meta.px = 0;
+    meta.py = 0;
+    meta.dx = 0;
+    meta.dy = 0;
+    meta.alza = 0;
     luz = 0;
     pedir();
   });

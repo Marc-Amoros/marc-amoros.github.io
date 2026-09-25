@@ -157,8 +157,8 @@
   background: var(--color-accent);
   color: var(--color-on-accent);
   box-shadow: 0 6px 24px color-mix(in oklab, var(--color-accent) 45%, transparent);
-  transition: scale var(--dur-mid) var(--ease-spring),
-              box-shadow var(--dur-mid) var(--ease-out);
+  transition: scale var(--dur-mid) var(--ease-emphasized),
+              box-shadow var(--dur-mid) var(--ease-emphasized);
 }
 .caso__play-chapa svg { inline-size: 45%; }
 .caso__play:hover .caso__play-chapa,
@@ -230,8 +230,8 @@
   background: var(--color-accent);
   color: var(--color-on-accent);
   box-shadow: 0 6px 24px color-mix(in oklab, var(--color-accent) 40%, transparent);
-  transition: scale var(--dur-mid) var(--ease-spring),
-              box-shadow var(--dur-mid) var(--ease-out);
+  transition: scale var(--dur-mid) var(--ease-emphasized),
+              box-shadow var(--dur-mid) var(--ease-emphasized);
 }
 .proto__chapa svg { inline-size: 45%; }
 .proto__rotulo {
@@ -293,7 +293,7 @@
   cursor: pointer;
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  transition: background var(--dur-fast, 150ms) ease, scale var(--dur-fast, 150ms) ease;
+  transition: background var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-emphasized);
 }
 .proto__accion svg {
   inline-size: 1.15rem;
@@ -364,7 +364,7 @@
   cursor: pointer;
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  transition: background var(--dur-fast, 150ms) ease, scale var(--dur-fast, 150ms) ease;
+  transition: background var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-emphasized);
 }
 .clipvid__ampliar svg {
   inline-size: 1.15rem;
@@ -688,7 +688,7 @@
   box-shadow: var(--elev-1);
   transition: box-shadow var(--dur-mid) var(--ease-emphasized), transform var(--dur-mid) var(--ease-emphasized);
 }
-.rel:hover { box-shadow: var(--elev-3); transform: translateY(-3px); }
+.rel:hover { box-shadow: var(--elev-3); transform: translateY(var(--mov-elevar)); }
 .rel__meta { font-size: var(--text-xs); color: var(--color-text-subtle); }
 .rel__t { font-size: var(--text-base); font-weight: var(--weight-semi); }
 
@@ -776,8 +776,8 @@
   color: var(--color-text);
   font: inherit;
   cursor: pointer;
-  transition: transform var(--dur-fast) var(--ease-spring),
-              box-shadow var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-emphasized),
+              box-shadow var(--dur-fast) var(--ease-emphasized);
 }
 .menu__tirador:hover {
   transform: translateY(-2px);
@@ -988,8 +988,8 @@
   block-size: var(--marca-h, 0px);
   transform: translateY(var(--marca-y, 0px));
   opacity: 0;
-  transition: transform var(--dur-mid) var(--ease-spring),
-              block-size var(--dur-mid) var(--ease-spring),
+  transition: transform var(--dur-mid) var(--ease-emphasized),
+              block-size var(--dur-mid) var(--ease-emphasized),
               opacity var(--dur-fast) var(--ease-out);
 }
 /* El acento pasa por detrás de los puntos: son opacos y le hacen de tapa. */
@@ -1019,7 +1019,7 @@
   border-radius: 50%;
   background: var(--color-surface);
   border: 2px solid var(--color-border);
-  transition: transform var(--dur-mid) var(--ease-spring),
+  transition: transform var(--dur-mid) var(--ease-emphasized),
               background var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out);
 }
