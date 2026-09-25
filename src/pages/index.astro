@@ -20,7 +20,7 @@ const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
    ocupa de x 60 a 580 y de y 100 a 570. «g» es cuándo empieza cada línea: cuanto
    más lejos de la esquina de arriba a la izquierda, más tarde, así la rejilla se
    traza en diagonal, desde donde entra la luz. */
-const PASO_REJILLA = 45;
+const PASO_REJILLA = 35;
 const rejilla = [
   ...Array.from({ length: 12 }, (_, i) => 88 + 44 * i)
     .map((x) => ({ x1: x, y1: 100, x2: x, y2: 570, g: Math.round((x - 60) / 44 * PASO_REJILLA) })),

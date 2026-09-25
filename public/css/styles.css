@@ -953,15 +953,16 @@ p { text-wrap: pretty; }
    se pise y cada gesto termine antes de que empiece el siguiente:
    0 s      El halo se enciende y el lienzo cae girando hasta su sitio, con su
             copia de puntos detrás.
-   0,3 s    Se trazan las guías y la rejilla, a regla, desde la esquina de la luz.
-   0,35 s   La «M» sube y, cuando ya casi está (1,15 s), saca su fondo de golpe,
-            con un pequeño rebote.
-   1,35 s   La caja de selección se dibuja y las asas saltan una tras otra.
-   2 s      Sale la medida (main.js cuenta sus números) y el interruptor se
+   0,28 s   Se trazan las guías y la retícula, a regla, desde la esquina de la
+            luz. La retícula está entera hacia 1,2 s…
+   1,2 s    …y solo entonces sube la «M», que al llegar (1,85 s) saca su fondo
+            de golpe, con un pequeño rebote.
+   2 s      La caja de selección se dibuja y las asas saltan una tras otra.
+   2,6 s    Sale la medida (main.js cuenta sus números) y el interruptor se
             enciende.
-   2,1 s    El cursor de Marc llega describiendo una curva suave y, al posarse
-            en la esquina (3,15 s), hace clic: un anillo y el asa responde.
-   3,25 s   El brillo cruza la letra y deja un destello en su pie.
+   2,7 s    El cursor de Marc llega describiendo una curva suave y, al posarse
+            en la esquina (3,75 s), hace clic: un anillo y el asa responde.
+   3,85 s   El brillo cruza la letra y deja un destello en su pie.
    Después el cursor se mece despacio. Los tiempos de main.js (la medida y
    cuándo acaba el brillo) van con estos: si cambias unos, cambia los otros.
    main.js pone .arte--entra y .arte--pausa en cuanto carga: la entrada queda
@@ -989,39 +990,39 @@ p { text-wrap: pretty; }
 .arte--entra::before        { animation: arte-halo 1500ms var(--ease-out) 80ms backwards; }
 .arte--entra .arte__hoja    { animation: arte-lienzo 1100ms var(--ease-emphasized-decel) 60ms backwards; }
 .arte--entra .arte__marco2  { animation: arte-copia 1000ms var(--ease-emphasized-decel) 420ms backwards; }
-.arte--entra .arte__guia    { animation: arte-guia 900ms var(--ease-emphasized-decel) 300ms backwards; }
+.arte--entra .arte__guia    { animation: arte-guia 900ms var(--ease-emphasized-decel) 280ms backwards; }
 /* La rejilla se traza a regla, línea a línea, en diagonal desde la esquina de
    la luz (--g, que viene del HTML): las verticales bajan, las horizontales
    corren a la derecha, y cada una nace con más tinta y se asienta en su tono. */
 .arte--entra .arte__rejilla line {
-  animation: arte-regla 1200ms var(--ease-emphasized-decel) calc(380ms + var(--g, 0ms)) backwards;
+  animation: arte-regla 1000ms var(--ease-emphasized-decel) calc(280ms + var(--g, 0ms)) backwards;
 }
 .arte--entra .arte__solido {
-  animation: arte-sube 1000ms var(--ease-emphasized-decel) 350ms backwards,
-             arte-prof 900ms var(--ease-spring) 1150ms backwards;
+  animation: arte-sube 1000ms var(--ease-emphasized-decel) 1200ms backwards,
+             arte-prof 900ms var(--ease-spring) 1850ms backwards;
 }
-.arte--entra .arte__marco   { animation: arte-caja 700ms var(--ease-emphasized-decel) 1350ms backwards; }
+.arte--entra .arte__marco   { animation: arte-caja 700ms var(--ease-emphasized-decel) 2000ms backwards; }
 .arte--entra .arte__asas rect {
-  animation: arte-pop 450ms var(--ease-spring) calc(1600ms + var(--i, 0) * 50ms) backwards;
+  animation: arte-pop 450ms var(--ease-spring) calc(2250ms + var(--i, 0) * 50ms) backwards;
 }
 .arte--entra .arte__asas .arte__asa-tocada {
-  animation: arte-pop 450ms var(--ease-spring) calc(1600ms + var(--i, 0) * 50ms) backwards,
-             arte-toque 420ms var(--ease-out) 3150ms;
+  animation: arte-pop 450ms var(--ease-spring) calc(2250ms + var(--i, 0) * 50ms) backwards,
+             arte-toque 420ms var(--ease-out) 3750ms;
 }
-.arte--entra .arte__medida  { animation: arte-baja 600ms var(--ease-emphasized-decel) 2000ms backwards; }
-.arte--entra .arte__pop     { animation: arte-pop 650ms var(--ease-spring) 2150ms backwards; }
-.arte--entra .arte__bola    { animation: arte-bola 600ms var(--ease-emphasized-decel) 2450ms backwards; }
-.arte--entra .arte__pista   { animation: arte-pista 600ms var(--ease-out) 2450ms backwards; }
+.arte--entra .arte__medida  { animation: arte-baja 600ms var(--ease-emphasized-decel) 2600ms backwards; }
+.arte--entra .arte__pop     { animation: arte-pop 650ms var(--ease-spring) 2750ms backwards; }
+.arte--entra .arte__bola    { animation: arte-bola 600ms var(--ease-emphasized-decel) 3050ms backwards; }
+.arte--entra .arte__pista   { animation: arte-pista 600ms var(--ease-out) 3050ms backwards; }
 /* La curva sale de mover cada eje con su ritmo: en horizontal frena pronto y
    en vertical tarde, así que llega describiendo un arco suave. */
 .arte--entra .arte__vuelo {
-  animation: arte-vuelo-x 1050ms cubic-bezier(0.15, 0.6, 0.25, 1) 2100ms backwards,
-             arte-vuelo-y 1050ms cubic-bezier(0.45, 0, 0.15, 1) 2100ms backwards,
-             arte-mece 3.8s ease-in-out 3350ms infinite alternate;
+  animation: arte-vuelo-x 1050ms cubic-bezier(0.15, 0.6, 0.25, 1) 2700ms backwards,
+             arte-vuelo-y 1050ms cubic-bezier(0.45, 0, 0.15, 1) 2700ms backwards,
+             arte-mece 3.8s ease-in-out 3950ms infinite alternate;
 }
-.arte--entra .arte__clic     { animation: arte-clic 650ms var(--ease-out) 3150ms; }
-.arte--entra .arte__brillo   { animation: arte-brillo 1300ms var(--ease-out) 3250ms backwards; }
-.arte--entra .arte__destello { animation: arte-destello 900ms var(--ease-out) 3830ms; }
+.arte--entra .arte__clic     { animation: arte-clic 650ms var(--ease-out) 3750ms; }
+.arte--entra .arte__brillo   { animation: arte-brillo 1300ms var(--ease-out) 3850ms backwards; }
+.arte--entra .arte__destello { animation: arte-destello 900ms var(--ease-out) 4430ms; }
 /* Cada vez que el cursor entra en la composición, main.js pone .arte--brilla y
    el brillo vuelve a cruzar la letra, con su destello (con otro nombre de
    animación para que el navegador la relance). */
