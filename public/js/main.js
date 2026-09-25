@@ -1330,19 +1330,18 @@
 })();
 
 /* ============================================================
-   La entrada del arte: la pluma dibuja la «M»
+   La entrada del arte de la portada
    ------------------------------------------------------------
-   Antes de salir en volumen, la letra se dibuja delante de ti: la pluma de
-   Marc recorre su contorno, el trazo avanza con ella y cada punto de anclaje
-   aparece cuando la pluma pasa por encima. Al cerrar el trazado, el relleno
-   se derrama desde ese punto y la letra saca su fondo. Luego la medida de la
-   selección cuenta hasta su valor, como cuando se arrastra un asa.
-   Aquí va lo que el CSS no puede hacer solo (seguir el trazado, hacer crecer
-   el recorte del relleno, contar); el resto lo hace styles.css con los mismos
-   tiempos: si cambias unos, cambia los otros.
-   Arranca cuando la portada empieza su entrada (.overture) y la composición
-   está en pantalla; hasta entonces queda en pausa, sin nada a la vista. Sin
-   JS o con menos movimiento se ve la letra terminada, como siempre.
+   La coreografía la hace styles.css (el conjunto gira hasta su sitio, la «M»
+   cae y golpea el lienzo, saca su fondo, llega la selección y el cursor de
+   Marc hace clic). Aquí solo va lo que el CSS no puede hacer solo:
+   - Decidir cuándo empieza: cuando la portada arranca su entrada (.overture)
+     y la composición está en pantalla. Hasta entonces queda en pausa, sin
+     nada a la vista; en el móvil, donde va debajo del texto, así se ve al
+     llegar a ella.
+   - Contar los números de la medida hasta su valor, como cuando se arrastra
+     un asa.
+   Sin JS o con menos movimiento se ve la composición terminada.
    ============================================================ */
 (function () {
   'use strict';
@@ -1353,86 +1352,42 @@
   if (!hero || !dibujo) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var trazo = dibujo.querySelector('.arte__trazo');
-  var pluma = dibujo.querySelector('.arte__pluma');
-  var inunda = dibujo.querySelector('.arte__inunda');
   var etiqueta = dibujo.querySelector('.arte__medida text');
-  var nodos = Array.prototype.slice.call(dibujo.querySelectorAll('.arte__nodo'));
-  if (!trazo || !pluma || !inunda || !trazo.getTotalLength) return;
 
-  /* La letra se dibuja en su propio sistema; la pluma, en el del conjunto. Es el
-     mismo translate + scale que lleva la letra en el HTML. */
-  var OX = 38.2;
-  var OY = 122.9;
-  var ESCALA = 0.90909;
-
-  /* Los tiempos, en ms desde que arranca la entrada. */
-  var TRAZO_EMPIEZA = 800;
-  var TRAZO_DURA = 1700;
-  var RELLENO_EMPIEZA = 2500;
-  var RELLENO_DURA = 700;
-  var MEDIDA_EMPIEZA = 3700;   // la etiqueta sale a los 3,65 s
+  /* Los tiempos, en ms desde que arranca la entrada: van con los de styles.css. */
+  var MEDIDA_EMPIEZA = 1800;   // la etiqueta sale a los 1,75 s
   var MEDIDA_DURA = 950;
-  var FIN = MEDIDA_EMPIEZA + MEDIDA_DURA;
   /* Cuándo acaba el brillo de la entrada: hasta entonces el cursor no lo relanza. */
-  var FIN_BRILLO = 5600;
-
-  var largo = trazo.getTotalLength();
-  var radio = parseFloat(inunda.getAttribute('r')) || 820;
-  var marcas = nodos.map(function (n) { return parseFloat(n.getAttribute('data-l')) || 0; });
-  var puestos = 0;
+  var FIN_BRILLO = 4100;
 
   var medidaFinal = etiqueta ? etiqueta.textContent : '';
   var cifras = medidaFinal.match(/(\d+)\s*×\s*(\d+)/);
   var ancho = cifras ? parseInt(cifras[1], 10) : 0;
   var alto = cifras ? parseInt(cifras[2], 10) : 0;
 
-  /* Punto de partida: la entrada puesta pero parada, nada dibujado, nada
-     relleno y la medida a cero. */
+  /* Punto de partida: la entrada puesta pero parada y la medida a cero. */
   arte.classList.add('arte--entra', 'arte--pausa');
-  trazo.style.strokeDasharray = largo + ' ' + largo;
-  trazo.style.strokeDashoffset = largo;
-  inunda.setAttribute('r', '0');
   if (cifras) etiqueta.textContent = '0 × 0';
 
-  function limitar(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
-  /* La pluma arranca, corre y frena al cerrar, como una mano. */
-  function suave(k) { return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
   function sale(k) { return 1 - Math.pow(1 - k, 3); }
 
-  function dibujar(p) {
-    var punto = trazo.getPointAtLength(largo * p);
-    pluma.setAttribute('transform', 'translate(' +
-      (OX + punto.x * ESCALA).toFixed(2) + ' ' + (OY + punto.y * ESCALA).toFixed(2) + ')');
-    trazo.style.strokeDashoffset = (largo * (1 - p)).toFixed(2);
-    while (puestos < nodos.length && marcas[puestos] <= p) {
-      nodos[puestos].classList.add('arte__nodo--puesto');
-      puestos++;
-    }
-  }
-
-  function medir(k) {
-    if (!cifras) return;
-    etiqueta.textContent = k >= 1 ? medidaFinal
-      : Math.round(ancho * k) + ' × ' + Math.round(alto * k);
-  }
-
   var inicio = 0;
-  function paso() {
-    /* Todo sale del reloj, no de contar fotogramas: si la pestaña estaba en
-       segundo plano, al volver la entrada está donde tiene que estar. */
-    var t = performance.now() - inicio;
-    if (t >= TRAZO_EMPIEZA) dibujar(suave(limitar((t - TRAZO_EMPIEZA) / TRAZO_DURA)));
-    inunda.setAttribute('r', (radio * sale(limitar((t - RELLENO_EMPIEZA) / RELLENO_DURA))).toFixed(1));
-    if (t >= MEDIDA_EMPIEZA) medir(sale(limitar((t - MEDIDA_EMPIEZA) / MEDIDA_DURA)));
-    if (t < FIN) window.requestAnimationFrame(paso);
+  function contar() {
+    if (!cifras) return;
+    /* Por reloj y no por fotogramas: si la pestaña estaba en segundo plano,
+       al volver la medida ya está en su valor. */
+    var k = Math.min(1, Math.max(0, (performance.now() - inicio - MEDIDA_EMPIEZA) / MEDIDA_DURA));
+    var e = sale(k);
+    etiqueta.textContent = k >= 1 ? medidaFinal
+      : Math.round(ancho * e) + ' × ' + Math.round(alto * e);
+    if (k < 1) window.requestAnimationFrame(contar);
   }
 
   function arrancar() {
     inicio = performance.now();
     arte.setAttribute('data-fin-entrada', String(Date.now() + FIN_BRILLO));
     arte.classList.remove('arte--pausa');
-    window.requestAnimationFrame(paso);
+    window.requestAnimationFrame(contar);
   }
 
   /* Dos condiciones: que la portada haya empezado su entrada y que la

@@ -755,6 +755,14 @@ p { text-wrap: pretty; }
   inherits: true;
   initial-value: 1;
 }
+/* Cuánto le falta a la letra para acabar de girar en la entrada: de 1 (el
+   fondo cae muy a la derecha, como si la viéramos de lado) a 0 (en su sitio).
+   Sin animación vale 0 y no cambia nada. */
+@property --giro {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
 
 .hero__arte {
   --arte-tinta: var(--portada-arte-tinta);
@@ -834,8 +842,8 @@ p { text-wrap: pretty; }
   /* --alza (la escribe main.js en .hero__arte): cuánto se acerca la letra a
      ti. Con el cursor encima sale un poco más de su lienzo. Va aparte de
      --prof porque la entrada deja --prof fijado. */
-  --ex: calc(15 + var(--px, 0) * -7);
-  --ey: calc(20 + var(--py, 0) * -6);
+  --ex: calc(15 + var(--px, 0) * -7 + var(--giro, 0) * 34);
+  --ey: calc(20 + var(--py, 0) * -6 - var(--giro, 0) * 12);
 }
 .arte__letra { fill: url(#arte-tinta-grad); }
 .arte__lado {
@@ -882,42 +890,21 @@ p { text-wrap: pretty; }
 .arte__pista { fill: var(--arte-acento); }
 .arte__bola { fill: #fff; }
 
-/* Lo que solo se ve en la entrada: el trazo de la pluma, fino y del acento, como
-   el de un vector en edición; sus puntos de anclaje, blancos con el filo del
-   acento; el anillo que marca el cierre del trazado; y la pluma de Marc, con su
-   nombre. En reposo no se ve nada de esto: sin JS la letra ya está terminada. */
-.arte__trazo {
-  fill: none;
-  stroke: var(--arte-acento);
-  stroke-width: 2.2;
-  stroke-linejoin: round;
-  opacity: 0;
-}
-.arte__nodo {
-  fill: var(--color-bg);
-  stroke: var(--arte-acento);
-  stroke-width: 1.8;
-  opacity: 0;
-  transform: scale(0);
-  transition: opacity 160ms var(--ease-out), transform 460ms var(--ease-spring);
-}
-/* main.js lo pone cuando la pluma pasa por el punto. */
-.arte__nodo--puesto { opacity: 1; transform: none; }
-.arte__cierre {
+/* Lo que solo se ve en la entrada: el anillo del clic de Marc sobre el asa y
+   el destello que deja el brillo al salir de la letra. En reposo, apagados. */
+.arte__clic {
   fill: none;
   stroke: var(--arte-acento);
   stroke-width: 2;
   opacity: 0;
 }
-.arte__pluma-cuerpo { opacity: 0; }
-.arte__plumilla {
-  fill: var(--arte-acento);
-  stroke: var(--color-bg);
-  stroke-width: 1.6;
+.arte__destello {
+  fill: #fff;
+  stroke: var(--arte-acento);
+  stroke-width: 1.2;
   stroke-linejoin: round;
+  opacity: 0;
 }
-.arte__plumilla-raja { stroke: var(--color-bg); stroke-width: 1.4; stroke-linecap: round; }
-.arte__plumilla-ojo { fill: var(--color-bg); }
 
 /* La luz de tu cursor sobre el lienzo: un brillo suave y la rejilla encendida en
    el acento justo debajo, como la malla de puntos de la portada. main.js coloca
@@ -970,89 +957,130 @@ p { text-wrap: pretty; }
   transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px));
 }
 
-/* Entrada: la letra se diseña delante de ti. El lienzo cae girando y el halo se
-   enciende, las guías cruzan y aparece la pluma de Marc, que dibuja la «M»
-   punto a punto (0,8-2,5 s: eso lo lleva main.js, igual que el relleno que se
-   derrama desde el cierre, 2,5-3,2 s).
-   Al cerrar el trazado, un anillo marca el cierre, el trazo y sus puntos se
-   apagan, la pluma le pasa el relevo al cursor y la letra saca su fondo de
-   golpe, con rebote. Después la caja se dibuja, las asas saltan una tras otra,
-   sale la medida, el interruptor se enciende y el brillo cruza la letra.
-   Los tiempos de main.js y los de aquí van juntos: si cambias unos, cambia los
-   otros. Después el cursor se mece despacio.
+/* Entrada: la letra llega con peso.
+   0 s     El conjunto entra girando en el espacio y se endereza, el halo se
+           enciende y el lienzo cae girando.
+   0,45 s  La «M» cae desde cerca de ti, todavía plana…
+   0,83 s  …y golpea el lienzo: el lienzo se hunde un poco y rebota, el halo
+           da un latido y la letra saca su fondo de golpe, con rebote. El
+           fondo arranca muy a la derecha y barre hasta su sitio, como si el
+           objeto acabara de girar hacia ti (--giro).
+   1,25 s  La caja se dibuja, las asas saltan una tras otra, sale la medida
+           (main.js cuenta sus números) y el interruptor se enciende.
+   1,5 s   El cursor de Marc llega en curva desde abajo y a los 2,6 s hace
+           clic en la esquina: un anillo y el asa responde.
+   2,75 s  El brillo cruza la letra y, al salir, deja un destello en su pie.
+   Después el cursor se mece despacio. Los tiempos de main.js (la medida y
+   cuándo acaba el brillo) van con estos: si cambias unos, cambia los otros.
    main.js pone .arte--entra y .arte--pausa en cuanto carga: la entrada queda
    puesta pero parada en su primer fotograma (nada a la vista), y quita la
    pausa cuando la portada arranca y la composición está en pantalla. En el
    móvil, donde queda debajo del texto, así se ve al llegar a ella y no se
    pierde mientras lees. El estado base es la composición terminada: sin JS, o
-   con menos movimiento, se ve completa y quieta. */
+   con menos movimiento, se ve completa y quieta. Todas las animaciones dejan
+   la pieza en ese estado base al acabar. */
 .arte__hoja,
+.arte__marco2,
 .arte__asas rect,
 .arte__pop,
 .arte__bola,
-.arte__nodo,
-.arte__cierre { transform-box: fill-box; transform-origin: center; }
+.arte__solido,
+.arte__clic,
+.arte__destello { transform-box: fill-box; transform-origin: center; }
+/* El cursor gira sobre su punta, no sobre el centro del dibujo. */
+.arte__vuelo { transform-box: fill-box; transform-origin: 0 0; }
 
 /* Con !important porque cada `animation` de abajo la devolvería a «running». */
+.arte--pausa,
 .arte--pausa::before,
 .arte--pausa * { animation-play-state: paused !important; }
 
-.arte--entra::before { animation: arte-aparece 1600ms var(--ease-out) 100ms both; }
-.arte--entra .arte__hoja    { animation: arte-lienzo 1150ms var(--ease-emphasized-decel) 60ms both; }
-.arte--entra .arte__rejilla { animation: arte-aparece 900ms var(--ease-out) 650ms both; }
-.arte--entra .arte__marco2  { animation: arte-aparece 1000ms var(--ease-out) 500ms both; }
-.arte--entra .arte__guia    { animation: arte-guia 1000ms var(--ease-emphasized-decel) 350ms both; }
-.arte--entra .arte__pluma-cuerpo { animation: arte-pluma 2150ms linear 550ms both; }
-.arte--entra .arte__trazo   { animation: arte-se-va 500ms var(--ease-out) 2750ms both; }
-.arte--entra .arte__nodos   { animation: arte-se-va 450ms var(--ease-out) 2800ms both; }
-.arte--entra .arte__cierre  { animation: arte-cierre 750ms var(--ease-out) 2480ms both; }
-.arte--entra .arte__solido  { animation: arte-prof 1100ms var(--ease-spring) 2950ms both; }
-.arte--entra .arte__marco   { animation: arte-caja 900ms var(--ease-emphasized-decel) 2950ms both; }
+.hero__arte.arte--entra { animation: arte-gira 1500ms var(--ease-emphasized-decel) backwards; }
+.arte--entra::before     { animation: arte-halo 1500ms var(--ease-out) backwards; }
+.arte--entra .arte__hoja {
+  animation: arte-lienzo 1000ms var(--ease-emphasized-decel) 60ms backwards,
+             arte-golpe 560ms var(--ease-out) 830ms;
+}
+.arte--entra .arte__marco2  { animation: arte-copia 900ms var(--ease-emphasized-decel) 350ms backwards; }
+.arte--entra .arte__rejilla { animation: arte-aparece 700ms var(--ease-out) 450ms backwards; }
+.arte--entra .arte__guia    { animation: arte-guia 900ms var(--ease-emphasized-decel) 300ms backwards; }
+.arte--entra .arte__solido {
+  animation: arte-cae 720ms linear 450ms backwards,
+             arte-prof 1000ms var(--ease-spring) 830ms backwards,
+             arte-giro 1300ms var(--ease-emphasized-decel) 830ms backwards;
+}
+.arte--entra .arte__marco   { animation: arte-caja 650ms var(--ease-emphasized-decel) 1250ms backwards; }
 .arte--entra .arte__asas rect {
-  animation: arte-pop 500ms var(--ease-spring) calc(3250ms + var(--i, 0) * 60ms) both;
+  animation: arte-pop 450ms var(--ease-spring) calc(1450ms + var(--i, 0) * 45ms) backwards;
 }
-.arte--entra .arte__medida  { animation: arte-baja 700ms var(--ease-emphasized-decel) 3650ms both; }
-.arte--entra .arte__pop     { animation: arte-pop 800ms var(--ease-spring) 3450ms both; }
-.arte--entra .arte__bola    { animation: arte-bola 700ms var(--ease-emphasized-decel) 3950ms both; }
-.arte--entra .arte__pista   { animation: arte-pista 700ms var(--ease-out) 3950ms both; }
+.arte--entra .arte__asas .arte__asa-tocada {
+  animation: arte-pop 450ms var(--ease-spring) calc(1450ms + var(--i, 0) * 45ms) backwards,
+             arte-toque 420ms var(--ease-out) 2600ms;
+}
+.arte--entra .arte__medida  { animation: arte-baja 600ms var(--ease-emphasized-decel) 1750ms backwards; }
+.arte--entra .arte__pop     { animation: arte-pop 700ms var(--ease-spring) 1900ms backwards; }
+.arte--entra .arte__bola    { animation: arte-bola 650ms var(--ease-emphasized-decel) 2300ms backwards; }
+.arte--entra .arte__pista   { animation: arte-pista 650ms var(--ease-out) 2300ms backwards; }
+/* La curva sale de mover cada eje con su ritmo: en horizontal frena pronto y
+   en vertical tarde, así que llega describiendo un arco. */
 .arte--entra .arte__vuelo {
-  animation: arte-vuelo 950ms var(--ease-emphasized) 2620ms both,
-             arte-mece 3.8s ease-in-out 3.6s infinite alternate;
+  animation: arte-vuelo-x 1100ms cubic-bezier(0.15, 0.6, 0.25, 1) 1500ms backwards,
+             arte-vuelo-y 1100ms cubic-bezier(0.55, 0, 0.15, 1) 1500ms backwards,
+             arte-mece 3.8s ease-in-out 3000ms infinite alternate;
 }
-.arte--entra .arte__brillo  { animation: arte-brillo 1300ms var(--ease-out) 4250ms both; }
+.arte--entra .arte__clic     { animation: arte-clic 650ms var(--ease-out) 2600ms; }
+.arte--entra .arte__brillo   { animation: arte-brillo 1300ms var(--ease-out) 2750ms backwards; }
+.arte--entra .arte__destello { animation: arte-destello 900ms var(--ease-out) 3350ms; }
 /* Cada vez que el cursor entra en la composición, main.js pone .arte--brilla y
-   el brillo vuelve a cruzar la letra (con otro nombre de animación para que el
-   navegador la relance). */
-.arte--brilla .arte__brillo { animation: arte-brillo-2 1300ms var(--ease-out) both; }
+   el brillo vuelve a cruzar la letra, con su destello (con otro nombre de
+   animación para que el navegador la relance). */
+.arte--brilla .arte__brillo   { animation: arte-brillo-2 1300ms var(--ease-out) both; }
+.arte--brilla .arte__destello { animation: arte-destello-2 900ms var(--ease-out) 600ms; }
 
-@keyframes arte-lienzo  { from { opacity: 0; transform: translateY(36px) rotate(-14deg) scale(0.66); } to { opacity: 1; transform: none; } }
-@keyframes arte-aparece { from { opacity: 0; } }
-@keyframes arte-se-va   { from { opacity: 1; } to { opacity: 0; } }
-@keyframes arte-guia    { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
-/* La pluma sale con un saltito justo antes de empezar a dibujar (0,8 s), se
-   queda mientras dibuja y se va al cerrar el trazado (2,5 s). */
-@keyframes arte-pluma {
-  0%   { opacity: 0; transform: scale(0.3); animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
-  12%  { opacity: 1; transform: none; }
-  90%  { opacity: 1; transform: none; animation-timing-function: ease-in; }
-  100% { opacity: 0; transform: scale(0.6); }
+@keyframes arte-gira {
+  from { opacity: 0; transform: perspective(1200px) translateY(28px) rotateX(16deg) rotateY(-34deg) scale(0.88); }
+  30%  { opacity: 1; }
 }
-@keyframes arte-cierre  { from { opacity: 1; transform: scale(0.4); } to { opacity: 0; transform: scale(2.8); } }
+/* Se enciende, y al golpear la letra (el 55 % es el 0,83 s) da un latido. */
+@keyframes arte-halo {
+  0%   { opacity: 0; scale: 0.55; }
+  55%  { opacity: 0.85; scale: 1; }
+  62%  { opacity: 1; scale: 1.14; }
+  100% { opacity: 1; scale: 1; }
+}
+@keyframes arte-lienzo  { from { opacity: 0; transform: translateY(-46px) rotate(-16deg) scale(0.7); } }
+/* El lienzo acusa el golpe: se hunde un poco y rebota. Va en scale, aparte del
+   transform de su entrada, para que las dos cosas se sumen. */
+@keyframes arte-golpe {
+  30%  { scale: 0.965; }
+  70%  { scale: 1.012; }
+}
+@keyframes arte-copia   { from { opacity: 0; transform: rotate(-9deg) scale(0.9); } }
+@keyframes arte-aparece { from { opacity: 0; } }
+@keyframes arte-guia    { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
+/* Cae como algo con peso: acelera hasta el golpe (53 %), se aplasta un poco y
+   rebota hasta su sitio. */
+@keyframes arte-cae {
+  0%   { opacity: 0; transform: translateY(-40px) scale(1.4); animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45); }
+  53%  { opacity: 1; transform: scale(0.95); animation-timing-function: cubic-bezier(0.2, 0, 0, 1); }
+  78%  { transform: scale(1.025); animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1); }
+  100% { opacity: 1; transform: none; }
+}
 @keyframes arte-prof    { from { --prof: 0; } to { --prof: 1; } }
+@keyframes arte-giro    { from { --giro: 1; } to { --giro: 0; } }
 @keyframes arte-caja    { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
 @keyframes arte-pop     { 0% { opacity: 0; transform: scale(0); } 62% { opacity: 1; transform: scale(1.25); } 100% { opacity: 1; transform: none; } }
-@keyframes arte-baja    { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
-@keyframes arte-bola    { from { transform: translateX(-28px); } to { transform: none; } }
+@keyframes arte-toque   { 40% { transform: scale(1.7); fill: var(--arte-acento); } }
+@keyframes arte-baja    { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes arte-bola    { from { transform: translateX(-28px); } }
 @keyframes arte-pista   { from { fill: color-mix(in oklab, var(--color-text) 30%, var(--color-bg)); } }
-/* El cursor aparece donde la pluma ha cerrado la letra (la esquina de arriba a
-   la izquierda de la selección) y se desliza por el borde de arriba hasta la
-   otra esquina, que es su sitio. */
-@keyframes arte-vuelo {
-  from { opacity: 0; transform: translate(-486px, -10px); }
-  10%  { opacity: 1; }
-  to   { opacity: 1; transform: none; }
+@keyframes arte-vuelo-x { from { translate: 190px 0; } }
+@keyframes arte-vuelo-y {
+  from { opacity: 0; transform: translateY(170px) rotate(-14deg); }
+  25%  { opacity: 1; }
 }
-@keyframes arte-mece    { from { transform: translate(0, -3px); } to { transform: translate(4px, 4px); } }
+@keyframes arte-mece    { from { transform: none; } to { transform: translate(4px, -5px); } }
+@keyframes arte-clic    { from { opacity: 0.9; transform: scale(0.2); } to { opacity: 0; transform: scale(1.9); } }
 @keyframes arte-brillo {
   0%   { opacity: 0; transform: translateX(-180px) skewX(-18deg); }
   15%  { opacity: 1; }
@@ -1064,6 +1092,16 @@ p { text-wrap: pretty; }
   15%  { opacity: 1; }
   85%  { opacity: 1; }
   100% { opacity: 0; transform: translateX(780px) skewX(-18deg); }
+}
+@keyframes arte-destello {
+  0%   { opacity: 0; transform: scale(0) rotate(-45deg); }
+  35%  { opacity: 1; transform: scale(1.25) rotate(0deg); }
+  100% { opacity: 0; transform: scale(0.4) rotate(30deg); }
+}
+@keyframes arte-destello-2 {
+  0%   { opacity: 0; transform: scale(0) rotate(-45deg); }
+  35%  { opacity: 1; transform: scale(1.25) rotate(0deg); }
+  100% { opacity: 0; transform: scale(0.4) rotate(30deg); }
 }
 
 /* Escritorio: texto a la izquierda y arte a la derecha, y las cifras debajo a
@@ -1090,6 +1128,7 @@ p { text-wrap: pretty; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero__arte.arte--entra,
   .arte--entra::before,
   .arte--entra .arte__hoja,
   .arte--entra .arte__rejilla,
@@ -1098,17 +1137,17 @@ p { text-wrap: pretty; }
   .arte--entra .arte__solido,
   .arte--entra .arte__marco,
   .arte--entra .arte__asas rect,
+  .arte--entra .arte__asas .arte__asa-tocada,
   .arte--entra .arte__medida,
   .arte--entra .arte__pop,
   .arte--entra .arte__bola,
   .arte--entra .arte__pista,
   .arte--entra .arte__vuelo,
+  .arte--entra .arte__clic,
   .arte--entra .arte__brillo,
-  .arte--entra .arte__pluma-cuerpo,
-  .arte--entra .arte__trazo,
-  .arte--entra .arte__nodos,
-  .arte--entra .arte__cierre,
-  .arte--brilla .arte__brillo { animation: none; }
+  .arte--entra .arte__destello,
+  .arte--brilla .arte__brillo,
+  .arte--brilla .arte__destello { animation: none; }
   .arte,
   .arte__capa,
   .arte__sigue,
