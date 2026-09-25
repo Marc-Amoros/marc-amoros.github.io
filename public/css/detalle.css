@@ -1235,7 +1235,15 @@
   border-radius: 2px;
   background: var(--color-accent);
   margin-block-end: var(--spacing-s);
+  transform-origin: left center;
 }
+/* Al llegar a un apartado, su filete se dibuja de izquierda a derecha y
+   después el titular sube palabra a palabra (main.js lo reparte), igual que
+   los capítulos de las fichas. Sin JS, el filete ya está dibujado. */
+.post__cuerpo h2.rise.is-in::before {
+  animation: filete-entra var(--dur-entrada) var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
+}
+@keyframes filete-entra { from { transform: scaleX(0); } }
 /* Los pasos dentro de cada apartado: mismo peso que un titular, un escalón
    por debajo. No entran en el menú lateral —ese guarda los apartados— pero
    ordenan la lectura larga. */

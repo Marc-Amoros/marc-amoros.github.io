@@ -197,6 +197,23 @@
      titular palabra a palabra y lo demás escalonado. Aquí solo se marca qué
      pieza es cada cosa y cuándo le toca (--d); cómo se mueve lo dice el CSS
      (sección 11 de styles.css). */
+  /* En los artículos, el texto entra a medida que se lee, como en las fichas:
+     cada pieza del cuerpo (párrafo, lista, cita, figura…) se marca como .rise
+     y aparece al llegar a ella, y los titulares de apartado entran palabra a
+     palabra con su filete dibujándose (ver coreografiar). Lo que ya está a la
+     vista al abrir la página se queda quieto: aparecería, se ocultaría y
+     volvería a aparecer, y el primer párrafo es lo primero que se lee. Sin JS
+     o con menos movimiento no se marca nada y todo está a la vista. */
+  var cuerpoArticulo = document.querySelector('.post__cuerpo');
+  if (cuerpoArticulo && !reduceMotion && 'IntersectionObserver' in window) {
+    var altoVentana = window.innerHeight;
+    Array.prototype.forEach.call(cuerpoArticulo.children, function (el) {
+      if (el.classList.contains('rise')) return;
+      if (el.getBoundingClientRect().top < altoVentana) return;
+      el.classList.add('rise');
+    });
+  }
+
   var revealables = document.querySelectorAll('.rise');
 
   var PASO_PALABRA = 38;  // ms entre palabra y palabra del titular
@@ -366,6 +383,10 @@
     else if (el.matches('.contact') && el.querySelector('.contact__inner')) largo = revelarCabecera(el.querySelector('.contact__inner'));
     else if (el.matches('.bloque')) largo = revelarCapitulo(el);
     else if (el.matches('.articles, .about__body')) largo = escalonar(hijos(el), 0);
+    /* Artículos: el titular de un apartado, palabra a palabra después de su
+       filete (que dibuja detalle.css); una lista, elemento a elemento. */
+    else if (el.matches('.post__cuerpo > h2')) largo = partirEnPalabras(el, 160);
+    else if (el.matches('.post__cuerpo > ul, .post__cuerpo > ol')) largo = escalonar(hijos(el), 0);
     else if (el.matches('.carrusel') && el.querySelector('.carrusel__pista')) largo = escalonar(hijos(el.querySelector('.carrusel__pista')), 0);
     if (largo < 0) return;
     el.classList.add('rise--grupo');
