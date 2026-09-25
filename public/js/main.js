@@ -1332,9 +1332,10 @@
 /* ============================================================
    La entrada del arte de la portada
    ------------------------------------------------------------
-   La coreografía la hace styles.css (el lienzo cae girando, la «M» sube y
-   saca su fondo, llega la selección y el cursor de Marc hace clic). Aquí
-   solo va lo que el CSS no puede hacer solo:
+   La coreografía la hace styles.css (el lienzo cae girando, se traza la
+   retícula, la «M» se dibuja, se rellena y gana volumen, llega la selección y
+   el cursor de Marc hace clic). Aquí solo va lo que el CSS no puede hacer
+   solo:
    - Decidir cuándo empieza: cuando la portada arranca su entrada (.overture)
      y la composición está en pantalla. Hasta entonces queda en pausa, sin
      nada a la vista; en el móvil, donde va debajo del texto, así se ve al
@@ -1355,10 +1356,10 @@
   var etiqueta = dibujo.querySelector('.arte__medida text');
 
   /* Los tiempos, en ms desde que arranca la entrada: van con los de styles.css. */
-  var MEDIDA_EMPIEZA = 3000;   // la etiqueta sale a los 2,95 s
+  var MEDIDA_EMPIEZA = 3950;   // la etiqueta sale a los 3,9 s
   var MEDIDA_DURA = 950;
   /* Cuándo acaba el brillo de la entrada: hasta entonces el cursor no lo relanza. */
-  var FIN_BRILLO = 5550;
+  var FIN_BRILLO = 6500;
 
   var medidaFinal = etiqueta ? etiqueta.textContent : '';
   var cifras = medidaFinal.match(/(\d+)\s*×\s*(\d+)/);

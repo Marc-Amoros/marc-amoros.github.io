@@ -881,8 +881,16 @@ p { text-wrap: pretty; }
 .arte__pista { fill: var(--arte-acento); }
 .arte__bola { fill: #fff; }
 
-/* Lo que solo se ve en la entrada: el anillo del clic de Marc sobre el asa y
-   el destello que deja el brillo al salir de la letra. En reposo, apagados. */
+/* Lo que solo se ve en la entrada: el contorno con el que se dibuja la letra,
+   del color de su tinta; el anillo del clic de Marc sobre el asa; y el destello
+   que deja el brillo al salir de la letra. En reposo, apagados. */
+.arte__contorno {
+  fill: none;
+  stroke: var(--arte-tinta);
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+  opacity: 0;
+}
 .arte__clic {
   fill: none;
   stroke: var(--arte-acento);
@@ -955,16 +963,17 @@ p { text-wrap: pretty; }
             copia de puntos detrás.
    0,28 s   Se trazan las guías y la retícula, a regla, desde la esquina de la
             luz. La retícula está entera hacia 1,2 s…
-   1,2 s    …y solo entonces sube la «M», despacio, sin brusquedad. Mientras
-            termina de posarse (1,9 s) va ganando volumen poco a poco, sin
-            rebote: se lee como un solo gesto, la letra que se levanta del
-            lienzo.
-   2,35 s   La caja de selección se dibuja y las asas saltan una tras otra.
-   2,95 s   Sale la medida (main.js cuenta sus números) y el interruptor se
+   1,2 s    …y solo entonces se dibuja la «M»: un trazo de tinta recorre su
+            contorno de una vez, desde la esquina de arriba a la izquierda.
+   2,55 s   Al cerrarse, la letra se rellena y el trazo se funde con el relleno.
+   2,9 s    La letra va ganando volumen poco a poco, sin rebote: se levanta
+            del lienzo.
+   3,3 s    La caja de selección se dibuja y las asas saltan una tras otra.
+   3,9 s    Sale la medida (main.js cuenta sus números) y el interruptor se
             enciende.
-   3,05 s   El cursor de Marc llega describiendo una curva suave y, al posarse
-            en la esquina (4,1 s), hace clic: un anillo y el asa responde.
-   4,2 s    El brillo cruza la letra y deja un destello en su pie.
+   4 s      El cursor de Marc llega describiendo una curva suave y, al posarse
+            en la esquina (5,05 s), hace clic: un anillo y el asa responde.
+   5,15 s   El brillo cruza la letra y deja un destello en su pie.
    Después el cursor se mece despacio. Los tiempos de main.js (la medida y
    cuándo acaba el brillo) van con estos: si cambias unos, cambia los otros.
    main.js pone .arte--entra y .arte--pausa en cuanto carga: la entrada queda
@@ -1001,31 +1010,32 @@ p { text-wrap: pretty; }
 }
 .arte--entra .arte__solido {
   /* Curva suave de entrada y de salida, nada de arranque en seco ni de rebote. */
-  animation: arte-sube 1100ms cubic-bezier(0.4, 0, 0.2, 1) 1200ms backwards,
-             arte-prof 1100ms cubic-bezier(0.4, 0, 0.2, 1) 1900ms backwards;
+  animation: arte-rellena 700ms cubic-bezier(0.4, 0, 0.2, 1) 2550ms backwards,
+             arte-prof 1000ms cubic-bezier(0.4, 0, 0.2, 1) 2900ms backwards;
 }
-.arte--entra .arte__marco   { animation: arte-caja 700ms var(--ease-emphasized-decel) 2350ms backwards; }
+.arte--entra .arte__contorno { animation: arte-dibuja 2200ms 1200ms backwards; }
+.arte--entra .arte__marco   { animation: arte-caja 700ms var(--ease-emphasized-decel) 3300ms backwards; }
 .arte--entra .arte__asas rect {
-  animation: arte-pop 450ms var(--ease-spring) calc(2600ms + var(--i, 0) * 50ms) backwards;
+  animation: arte-pop 450ms var(--ease-spring) calc(3550ms + var(--i, 0) * 50ms) backwards;
 }
 .arte--entra .arte__asas .arte__asa-tocada {
-  animation: arte-pop 450ms var(--ease-spring) calc(2600ms + var(--i, 0) * 50ms) backwards,
-             arte-toque 420ms var(--ease-out) 4100ms;
+  animation: arte-pop 450ms var(--ease-spring) calc(3550ms + var(--i, 0) * 50ms) backwards,
+             arte-toque 420ms var(--ease-out) 5050ms;
 }
-.arte--entra .arte__medida  { animation: arte-baja 600ms var(--ease-emphasized-decel) 2950ms backwards; }
-.arte--entra .arte__pop     { animation: arte-pop 650ms var(--ease-spring) 3100ms backwards; }
-.arte--entra .arte__bola    { animation: arte-bola 600ms var(--ease-emphasized-decel) 3400ms backwards; }
-.arte--entra .arte__pista   { animation: arte-pista 600ms var(--ease-out) 3400ms backwards; }
+.arte--entra .arte__medida  { animation: arte-baja 600ms var(--ease-emphasized-decel) 3900ms backwards; }
+.arte--entra .arte__pop     { animation: arte-pop 650ms var(--ease-spring) 4050ms backwards; }
+.arte--entra .arte__bola    { animation: arte-bola 600ms var(--ease-emphasized-decel) 4350ms backwards; }
+.arte--entra .arte__pista   { animation: arte-pista 600ms var(--ease-out) 4350ms backwards; }
 /* La curva sale de mover cada eje con su ritmo: en horizontal frena pronto y
    en vertical tarde, así que llega describiendo un arco suave. */
 .arte--entra .arte__vuelo {
-  animation: arte-vuelo-x 1050ms cubic-bezier(0.15, 0.6, 0.25, 1) 3050ms backwards,
-             arte-vuelo-y 1050ms cubic-bezier(0.45, 0, 0.15, 1) 3050ms backwards,
-             arte-mece 3.8s ease-in-out 4300ms infinite alternate;
+  animation: arte-vuelo-x 1050ms cubic-bezier(0.15, 0.6, 0.25, 1) 4000ms backwards,
+             arte-vuelo-y 1050ms cubic-bezier(0.45, 0, 0.15, 1) 4000ms backwards,
+             arte-mece 3.8s ease-in-out 5250ms infinite alternate;
 }
-.arte--entra .arte__clic     { animation: arte-clic 650ms var(--ease-out) 4100ms; }
-.arte--entra .arte__brillo   { animation: arte-brillo 1300ms var(--ease-out) 4200ms backwards; }
-.arte--entra .arte__destello { animation: arte-destello 900ms var(--ease-out) 4780ms; }
+.arte--entra .arte__clic     { animation: arte-clic 650ms var(--ease-out) 5050ms; }
+.arte--entra .arte__brillo   { animation: arte-brillo 1300ms var(--ease-out) 5150ms backwards; }
+.arte--entra .arte__destello { animation: arte-destello 900ms var(--ease-out) 5730ms; }
 /* Cada vez que el cursor entra en la composición, main.js pone .arte--brilla y
    el brillo vuelve a cruzar la letra, con su destello (con otro nombre de
    animación para que el navegador la relance). */
@@ -1041,11 +1051,15 @@ p { text-wrap: pretty; }
   50%  { stroke-dasharray: 1; stroke-dashoffset: 0; }
   100% { stroke-dasharray: 1; stroke-dashoffset: 0; }
 }
-/* Poco recorrido y la opacidad llega antes que la posición: aparece y se posa. */
-@keyframes arte-sube {
-  from { opacity: 0; transform: translateY(22px); }
-  55%  { opacity: 1; }
+/* El trazo recorre el contorno de una vez (hasta el 68 %: 1,5 s), espera a
+   que llegue el relleno y se funde con él. */
+@keyframes arte-dibuja {
+  0%   { opacity: 1; stroke-dasharray: 1; stroke-dashoffset: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1); }
+  68%  { opacity: 1; stroke-dasharray: 1; stroke-dashoffset: 0; animation-timing-function: linear; }
+  73%  { opacity: 1; stroke-dasharray: 1; stroke-dashoffset: 0; animation-timing-function: ease-out; }
+  100% { opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 0; }
 }
+@keyframes arte-rellena { from { opacity: 0; } }
 @keyframes arte-prof    { from { --prof: 0; } to { --prof: 1; } }
 @keyframes arte-caja    { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
 @keyframes arte-pop     { 0% { opacity: 0; transform: scale(0); } 62% { opacity: 1; transform: scale(1.2); } 100% { opacity: 1; transform: none; } }
@@ -1113,6 +1127,7 @@ p { text-wrap: pretty; }
   .arte--entra .arte__marco2,
   .arte--entra .arte__guia,
   .arte--entra .arte__solido,
+  .arte--entra .arte__contorno,
   .arte--entra .arte__marco,
   .arte--entra .arte__asas rect,
   .arte--entra .arte__asas .arte__asa-tocada,

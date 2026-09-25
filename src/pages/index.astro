@@ -186,8 +186,10 @@ const rejilla = [
 
           <!-- La «M» como un sólido: su sombra, el fondo (16 capas que se desplazan
                un poco con el cursor, y eso es lo que da la profundidad), la cara y
-               un brillo que la cruza. Debajo, la selección con sus asas y su medida,
-               y el destello que deja el brillo al salir de la letra. -->
+               un brillo que la cruza. Encima, su contorno: el trazo con el que se
+               dibuja en la entrada (en reposo no se ve). Debajo, la selección con
+               sus asas y su medida, y el destello que deja el brillo al salir de la
+               letra. -->
           <g class="arte__capa arte__capa--m">
             <g transform="translate(38.2 122.9) scale(0.90909)">
               <g class="arte__solido">
@@ -198,6 +200,7 @@ const rejilla = [
                   <rect class="arte__brillo" x="0" y="0" width="110" height="470"/>
                 </g>
               </g>
+              <path class="arte__contorno" d={letraM} pathLength="1"/>
             </g>
             <g class="arte__seleccion">
               <rect class="arte__marco" pathLength="100" x="80" y="150.2" width="480" height="363.6"/>
