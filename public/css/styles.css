@@ -882,11 +882,11 @@ p { text-wrap: pretty; }
 .arte__bola { fill: #fff; }
 
 /* Lo que solo se ve en la entrada: el contorno con el que se dibuja la letra,
-   del color de su tinta; el anillo del clic de Marc sobre el asa; y el destello
+   en el color de acento, como el boceto de un vector; el anillo del clic de Marc sobre el asa; y el destello
    que deja el brillo al salir de la letra. En reposo, apagados. */
 .arte__contorno {
   fill: none;
-  stroke: var(--arte-tinta);
+  stroke: var(--arte-acento);
   stroke-width: 2.6;
   stroke-linejoin: round;
   opacity: 0;
@@ -963,8 +963,9 @@ p { text-wrap: pretty; }
             copia de puntos detrás.
    0,28 s   Se trazan las guías y la retícula, a regla, desde la esquina de la
             luz. La retícula está entera hacia 1,2 s…
-   1,2 s    …y solo entonces se dibuja la «M»: un trazo de tinta recorre su
-            contorno de una vez, desde la esquina de arriba a la izquierda.
+   1,2 s    …y solo entonces se dibuja la «M»: un trazo del color de acento
+            recorre su contorno de una vez, desde la esquina de arriba a la
+            izquierda.
    2,55 s   Al cerrarse, la letra se rellena y el trazo se funde con el relleno.
    2,9 s    La letra va ganando volumen poco a poco, sin rebote: se levanta
             del lienzo.
