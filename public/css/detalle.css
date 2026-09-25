@@ -589,9 +589,12 @@
   letter-spacing: -0.05em;
   color: var(--color-accent);
   opacity: 0;
-  transform: translateY(0.18em);
-  transition: opacity var(--dur-slow) var(--ease-out),
-              transform var(--dur-slow) var(--ease-out);
+  /* Sube desde más abajo y algo más pequeño, y tarda más que el texto: al ser
+     lo más grande y lo más tenue, se lee como un fondo que llega despacio. */
+  transform: translateY(0.4em) scale(0.9);
+  transform-origin: right bottom;
+  transition: opacity 1200ms var(--ease-out),
+              transform 1400ms var(--ease-emphasized-decel);
   pointer-events: none;
   user-select: none;
 }

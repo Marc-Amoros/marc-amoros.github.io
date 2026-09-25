@@ -191,12 +191,135 @@
     window.matchMedia('(min-width: 48rem)').addEventListener('change', closePanel);
   }
 
-  /* ---------- Revelado progresivo al entrar en pantalla ---------- */
+  /* ---------- Revelado progresivo al entrar en pantalla ----------
+     Cada .rise aparece al llegar a él (.is-in). Antes, a los grupos se les
+     reparten las piezas para que no entren de un bloque: la etiqueta, el
+     titular palabra a palabra y lo demás escalonado. Aquí solo se marca qué
+     pieza es cada cosa y cuándo le toca (--d); cómo se mueve lo dice el CSS
+     (sección 11 de styles.css). */
   var revealables = document.querySelectorAll('.rise');
+
+  var PASO_PALABRA = 38;  // ms entre palabra y palabra del titular
+  var PASO_PIEZA = 90;    // ms entre pieza y pieza de un grupo
+  var MAX_PIEZAS = 6;     // de la sexta en adelante, todas a la vez: nadie espera tanto
+
+  function retrasar(el, ms) { el.style.setProperty('--d', Math.round(ms) + 'ms'); }
+
+  function hijos(el) { return el ? Array.prototype.slice.call(el.children) : []; }
+
+  /* Las piezas de un grupo, una detrás de otra a partir de «desde». Devuelve
+     cuándo empieza la última. */
+  function escalonar(piezas, desde) {
+    var t = desde;
+    piezas.forEach(function (pieza, i) {
+      t = desde + Math.min(i, MAX_PIEZAS) * PASO_PIEZA;
+      pieza.classList.add('escalon');
+      retrasar(pieza, t);
+    });
+    return t;
+  }
+
+  /* Parte el titular en palabras para que suban una a una. Cada palabra va en
+     un <span> en bloque en línea (el texto se sigue partiendo en renglones por
+     los espacios, que se quedan fuera). Lo que ya viene envuelto en otra
+     etiqueta —«puente», con su trazo— entra entero, como una palabra más; si
+     lleva varias palabras, se parte por dentro. Para los lectores de pantalla
+     el titular se sigue leyendo de un tirón: el texto completo va en su
+     aria-label y los trozos se ocultan. Devuelve cuándo acaba de empezar. */
+  function partirEnPalabras(titulo, desde) {
+    var n = 0;
+    var texto = titulo.textContent.replace(/\s+/g, ' ').trim();
+
+    function palabra(contenido) {
+      var span = document.createElement('span');
+      span.className = 'palabra';
+      span.setAttribute('aria-hidden', 'true');
+      retrasar(span, desde + n * PASO_PALABRA);
+      n++;
+      if (typeof contenido === 'string') span.textContent = contenido;
+      else span.appendChild(contenido);
+      return span;
+    }
+
+    function partir(nodo) {
+      Array.prototype.slice.call(nodo.childNodes).forEach(function (hijo) {
+        if (hijo.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          hijo.textContent.split(/(\s+)/).forEach(function (trozo) {
+            if (!trozo) return;
+            frag.appendChild(/^\s+$/.test(trozo) ? document.createTextNode(trozo) : palabra(trozo));
+          });
+          nodo.replaceChild(frag, hijo);
+        } else if (hijo.nodeType === 1 && hijo.tagName !== 'BR') {
+          if (/\S\s+\S/.test(hijo.textContent)) {
+            partir(hijo);
+          } else {
+            var sitio = document.createComment('');
+            nodo.replaceChild(sitio, hijo);
+            nodo.replaceChild(palabra(hijo), sitio);
+          }
+        }
+      });
+    }
+
+    partir(titulo);
+    titulo.setAttribute('aria-label', texto);
+    return desde + n * PASO_PALABRA;
+  }
+
+  /* Una cabecera: la etiqueta se escribe, el titular sube palabra a palabra y
+     lo demás (la entradilla, el retrato…) llega detrás. */
+  function revelarCabecera(el) {
+    var t = 0;
+    var etiqueta = el.querySelector(':scope > .eyebrow');
+    var titulo = el.querySelector(':scope > h2');
+    if (etiqueta) {
+      var texto = document.createElement('span');
+      texto.className = 'eyebrow__txt';
+      while (etiqueta.firstChild) texto.appendChild(etiqueta.firstChild);
+      etiqueta.appendChild(texto);
+      retrasar(texto, 0);
+      t = 140;
+    }
+    if (titulo) t = partirEnPalabras(titulo, t) + 120;
+    escalonar(hijos(el).filter(function (h) { return h !== etiqueta && h !== titulo; }), t);
+  }
+
+  /* Un capítulo de una ficha: su número, el titular por palabras y luego los
+     párrafos, los datos de la ficha y las cifras. Las láminas no: son .rise
+     por su cuenta y se destapan al llegar a cada una. */
+  function revelarCapitulo(el) {
+    var t = 0;
+    var numero = el.querySelector(':scope > .bloque__head > .bloque__n');
+    var titulo = el.querySelector(':scope > .bloque__head > .bloque__t');
+    if (numero) { numero.classList.add('escalon'); retrasar(numero, 0); t = 90; }
+    if (titulo) t = partirEnPalabras(titulo, t) + 120;
+    var piezas = [];
+    ['.bloque__texto', '.ficha', '.cifras'].forEach(function (sel) {
+      piezas = piezas.concat(hijos(el.querySelector(':scope > ' + sel)));
+    });
+    escalonar(piezas, t);
+  }
+
+  function coreografiar(el) {
+    var hecho = true;
+    if (el.matches('.section-head')) revelarCabecera(el);
+    else if (el.matches('.contact') && el.querySelector('.contact__inner')) revelarCabecera(el.querySelector('.contact__inner'));
+    else if (el.matches('.bloque')) revelarCapitulo(el);
+    else if (el.matches('.articles, .about__body')) escalonar(hijos(el), 0);
+    else if (el.matches('.carrusel') && el.querySelector('.carrusel__pista')) escalonar(hijos(el.querySelector('.carrusel__pista')), 60);
+    else hecho = false;
+    if (hecho) el.classList.add('rise--grupo');
+  }
 
   if (reduceMotion || !('IntersectionObserver' in window)) {
     revealables.forEach(function (el) { el.classList.add('is-in'); });
   } else {
+    /* Si algo del reparto falla, el bloque entra entero como siempre: un error
+       aquí no puede dejar el contenido oculto. */
+    revealables.forEach(function (el) {
+      try { coreografiar(el); } catch (e) { el.classList.remove('rise--grupo'); }
+    });
     var revealObserver = new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -598,11 +721,13 @@
 
     if (trazo) {
       trazo.style.setProperty('--trazo', '0');
+      /* Con el titular entrando palabra a palabra, el trazo espera a que
+         «puente» haya llegado a su sitio. */
       motion.inView(titulo, function () {
         if (trazado || !titulo.offsetParent) return;
         trazado = true;
         motion.animate(trazo, { '--trazo': [0, 1] },
-          { duration: 0.65, delay: 0.25, ease: [0.2, 0, 0, 1] });
+          { duration: 0.65, delay: 0.75, ease: [0.2, 0, 0, 1] });
       }, { amount: 0.6 });
     }
     pasos.forEach(function (paso) {

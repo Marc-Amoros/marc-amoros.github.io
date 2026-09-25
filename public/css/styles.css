@@ -2339,15 +2339,61 @@ p { text-wrap: pretty; }
 
 /* ------------------------------------------------------------
    11. Movimiento: entrada del hero y revelado al hacer scroll
-   ------------------------------------------------------------ */
-.rise {
-  opacity: 0;
-  transform: translateY(1.5rem);
-  transition: opacity var(--dur-slow) var(--ease-out),
-              transform var(--dur-slow) var(--ease-out);
-  transition-delay: var(--delay, 0ms);
+   ------------------------------------------------------------
+   Cada bloque .rise está oculto hasta que main.js le pone .is-in al llegar a
+   él. Lo que pasa entonces depende de qué es:
+   - Un bloque suelto sube y aparece.
+   - Un grupo (.rise--grupo: cabeceras de sección, tarjetas, artículos, los
+     bloques de las fichas…) no se mueve entero: aparece y sus piezas llegan
+     una detrás de otra. La etiqueta se escribe de izquierda a derecha, el
+     titular sube palabra a palabra enfocándose y luego lo demás, escalonado.
+     main.js marca las piezas (.escalon, .palabra, .eyebrow__txt) y apunta en
+     --d cuándo le toca a cada una.
+   - Una lámina o una figura se destapa de arriba abajo mientras la imagen se
+     asienta, como una hoja que se desenrolla.
+   Todo son animaciones que, al acabar, dejan la pieza tal cual es: nada se
+   queda con un translate o un recorte puesto (las láminas con un prototipo a
+   pantalla completa lo necesitan así). Y usan translate/scale sueltos, no
+   transform, para no pisar la inclinación de las tarjetas. */
+.rise { opacity: 0; }
+.rise.is-in {
+  opacity: 1;
+  animation: rise-entra 900ms var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
 }
-.rise.is-in { opacity: 1; transform: none; }
+.rise--grupo.is-in { animation-name: rise-fundido; animation-duration: 500ms; }
+
+.palabra,
+.eyebrow__txt { display: inline-block; }
+.is-in .escalon {
+  animation: rise-entra 900ms var(--ease-emphasized-decel)
+             calc(var(--delay, 0ms) + var(--d, 0ms)) backwards;
+}
+.is-in .palabra {
+  animation: palabra-entra 850ms var(--ease-emphasized-decel)
+             calc(var(--delay, 0ms) + var(--d, 0ms)) backwards;
+}
+.is-in .eyebrow__txt {
+  animation: eyebrow-entra 750ms var(--ease-emphasized)
+             calc(var(--delay, 0ms) + var(--d, 0ms)) backwards;
+}
+
+figure.rise.is-in {
+  animation: lamina-destapa 1100ms var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
+}
+figure.rise.is-in img {
+  animation: lamina-asienta 1500ms var(--ease-emphasized-decel) var(--delay, 0ms) backwards;
+}
+
+@keyframes rise-entra    { from { opacity: 0; translate: 0 2rem; } }
+@keyframes rise-fundido  { from { opacity: 0; } }
+@keyframes palabra-entra { from { opacity: 0; translate: 0 0.5em; filter: blur(8px); } }
+@keyframes eyebrow-entra { from { clip-path: inset(0 100% 0 0); translate: -0.6em 0; } to { clip-path: inset(0 -0.2em 0 0); } }
+@keyframes lamina-destapa {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); translate: 0 1.5rem; }
+  25%  { opacity: 1; }
+  to   { clip-path: inset(0); }
+}
+@keyframes lamina-asienta { from { scale: 1.08; } }
 
 /* Sin JS todo se ve igualmente */
 .no-js .rise { opacity: 1; transform: none; }
@@ -2360,6 +2406,9 @@ p { text-wrap: pretty; }
     scroll-behavior: auto !important;
   }
   .rise { opacity: 1; transform: none; }
+  .rise.is-in,
+  figure.rise.is-in,
+  figure.rise.is-in img { animation: none; }
   .btn:hover, .social:hover, .work:hover, .article:hover, .theme-toggle:hover { transform: none; }
 }
 
