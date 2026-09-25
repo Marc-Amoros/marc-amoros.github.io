@@ -809,8 +809,7 @@ p { text-wrap: pretty; }
 .arte__lienzo { fill: url(#arte-lienzo-grad); }
 .arte__gloss { fill: url(#arte-gloss); pointer-events: none; }
 .arte__borde { fill: none; stroke: var(--portada-arte-borde); stroke-width: 1.2; }
-.arte__rejilla { fill: url(#arte-rejilla); }
-#arte-rejilla path {
+.arte__rejilla line {
   stroke: color-mix(in oklab, var(--arte-acento) 22%, transparent);
   stroke-width: 1;
 }
@@ -1002,7 +1001,12 @@ p { text-wrap: pretty; }
              arte-golpe 560ms var(--ease-out) 830ms;
 }
 .arte--entra .arte__marco2  { animation: arte-copia 900ms var(--ease-emphasized-decel) 350ms backwards; }
-.arte--entra .arte__rejilla { animation: arte-aparece 700ms var(--ease-out) 450ms backwards; }
+/* La rejilla se traza a regla, línea a línea, en diagonal desde la esquina de
+   la luz (--g, que viene del HTML): las verticales bajan, las horizontales
+   corren a la derecha, y cada una nace con más tinta y se asienta en su tono. */
+.arte--entra .arte__rejilla line {
+  animation: arte-regla 1200ms var(--ease-emphasized-decel) calc(380ms + var(--g, 0ms)) backwards;
+}
 .arte--entra .arte__guia    { animation: arte-guia 900ms var(--ease-emphasized-decel) 300ms backwards; }
 .arte--entra .arte__solido {
   animation: arte-cae 720ms linear 450ms backwards,
@@ -1056,7 +1060,11 @@ p { text-wrap: pretty; }
   70%  { scale: 1.012; }
 }
 @keyframes arte-copia   { from { opacity: 0; transform: rotate(-9deg) scale(0.9); } }
-@keyframes arte-aparece { from { opacity: 0; } }
+@keyframes arte-regla {
+  0%   { stroke-dasharray: 1; stroke-dashoffset: 1; stroke: color-mix(in oklab, var(--arte-acento) 60%, transparent); }
+  50%  { stroke-dasharray: 1; stroke-dashoffset: 0; }
+  100% { stroke-dasharray: 1; stroke-dashoffset: 0; }
+}
 @keyframes arte-guia    { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
 /* Cae como algo con peso: acelera hasta el golpe (53 %), se aplasta un poco y
    rebota hasta su sitio. */
@@ -1131,7 +1139,7 @@ p { text-wrap: pretty; }
   .hero__arte.arte--entra,
   .arte--entra::before,
   .arte--entra .arte__hoja,
-  .arte--entra .arte__rejilla,
+  .arte--entra .arte__rejilla line,
   .arte--entra .arte__marco2,
   .arte--entra .arte__guia,
   .arte--entra .arte__solido,

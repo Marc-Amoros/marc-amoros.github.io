@@ -15,6 +15,19 @@ const letraM = 'M46 30H194L306.1 292.2L426 30H574V38Q574 46 566 46H534Q520 46 52
 /* Las 16 capas del fondo, de la más lejana (k = 1) a la más cercana a la cara. */
 const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
 
+/* La rejilla del lienzo, línea a línea y cada 44 unidades (las mismas que el
+   patrón de la luz), para que la entrada pueda trazarlas una a una. El lienzo
+   ocupa de x 60 a 580 y de y 100 a 570. «g» es cuándo empieza cada línea: cuanto
+   más lejos de la esquina de arriba a la izquierda, más tarde, así la rejilla se
+   traza en diagonal, desde donde entra la luz. */
+const PASO_REJILLA = 45;
+const rejilla = [
+  ...Array.from({ length: 12 }, (_, i) => 88 + 44 * i)
+    .map((x) => ({ x1: x, y1: 100, x2: x, y2: 570, g: Math.round((x - 60) / 44 * PASO_REJILLA) })),
+  ...Array.from({ length: 10 }, (_, i) => 132 + 44 * i)
+    .map((y) => ({ x1: 60, y1: y, x2: 580, y2: y, g: Math.round((y - 100) / 44 * PASO_REJILLA) })),
+];
+
 ---
 
 <Base
@@ -74,9 +87,6 @@ const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
       <div class="hero__arte" data-arte>
         <svg class="arte" viewBox="0 0 640 620" aria-hidden="true" focusable="false">
           <defs>
-            <pattern id="arte-rejilla" width="44" height="44" patternUnits="userSpaceOnUse">
-              <path d="M44 0H0V44" fill="none"/>
-            </pattern>
             <clipPath id="arte-recorte"><rect x="60" y="100" width="520" height="470" rx="46"/></clipPath>
             <path id="arte-m" d={letraM}/>
             <clipPath id="arte-clip-m"><use href="#arte-m"/></clipPath>
@@ -144,8 +154,8 @@ const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
             <g transform="rotate(-4 320 335)">
               <g class="arte__hoja" filter="url(#arte-elevacion)">
                 <rect class="arte__lienzo" x="60" y="100" width="520" height="470" rx="46"/>
-                <g clip-path="url(#arte-recorte)">
-                  <rect class="arte__rejilla" x="60" y="100" width="520" height="470"/>
+                <g class="arte__rejilla" clip-path="url(#arte-recorte)">
+                  {rejilla.map((l) => <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} pathLength="1" style={`--g:${l.g}ms`}/>)}
                 </g>
                 <rect class="arte__gloss" x="60" y="100" width="520" height="470" rx="46"/>
                 <rect class="arte__borde" x="60.6" y="100.6" width="518.8" height="468.8" rx="45.4"/>
