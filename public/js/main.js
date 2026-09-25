@@ -865,14 +865,6 @@
       var raton = { x: -9999, y: -9999, dx: -9999, dy: -9999 };
       var visible = true;
       var animando = false;
-      // La onda que suelta la «M» del arte cuando sale en volumen: un anillo
-      // que enciende los puntos a su paso y se apaga al alejarse.
-      // (Se llama «ola» y no «onda» porque «onda» ya es la respiración de
-      // la malla dentro de pintar.)
-      var OLA_VEL = 0.8;    // px por ms
-      var OLA_VIDA = 1500;  // ms
-      var OLA_ANCHO = 64;   // grosor del anillo, en px
-      var ola = null;
       // Los dos extremos del degradado del retículo: el secundario en una
       // esquina, el acento en la otra. Cada punto es un color liso; el
       // degradado aparece al recorrer el campo entero.
@@ -958,19 +950,6 @@
         raton.dx += (raton.x - raton.dx) * 0.12;
         raton.dy += (raton.y - raton.dy) * 0.12;
 
-        // Por dónde va la ola y cuánta fuerza le queda (0 = no hay).
-        var olaR = 0, olaF = 0, olaX = 0, olaY = 0;
-        if (ola && t >= ola.t0) {
-          var vida = (t - ola.t0) / OLA_VIDA;
-          if (vida >= 1) ola = null;
-          else {
-            olaR = (t - ola.t0) * OLA_VEL;
-            olaF = 1 - vida * vida;
-            olaX = ola.x;
-            olaY = ola.y;
-          }
-        }
-
         for (var y = PASO / 2; y < alto; y += PASO) {
           // Se disuelve hacia abajo, donde están el retrato y las cifras.
           var caidaY = 1 - Math.pow(y / alto, 1.2);
@@ -1006,18 +985,6 @@
               radio += cerca * 2.1;
               alfa = Math.min(1, alfa + cerca * 0.75);
               color = acento;
-            }
-
-            if (olaF > 0) {
-              var ox = x - olaX;
-              var oy = y - olaY;
-              var banda = 1 - Math.abs(Math.sqrt(ox * ox + oy * oy) - olaR) / OLA_ANCHO;
-              if (banda > 0) {
-                banda = banda * banda * olaF;
-                radio += banda * 2.6;
-                alfa = Math.min(1, alfa + banda * 0.85);
-                color = mezclar(color, acento, Math.min(1, banda * 1.8));
-              }
             }
 
             ctx.beginPath();
@@ -1079,12 +1046,6 @@
           raton.x = -9999; raton.y = -9999;
         });
       }
-
-      // La «M» avisa cuando sale en volumen; la onda nace en su centro.
-      hero.addEventListener('arte:onda', function (e) {
-        var r = hero.getBoundingClientRect();
-        ola = { x: e.detail.x - r.left, y: e.detail.y - r.top, t0: performance.now() };
-      });
 
       // Fuera de pantalla no se dibuja nada.
       if ('IntersectionObserver' in window) {
@@ -1277,8 +1238,7 @@
    Antes de salir en volumen, la letra se dibuja delante de ti: la pluma de
    Marc recorre su contorno, el trazo avanza con ella y cada punto de anclaje
    aparece cuando la pluma pasa por encima. Al cerrar el trazado, el relleno
-   se derrama desde ese punto y, cuando la letra saca su fondo, una onda sale
-   de ella y recorre la malla de puntos de la portada. Luego la medida de la
+   se derrama desde ese punto y la letra saca su fondo. Luego la medida de la
    selección cuenta hasta su valor, como cuando se arrastra un asa.
    Aquí va lo que el CSS no puede hacer solo (seguir el trazado, hacer crecer
    el recorte del relleno, contar); el resto lo hace styles.css con los mismos
@@ -1314,7 +1274,6 @@
   var TRAZO_DURA = 1700;
   var RELLENO_EMPIEZA = 2500;
   var RELLENO_DURA = 700;
-  var ONDA = 3150;
   var MEDIDA_EMPIEZA = 3700;   // la etiqueta sale a los 3,65 s
   var MEDIDA_DURA = 950;
   var FIN = MEDIDA_EMPIEZA + MEDIDA_DURA;
@@ -1361,20 +1320,7 @@
       : Math.round(ancho * k) + ' × ' + Math.round(alto * k);
   }
 
-  /* La onda la pinta la malla de puntos: aquí solo se le dice desde dónde. */
-  function lanzarOnda() {
-    var c = dibujo.getBoundingClientRect();
-    var evento;
-    try {
-      evento = new CustomEvent('arte:onda', {
-        detail: { x: c.left + c.width / 2, y: c.top + c.height * 0.55 }
-      });
-    } catch (e) { return; }
-    hero.dispatchEvent(evento);
-  }
-
   var inicio = 0;
-  var ondaLanzada = false;
   function paso() {
     /* Todo sale del reloj, no de contar fotogramas: si la pestaña estaba en
        segundo plano, al volver la entrada está donde tiene que estar. */
@@ -1382,11 +1328,6 @@
     if (t >= TRAZO_EMPIEZA) dibujar(suave(limitar((t - TRAZO_EMPIEZA) / TRAZO_DURA)));
     inunda.setAttribute('r', (radio * sale(limitar((t - RELLENO_EMPIEZA) / RELLENO_DURA))).toFixed(1));
     if (t >= MEDIDA_EMPIEZA) medir(sale(limitar((t - MEDIDA_EMPIEZA) / MEDIDA_DURA)));
-    if (!ondaLanzada && t >= ONDA) {
-      ondaLanzada = true;
-      /* Si la pestaña estuvo oculta y ya ha pasado el momento, sin onda. */
-      if (t < ONDA + 500) lanzarOnda();
-    }
     if (t < FIN) window.requestAnimationFrame(paso);
   }
 

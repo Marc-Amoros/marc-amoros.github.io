@@ -978,7 +978,7 @@ p { text-wrap: pretty; }
 /* Entrada: la letra se diseña delante de ti. El lienzo cae girando y el halo se
    enciende, las guías cruzan y aparece la pluma de Marc, que dibuja la «M»
    punto a punto (0,8-2,5 s: eso lo lleva main.js, igual que el relleno que se
-   derrama desde el cierre, 2,5-3,2 s, y la onda que recorre la malla, 3,15 s).
+   derrama desde el cierre, 2,5-3,2 s).
    Al cerrar el trazado, un anillo marca el cierre, el trazo y sus puntos se
    apagan, la pluma le pasa el relevo al cursor y la letra saca su fondo de
    golpe, con rebote. Después la caja se dibuja, las asas saltan una tras otra,
