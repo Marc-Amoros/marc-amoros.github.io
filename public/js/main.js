@@ -740,6 +740,14 @@
       var raton = { x: -9999, y: -9999, dx: -9999, dy: -9999 };
       var visible = true;
       var animando = false;
+      // La onda que suelta la «M» del arte cuando sale en volumen: un anillo
+      // que enciende los puntos a su paso y se apaga al alejarse.
+      // (Se llama «ola» y no «onda» porque «onda» ya es la respiración de
+      // la malla dentro de pintar.)
+      var OLA_VEL = 0.8;    // px por ms
+      var OLA_VIDA = 1500;  // ms
+      var OLA_ANCHO = 64;   // grosor del anillo, en px
+      var ola = null;
       // Los dos extremos del degradado del retículo: el secundario en una
       // esquina, el acento en la otra. Cada punto es un color liso; el
       // degradado aparece al recorrer el campo entero.
@@ -825,6 +833,19 @@
         raton.dx += (raton.x - raton.dx) * 0.12;
         raton.dy += (raton.y - raton.dy) * 0.12;
 
+        // Por dónde va la ola y cuánta fuerza le queda (0 = no hay).
+        var olaR = 0, olaF = 0, olaX = 0, olaY = 0;
+        if (ola && t >= ola.t0) {
+          var vida = (t - ola.t0) / OLA_VIDA;
+          if (vida >= 1) ola = null;
+          else {
+            olaR = (t - ola.t0) * OLA_VEL;
+            olaF = 1 - vida * vida;
+            olaX = ola.x;
+            olaY = ola.y;
+          }
+        }
+
         for (var y = PASO / 2; y < alto; y += PASO) {
           // Se disuelve hacia abajo, donde están el retrato y las cifras.
           var caidaY = 1 - Math.pow(y / alto, 1.2);
@@ -860,6 +881,18 @@
               radio += cerca * 2.1;
               alfa = Math.min(1, alfa + cerca * 0.75);
               color = acento;
+            }
+
+            if (olaF > 0) {
+              var ox = x - olaX;
+              var oy = y - olaY;
+              var banda = 1 - Math.abs(Math.sqrt(ox * ox + oy * oy) - olaR) / OLA_ANCHO;
+              if (banda > 0) {
+                banda = banda * banda * olaF;
+                radio += banda * 2.6;
+                alfa = Math.min(1, alfa + banda * 0.85);
+                color = mezclar(color, acento, Math.min(1, banda * 1.8));
+              }
             }
 
             ctx.beginPath();
@@ -921,6 +954,12 @@
           raton.x = -9999; raton.y = -9999;
         });
       }
+
+      // La «M» avisa cuando sale en volumen; la onda nace en su centro.
+      hero.addEventListener('arte:onda', function (e) {
+        var r = hero.getBoundingClientRect();
+        ola = { x: e.detail.x - r.left, y: e.detail.y - r.top, t0: performance.now() };
+      });
 
       // Fuera de pantalla no se dibuja nada.
       if ('IntersectionObserver' in window) {
@@ -1108,6 +1147,169 @@
 })();
 
 /* ============================================================
+   La entrada del arte: la pluma dibuja la «M»
+   ------------------------------------------------------------
+   Antes de salir en volumen, la letra se dibuja delante de ti: la pluma de
+   Marc recorre su contorno, el trazo avanza con ella y cada punto de anclaje
+   aparece cuando la pluma pasa por encima. Al cerrar el trazado, el relleno
+   se derrama desde ese punto y, cuando la letra saca su fondo, una onda sale
+   de ella y recorre la malla de puntos de la portada. Luego la medida de la
+   selección cuenta hasta su valor, como cuando se arrastra un asa.
+   Aquí va lo que el CSS no puede hacer solo (seguir el trazado, hacer crecer
+   el recorte del relleno, contar); el resto lo hace styles.css con los mismos
+   tiempos: si cambias unos, cambia los otros.
+   Arranca cuando la portada empieza su entrada (.overture) y la composición
+   está en pantalla; hasta entonces queda en pausa, sin nada a la vista. Sin
+   JS o con menos movimiento se ve la letra terminada, como siempre.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var hero = document.getElementById('inicio');
+  var arte = document.querySelector('[data-arte]');
+  var dibujo = arte && arte.querySelector('.arte');
+  if (!hero || !dibujo) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var trazo = dibujo.querySelector('.arte__trazo');
+  var pluma = dibujo.querySelector('.arte__pluma');
+  var inunda = dibujo.querySelector('.arte__inunda');
+  var etiqueta = dibujo.querySelector('.arte__medida text');
+  var nodos = Array.prototype.slice.call(dibujo.querySelectorAll('.arte__nodo'));
+  if (!trazo || !pluma || !inunda || !trazo.getTotalLength) return;
+
+  /* La letra se dibuja en su propio sistema; la pluma, en el del conjunto. Es el
+     mismo translate + scale que lleva la letra en el HTML. */
+  var OX = 38.2;
+  var OY = 122.9;
+  var ESCALA = 0.90909;
+
+  /* Los tiempos, en ms desde que arranca la entrada. */
+  var TRAZO_EMPIEZA = 800;
+  var TRAZO_DURA = 1700;
+  var RELLENO_EMPIEZA = 2500;
+  var RELLENO_DURA = 700;
+  var ONDA = 3150;
+  var MEDIDA_EMPIEZA = 3700;   // la etiqueta sale a los 3,65 s
+  var MEDIDA_DURA = 950;
+  var FIN = MEDIDA_EMPIEZA + MEDIDA_DURA;
+  /* Cuándo acaba el brillo de la entrada: hasta entonces el cursor no lo relanza. */
+  var FIN_BRILLO = 5600;
+
+  var largo = trazo.getTotalLength();
+  var radio = parseFloat(inunda.getAttribute('r')) || 820;
+  var marcas = nodos.map(function (n) { return parseFloat(n.getAttribute('data-l')) || 0; });
+  var puestos = 0;
+
+  var medidaFinal = etiqueta ? etiqueta.textContent : '';
+  var cifras = medidaFinal.match(/(\d+)\s*×\s*(\d+)/);
+  var ancho = cifras ? parseInt(cifras[1], 10) : 0;
+  var alto = cifras ? parseInt(cifras[2], 10) : 0;
+
+  /* Punto de partida: la entrada puesta pero parada, nada dibujado, nada
+     relleno y la medida a cero. */
+  arte.classList.add('arte--entra', 'arte--pausa');
+  trazo.style.strokeDasharray = largo + ' ' + largo;
+  trazo.style.strokeDashoffset = largo;
+  inunda.setAttribute('r', '0');
+  if (cifras) etiqueta.textContent = '0 × 0';
+
+  function limitar(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+  /* La pluma arranca, corre y frena al cerrar, como una mano. */
+  function suave(k) { return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
+  function sale(k) { return 1 - Math.pow(1 - k, 3); }
+
+  function dibujar(p) {
+    var punto = trazo.getPointAtLength(largo * p);
+    pluma.setAttribute('transform', 'translate(' +
+      (OX + punto.x * ESCALA).toFixed(2) + ' ' + (OY + punto.y * ESCALA).toFixed(2) + ')');
+    trazo.style.strokeDashoffset = (largo * (1 - p)).toFixed(2);
+    while (puestos < nodos.length && marcas[puestos] <= p) {
+      nodos[puestos].classList.add('arte__nodo--puesto');
+      puestos++;
+    }
+  }
+
+  function medir(k) {
+    if (!cifras) return;
+    etiqueta.textContent = k >= 1 ? medidaFinal
+      : Math.round(ancho * k) + ' × ' + Math.round(alto * k);
+  }
+
+  /* La onda la pinta la malla de puntos: aquí solo se le dice desde dónde. */
+  function lanzarOnda() {
+    var c = dibujo.getBoundingClientRect();
+    var evento;
+    try {
+      evento = new CustomEvent('arte:onda', {
+        detail: { x: c.left + c.width / 2, y: c.top + c.height * 0.55 }
+      });
+    } catch (e) { return; }
+    hero.dispatchEvent(evento);
+  }
+
+  var inicio = 0;
+  var ondaLanzada = false;
+  function paso() {
+    /* Todo sale del reloj, no de contar fotogramas: si la pestaña estaba en
+       segundo plano, al volver la entrada está donde tiene que estar. */
+    var t = performance.now() - inicio;
+    if (t >= TRAZO_EMPIEZA) dibujar(suave(limitar((t - TRAZO_EMPIEZA) / TRAZO_DURA)));
+    inunda.setAttribute('r', (radio * sale(limitar((t - RELLENO_EMPIEZA) / RELLENO_DURA))).toFixed(1));
+    if (t >= MEDIDA_EMPIEZA) medir(sale(limitar((t - MEDIDA_EMPIEZA) / MEDIDA_DURA)));
+    if (!ondaLanzada && t >= ONDA) {
+      ondaLanzada = true;
+      /* Si la pestaña estuvo oculta y ya ha pasado el momento, sin onda. */
+      if (t < ONDA + 500) lanzarOnda();
+    }
+    if (t < FIN) window.requestAnimationFrame(paso);
+  }
+
+  function arrancar() {
+    inicio = performance.now();
+    arte.setAttribute('data-fin-entrada', String(Date.now() + FIN_BRILLO));
+    arte.classList.remove('arte--pausa');
+    window.requestAnimationFrame(paso);
+  }
+
+  /* Dos condiciones: que la portada haya empezado su entrada y que la
+     composición se vea (al menos la mitad). */
+  var portadaLista = hero.classList.contains('overture');
+  var aLaVista = !('IntersectionObserver' in window);
+  function quizaArrancar() {
+    if (!inicio && portadaLista && aLaVista) arrancar();
+  }
+
+  if (!portadaLista) {
+    var vigia = new MutationObserver(function () {
+      if (!hero.classList.contains('overture')) return;
+      vigia.disconnect();
+      portadaLista = true;
+      quizaArrancar();
+    });
+    vigia.observe(hero, { attributes: true, attributeFilter: ['class'] });
+    /* Por si la clase nunca llega: a los 6 s arranca igual. */
+    window.setTimeout(function () {
+      vigia.disconnect();
+      portadaLista = true;
+      quizaArrancar();
+    }, 6000);
+  }
+
+  if (!aLaVista) {
+    var ojo = new IntersectionObserver(function (entradas) {
+      if (!entradas[0].isIntersecting) return;
+      ojo.disconnect();
+      aLaVista = true;
+      quizaArrancar();
+    }, { threshold: 0.5 });
+    ojo.observe(arte);
+  }
+
+  quizaArrancar();
+})();
+
+/* ============================================================
    El arte de la portada responde al cursor
    ------------------------------------------------------------
    Tres cosas, todas con el cursor y ninguna necesaria para entender la página:
@@ -1117,8 +1319,11 @@
       escribe como --px y --py (de -1 a 1) en .hero__arte; cuánto se mueve cada
       capa lo decide el CSS. También de ahí sale hacia dónde cae el fondo de la
       letra en 3D.
+      Con los mismos valores el CSS inclina el conjunto hacia tu cursor.
    2) El cursor de Marc va hacia el tuyo mientras lo tienes sobre la composición
       (--dx y --dy: cuánto se aleja de su sitio), como en un archivo compartido.
+      Y el lienzo se ilumina donde estás (se mueven los círculos de la luz;
+      --luz la enciende).
    3) Cada vez que tu cursor entra, el brillo vuelve a cruzar la letra.
    Sin cursor (táctil) o con movimiento reducido no hace nada.
    ============================================================ */
@@ -1131,19 +1336,26 @@
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var dibujo = arte.querySelector('.arte');
+  var luces = dibujo ? dibujo.querySelectorAll('.arte__luz circle') : [];
   var VB_W = 640;
   var VB_H = 620;
   /* Dónde está el cursor de Marc en reposo (la punta de la flecha). */
   var REPOSO_X = 566;
   var REPOSO_Y = 160;
+  /* El lienzo va girado -4° alrededor de (320, 335): para poner la luz bajo tu
+     cursor hay que deshacer ese giro. */
+  var GIRO_COS = Math.cos(4 * Math.PI / 180);
+  var GIRO_SIN = Math.sin(4 * Math.PI / 180);
 
   var px = 0;
   var py = 0;
   var dx = 0;
   var dy = 0;
+  var lx = 320;
+  var ly = 335;
+  var luz = 0;
   var pendiente = false;
-  /* Cuenta desde la carga: el brillo de la entrada (2,7 s) no lo pisa el del cursor. */
-  var ultimoBrillo = Date.now();
+  var ultimoBrillo = 0;
 
   function pintar() {
     pendiente = false;
@@ -1151,6 +1363,17 @@
     arte.style.setProperty('--py', py.toFixed(3));
     arte.style.setProperty('--dx', dx.toFixed(1));
     arte.style.setProperty('--dy', dy.toFixed(1));
+    arte.style.setProperty('--luz', luz);
+    if (luz) {
+      var ox = lx - 320;
+      var oy = ly - 335;
+      var cx = (320 + ox * GIRO_COS - oy * GIRO_SIN).toFixed(1);
+      var cy = (335 + ox * GIRO_SIN + oy * GIRO_COS).toFixed(1);
+      for (var i = 0; i < luces.length; i++) {
+        luces[i].setAttribute('cx', cx);
+        luces[i].setAttribute('cy', cy);
+      }
+    }
   }
   function pedir() {
     if (pendiente) return;
@@ -1175,9 +1398,13 @@
       if (sx > -70 && sx < VB_W + 70 && sy > -70 && sy < VB_H + 70) {
         dx = limitar(sx + 26, 40, 556) - REPOSO_X;
         dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
+        lx = sx;
+        ly = sy;
+        luz = 1;
       } else {
         dx = 0;
         dy = 0;
+        luz = 0;
       }
     }
     pedir();
@@ -1188,6 +1415,7 @@
     py = 0;
     dx = 0;
     dy = 0;
+    luz = 0;
     pedir();
   });
 
@@ -1198,6 +1426,10 @@
     arte.addEventListener('pointerenter', function (e) {
       if (e.pointerType === 'touch') return;
       var ahora = Date.now();
+      /* Ni encima del brillo de la entrada (main.js apunta cuándo acaba) ni
+         antes de que la letra esté hecha. */
+      var finEntrada = parseInt(arte.getAttribute('data-fin-entrada'), 10) || 0;
+      if (arte.classList.contains('arte--pausa') || ahora < finEntrada) return;
       if (ahora - ultimoBrillo < 5000) return;
       ultimoBrillo = ahora;
       dibujo.classList.remove('arte--brilla');
@@ -1207,59 +1439,5 @@
     dibujo.addEventListener('animationend', function (e) {
       if (e.animationName === 'arte-brillo-2') dibujo.classList.remove('arte--brilla');
     });
-  }
-})();
-
-/* ============================================================
-   La medida de la selección cuenta hasta su valor
-   ------------------------------------------------------------
-   La etiqueta «480 × 364» de la caja de selección sale en la entrada y sus
-   números suben desde cero, como cuando se arrastra un asa. Empieza cuando el
-   hero recibe .overture (la etiqueta aparece a los 2,1 s). Sin JS o con menos
-   movimiento se queda con su valor final, que es el que trae el HTML.
-   ============================================================ */
-(function () {
-  'use strict';
-
-  var etiqueta = document.querySelector('.arte__medida text');
-  var hero = document.getElementById('inicio');
-  if (!etiqueta || !hero) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  var final = etiqueta.textContent;
-  var cifras = final.match(/(\d+)\s*×\s*(\d+)/);
-  if (!cifras) return;
-  var ancho = parseInt(cifras[1], 10);
-  var alto = parseInt(cifras[2], 10);
-
-  etiqueta.textContent = '0 × 0';
-
-  var contado = false;
-  function contar() {
-    if (contado) return;
-    contado = true;
-    var inicio = null;
-    var duracion = 950;
-    function paso(t) {
-      if (inicio === null) inicio = t;
-      var k = Math.min(1, (t - inicio) / duracion);
-      var e = 1 - Math.pow(1 - k, 3);
-      etiqueta.textContent = Math.round(ancho * e) + ' × ' + Math.round(alto * e);
-      if (k < 1) window.requestAnimationFrame(paso);
-      else etiqueta.textContent = final;
-    }
-    window.requestAnimationFrame(paso);
-  }
-
-  function arrancar() { window.setTimeout(contar, 2150); }
-  if (hero.classList.contains('overture')) {
-    arrancar();
-  } else {
-    var vigia = new MutationObserver(function () {
-      if (hero.classList.contains('overture')) { vigia.disconnect(); arrancar(); }
-    });
-    vigia.observe(hero, { attributes: true, attributeFilter: ['class'] });
-    /* Por si la clase nunca llega: a los 6 s se deja el valor final. */
-    window.setTimeout(function () { vigia.disconnect(); contar(); }, 6000);
   }
 })();

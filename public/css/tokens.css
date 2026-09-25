@@ -227,6 +227,8 @@
   --portada-arte-brillo:      #fff;
   --portada-arte-gloss:       0.5;
   --portada-arte-borde:       rgba(255 255 255 / 0.7);
+  /* La luz de tu cursor sobre el lienzo: cuánto se nota en el centro del foco. */
+  --portada-arte-luz:         0.6;
 
   color-scheme: light;
 }
@@ -291,6 +293,7 @@
     --portada-arte-brillo:      color-mix(in oklab, var(--color-accent) 60%, #fff);
     --portada-arte-gloss:       0.16;
     --portada-arte-borde:       rgba(255 255 255 / 0.22);
+    --portada-arte-luz:         0.22;
 
     color-scheme: dark;
   }
@@ -354,6 +357,7 @@
   --portada-arte-brillo:      color-mix(in oklab, var(--color-accent) 60%, #fff);
   --portada-arte-gloss:       0.16;
   --portada-arte-borde:       rgba(255 255 255 / 0.22);
+  --portada-arte-luz:         0.22;
 
   color-scheme: dark;
 }

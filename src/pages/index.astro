@@ -15,6 +15,44 @@ const letraM = 'M46 30H194L306.1 292.2L426 30H574V38Q574 46 566 46H534Q520 46 52
 /* Las 16 capas del fondo, de la más lejana (k = 1) a la más cercana a la cara. */
 const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
 
+/* Los puntos de anclaje de la «M», para la entrada en la que la pluma la dibuja:
+   cada uno con la parte del trazado que lleva recorrida la pluma al llegar a él
+   (l, de 0 a 1), para que main.js lo encienda justo cuando pasa por encima. Las
+   curvas se miden en 16 tramos rectos: de sobra para decidir cuándo aparece. */
+const nodosM = (() => {
+  const piezas = letraM.match(/[A-Z]|-?\d*\.?\d+/g);
+  const nodos = [];
+  let i = 0, orden = '', x = 0, y = 0, x0 = 0, y0 = 0, recorrido = 0;
+  const num = () => parseFloat(piezas[i++]);
+  while (i < piezas.length) {
+    if (/[A-Z]/.test(piezas[i])) orden = piezas[i++];
+    let nx = x, ny = y, tramo = 0;
+    if (orden === 'M') { nx = x0 = num(); ny = y0 = num(); }
+    else if (orden === 'H') nx = num();
+    else if (orden === 'V') ny = num();
+    else if (orden === 'L') { nx = num(); ny = num(); }
+    else if (orden === 'Z') { nx = x0; ny = y0; }
+    if (orden === 'Q') {
+      const cx = num(), cy = num();
+      nx = num(); ny = num();
+      let px = x, py = y;
+      for (let s = 1; s <= 16; s++) {
+        const t = s / 16, u = 1 - t;
+        const qx = u * u * x + 2 * u * t * cx + t * t * nx;
+        const qy = u * u * y + 2 * u * t * cy + t * t * ny;
+        tramo += Math.hypot(qx - px, qy - py);
+        px = qx; py = qy;
+      }
+    } else {
+      tramo = Math.hypot(nx - x, ny - y);
+    }
+    recorrido += tramo;
+    x = nx; y = ny;
+    if (orden !== 'Z') nodos.push({ x, y, l: recorrido });
+  }
+  return nodos.map((n) => ({ ...n, l: +(n.l / recorrido).toFixed(4) }));
+})();
+
 ---
 
 <Base
@@ -80,6 +118,28 @@ const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
             <clipPath id="arte-recorte"><rect x="60" y="100" width="520" height="470" rx="46"/></clipPath>
             <path id="arte-m" d={letraM}/>
             <clipPath id="arte-clip-m"><use href="#arte-m"/></clipPath>
+            <!-- El relleno de la letra se derrama desde donde la pluma cierra el
+                 trazado: main.js hace crecer este círculo. Su radio de partida ya
+                 la cubre entera, así que sin JS la letra se ve rellena. -->
+            <clipPath id="arte-inunda"><circle class="arte__inunda" cx="46" cy="30" r="820"/></clipPath>
+            <!-- La luz de tu cursor sobre el lienzo: un brillo suave y, debajo, la
+                 rejilla en el acento, que solo asoma dentro del foco (la máscara va
+                 en unidades del propio círculo, así que viaja con él). -->
+            <radialGradient id="arte-luz-grad">
+              <stop offset="0" class="arte__luz-a"/>
+              <stop offset="1" class="arte__luz-b"/>
+            </radialGradient>
+            <pattern id="arte-rejilla-viva" width="44" height="44" patternUnits="userSpaceOnUse">
+              <path d="M44 0H0V44" fill="none"/>
+            </pattern>
+            <radialGradient id="arte-foco-grad">
+              <stop offset="0" stop-color="#fff"/>
+              <stop offset="0.35" stop-color="#fff" stop-opacity="0.8"/>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+            <mask id="arte-foco" maskContentUnits="objectBoundingBox">
+              <rect width="1" height="1" fill="url(#arte-foco-grad)"/>
+            </mask>
             <linearGradient id="arte-lienzo-grad" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" class="arte__lz-a"/>
               <stop offset="1" class="arte__lz-b"/>
@@ -132,6 +192,13 @@ const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
                 <rect class="arte__gloss" x="60" y="100" width="520" height="470" rx="46"/>
                 <rect class="arte__borde" x="60.6" y="100.6" width="518.8" height="468.8" rx="45.4"/>
               </g>
+              <!-- La luz de tu cursor sobre el lienzo. Fuera de la hoja para que
+                   moverla no obligue a recalcular su sombra; main.js la coloca
+                   (cx, cy) donde estás. -->
+              <g class="arte__luz" clip-path="url(#arte-recorte)">
+                <circle class="arte__luz-brillo" cx="320" cy="335" r="230"/>
+                <circle class="arte__luz-rejilla" cx="320" cy="335" r="150" mask="url(#arte-foco)"/>
+              </g>
             </g>
           </g>
 
@@ -151,17 +218,27 @@ const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
 
           <!-- La «M» como un sólido: su sombra, el fondo (16 capas que se desplazan
                un poco con el cursor, y eso es lo que da la profundidad), la cara y
-               un brillo que la cruza. Debajo, la selección con sus asas y su medida. -->
+               un brillo que la cruza. Encima, lo que se ve solo en la entrada: el
+               trazo que va dejando la pluma, sus puntos de anclaje y el anillo que
+               marca el cierre. Debajo, la selección con sus asas y su medida, y la
+               pluma de Marc. -->
           <g class="arte__capa arte__capa--m">
             <g transform="translate(38.2 122.9) scale(0.90909)">
               <g class="arte__solido">
                 <use href="#arte-m" class="arte__sombra-m" filter="url(#arte-desenfoque)"/>
-                {capasLado.map((k) => <use href="#arte-m" class="arte__lado" style={`--k:${k}`}/>)}
-                <use href="#arte-m" class="arte__letra"/>
-                <g clip-path="url(#arte-clip-m)">
-                  <rect class="arte__brillo" x="0" y="0" width="110" height="470"/>
+                <g clip-path="url(#arte-inunda)">
+                  {capasLado.map((k) => <use href="#arte-m" class="arte__lado" style={`--k:${k}`}/>)}
+                  <use href="#arte-m" class="arte__letra"/>
+                  <g clip-path="url(#arte-clip-m)">
+                    <rect class="arte__brillo" x="0" y="0" width="110" height="470"/>
+                  </g>
                 </g>
               </g>
+              <path class="arte__trazo" d={letraM}/>
+              <g class="arte__nodos">
+                {nodosM.map((n) => <circle class="arte__nodo" cx={n.x} cy={n.y} r="5.5" data-l={n.l}/>)}
+              </g>
+              <circle class="arte__cierre" cx="46" cy="30" r="11"/>
             </g>
             <g class="arte__seleccion">
               <rect class="arte__marco" pathLength="100" x="80" y="150.2" width="480" height="363.6"/>
@@ -182,10 +259,28 @@ const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
                 </g>
               </g>
             </g>
+            <!-- La pluma de Marc: dibuja la letra en la entrada y luego le pasa el
+                 relevo a su cursor. main.js la lleva por el trazado (transform);
+                 la punta está en su 0,0 y parte del primer punto de la «M». -->
+            <g class="arte__pluma" transform="translate(80 150.2)">
+              <g class="arte__pluma-cuerpo">
+                <g class="arte__sombra-ui" filter="url(#arte-elevacion-ui)">
+                  <g transform="rotate(-45)">
+                    <path class="arte__plumilla" d="M0 0L7.2 12.4Q8 14 6.6 15.4L4 18H-4L-6.6 15.4Q-8 14 -7.2 12.4Z"/>
+                    <rect class="arte__plumilla" x="-5" y="19.5" width="10" height="5" rx="1.5"/>
+                    <path class="arte__plumilla-raja" d="M0 3.2V10"/>
+                    <circle class="arte__plumilla-ojo" cx="0" cy="11.4" r="1.8"/>
+                  </g>
+                  <rect class="arte__etiqueta" x="20" y="24" width="68" height="30" rx="9"/>
+                  <text class="arte__nombre" x="54" y="43.6">Marc</text>
+                </g>
+              </g>
+            </g>
           </g>
 
           <!-- Delante del todo: el cursor de quien la toca, con su nombre. En escritorio
-               sigue a tu cursor (arte__sigue); llega volando y luego se mece. -->
+               sigue a tu cursor (arte__sigue). Aparece donde la pluma cierra la
+               letra, se desliza hasta la esquina de la selección y luego se mece. -->
           <g class="arte__capa arte__capa--cursor">
             <g class="arte__sigue">
               <g class="arte__vuelo">

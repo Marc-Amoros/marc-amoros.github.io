@@ -831,22 +831,28 @@ p { text-wrap: pretty; }
   /* --prof: 1 aquí también, por si el navegador no registra el número (@property):
      así la letra se ve en volumen aunque no se anime. */
   --prof: 1;
+  /* --alza: cuánto se acerca la letra a ti. Con el cursor encima sale un poco más
+     de su lienzo (va aparte de --prof porque la entrada deja --prof fijado). */
+  --alza: 1;
   --ex: calc(15 + var(--px, 0) * -7);
   --ey: calc(20 + var(--py, 0) * -6);
 }
 .arte__letra { fill: url(#arte-tinta-grad); }
 .arte__lado {
   fill: color-mix(in oklab, var(--portada-arte-lado-cerca) calc((1 - var(--k)) * 100%), var(--portada-arte-lado-lejos));
-  transform: translate(calc(var(--ex) * var(--prof) * var(--k) * 1px),
-                       calc(var(--ey) * var(--prof) * var(--k) * 1px));
+  transform: translate(calc(var(--ex) * var(--prof) * var(--alza) * var(--k) * 1px),
+                       calc(var(--ey) * var(--prof) * var(--alza) * var(--k) * 1px));
   transition: transform 700ms var(--ease-out);
 }
 .arte__sombra-m {
   fill: var(--portada-arte-sombra);
   opacity: var(--prof);
-  transform: translate(calc(var(--ex) * 2.1 * var(--prof) * 1px),
-                       calc(var(--ey) * 2.2 * var(--prof) * 1px));
+  transform: translate(calc(var(--ex) * 2.1 * var(--prof) * var(--alza) * 1px),
+                       calc(var(--ey) * 2.2 * var(--prof) * var(--alza) * 1px));
   transition: transform 700ms var(--ease-out);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hero__arte:hover .arte__solido { --alza: 1.45; }
 }
 /* El brillo: una banda de luz en diagonal que cruza la cara de izquierda a
    derecha. Va recortada con la propia «M» (clip-path), así que solo se ve sobre
@@ -881,6 +887,70 @@ p { text-wrap: pretty; }
 .arte__pista { fill: var(--arte-acento); }
 .arte__bola { fill: #fff; }
 
+/* Lo que solo se ve en la entrada: el trazo de la pluma, fino y del acento, como
+   el de un vector en edición; sus puntos de anclaje, blancos con el filo del
+   acento; el anillo que marca el cierre del trazado; y la pluma de Marc, con su
+   nombre. En reposo no se ve nada de esto: sin JS la letra ya está terminada. */
+.arte__trazo {
+  fill: none;
+  stroke: var(--arte-acento);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  opacity: 0;
+}
+.arte__nodo {
+  fill: var(--color-bg);
+  stroke: var(--arte-acento);
+  stroke-width: 1.8;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 160ms var(--ease-out), transform 460ms var(--ease-spring);
+}
+/* main.js lo pone cuando la pluma pasa por el punto. */
+.arte__nodo--puesto { opacity: 1; transform: none; }
+.arte__cierre {
+  fill: none;
+  stroke: var(--arte-acento);
+  stroke-width: 2;
+  opacity: 0;
+}
+.arte__pluma-cuerpo { opacity: 0; }
+.arte__plumilla {
+  fill: var(--arte-acento);
+  stroke: var(--color-bg);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.arte__plumilla-raja { stroke: var(--color-bg); stroke-width: 1.4; stroke-linecap: round; }
+.arte__plumilla-ojo { fill: var(--color-bg); }
+
+/* La luz de tu cursor sobre el lienzo: un brillo suave y la rejilla encendida en
+   el acento justo debajo, como la malla de puntos de la portada. main.js coloca
+   los dos círculos donde estás y la enciende con --luz mientras lo tienes encima. */
+.arte__luz-a { stop-color: var(--portada-arte-brillo); stop-opacity: var(--portada-arte-luz); }
+.arte__luz-b { stop-color: var(--portada-arte-brillo); stop-opacity: 0; }
+.arte__luz {
+  pointer-events: none;
+  opacity: var(--luz, 0);
+  transition: opacity 600ms var(--ease-out);
+}
+.arte__luz-brillo { fill: url(#arte-luz-grad); }
+.arte__luz-rejilla { fill: url(#arte-rejilla-viva); }
+#arte-rejilla-viva path {
+  stroke: color-mix(in oklab, var(--arte-acento) 70%, transparent);
+  stroke-width: 1.4;
+}
+
+/* Y el conjunto entero se inclina hacia tu cursor, como una lámina que miras
+   de lado: con las capas ya desplazadas a distinto ritmo, se lee como un
+   objeto con fondo y no como un dibujo plano. */
+.arte {
+  transform: perspective(1400px)
+             rotateX(calc(var(--py, 0) * -7deg))
+             rotateY(calc(var(--px, 0) * 9deg));
+  transition: transform 900ms var(--ease-out);
+}
+
 /* Cada grupo es una capa que se desplaza un poco con el cursor, cada una a su
    ritmo, y así la composición gana profundidad: la selección va con la letra,
    el cursor y el interruptor se adelantan y el lienzo se queda atrás.
@@ -905,55 +975,88 @@ p { text-wrap: pretty; }
   transition: transform 620ms var(--ease-out);
 }
 
-/* Entrada: el lienzo cae girando y el halo se enciende, las guías cruzan, la
-   letra sube y después saca su fondo (con un pequeño rebote), la caja se dibuja
-   y las asas saltan una tras otra, sale la medida, el interruptor se enciende y
-   el cursor llega volando a la esquina; al final, el brillo cruza la letra. El
-   estado base es la composición terminada: si main.js no llega a poner
-   .overture, se ve completa y quieta. Después el cursor se mece despacio. */
+/* Entrada: la letra se diseña delante de ti. El lienzo cae girando y el halo se
+   enciende, las guías cruzan y aparece la pluma de Marc, que dibuja la «M»
+   punto a punto (0,8-2,5 s: eso lo lleva main.js, igual que el relleno que se
+   derrama desde el cierre, 2,5-3,2 s, y la onda que recorre la malla, 3,15 s).
+   Al cerrar el trazado, un anillo marca el cierre, el trazo y sus puntos se
+   apagan, la pluma le pasa el relevo al cursor y la letra saca su fondo de
+   golpe, con rebote. Después la caja se dibuja, las asas saltan una tras otra,
+   sale la medida, el interruptor se enciende y el brillo cruza la letra.
+   Los tiempos de main.js y los de aquí van juntos: si cambias unos, cambia los
+   otros. Después el cursor se mece despacio.
+   main.js pone .arte--entra y .arte--pausa en cuanto carga: la entrada queda
+   puesta pero parada en su primer fotograma (nada a la vista), y quita la
+   pausa cuando la portada arranca y la composición está en pantalla. En el
+   móvil, donde queda debajo del texto, así se ve al llegar a ella y no se
+   pierde mientras lees. El estado base es la composición terminada: sin JS, o
+   con menos movimiento, se ve completa y quieta. */
 .arte__hoja,
 .arte__asas rect,
 .arte__pop,
-.arte__bola { transform-box: fill-box; transform-origin: center; }
+.arte__bola,
+.arte__nodo,
+.arte__cierre { transform-box: fill-box; transform-origin: center; }
 
-.overture .hero__arte::before { animation: arte-aparece 1600ms var(--ease-out) 150ms both; }
-.overture .arte__hoja    { animation: arte-lienzo 1100ms var(--ease-emphasized-decel) 100ms both; }
-.overture .arte__rejilla { animation: arte-aparece 900ms var(--ease-out) 750ms both; }
-.overture .arte__marco2  { animation: arte-aparece 1000ms var(--ease-out) 600ms both; }
-.overture .arte__guia    { animation: arte-guia 1000ms var(--ease-emphasized-decel) 500ms both; }
-.overture .arte__solido  {
-  animation: arte-sube 1100ms var(--ease-emphasized-decel) 350ms both,
-             arte-prof 950ms var(--ease-spring) 1400ms both;
+/* Con !important porque cada `animation` de abajo la devolvería a «running». */
+.arte--pausa::before,
+.arte--pausa * { animation-play-state: paused !important; }
+
+.arte--entra::before { animation: arte-aparece 1600ms var(--ease-out) 100ms both; }
+.arte--entra .arte__hoja    { animation: arte-lienzo 1150ms var(--ease-emphasized-decel) 60ms both; }
+.arte--entra .arte__rejilla { animation: arte-aparece 900ms var(--ease-out) 650ms both; }
+.arte--entra .arte__marco2  { animation: arte-aparece 1000ms var(--ease-out) 500ms both; }
+.arte--entra .arte__guia    { animation: arte-guia 1000ms var(--ease-emphasized-decel) 350ms both; }
+.arte--entra .arte__pluma-cuerpo { animation: arte-pluma 2150ms linear 550ms both; }
+.arte--entra .arte__trazo   { animation: arte-se-va 500ms var(--ease-out) 2750ms both; }
+.arte--entra .arte__nodos   { animation: arte-se-va 450ms var(--ease-out) 2800ms both; }
+.arte--entra .arte__cierre  { animation: arte-cierre 750ms var(--ease-out) 2480ms both; }
+.arte--entra .arte__solido  { animation: arte-prof 1100ms var(--ease-spring) 2950ms both; }
+.arte--entra .arte__marco   { animation: arte-caja 900ms var(--ease-emphasized-decel) 2950ms both; }
+.arte--entra .arte__asas rect {
+  animation: arte-pop 500ms var(--ease-spring) calc(3250ms + var(--i, 0) * 60ms) both;
 }
-.overture .arte__marco   { animation: arte-caja 1000ms var(--ease-emphasized-decel) 1000ms both; }
-.overture .arte__asas rect {
-  animation: arte-pop 500ms var(--ease-spring) calc(1600ms + var(--i, 0) * 70ms) both;
+.arte--entra .arte__medida  { animation: arte-baja 700ms var(--ease-emphasized-decel) 3650ms both; }
+.arte--entra .arte__pop     { animation: arte-pop 800ms var(--ease-spring) 3450ms both; }
+.arte--entra .arte__bola    { animation: arte-bola 700ms var(--ease-emphasized-decel) 3950ms both; }
+.arte--entra .arte__pista   { animation: arte-pista 700ms var(--ease-out) 3950ms both; }
+.arte--entra .arte__vuelo {
+  animation: arte-vuelo 950ms var(--ease-emphasized) 2620ms both,
+             arte-mece 3.8s ease-in-out 3.6s infinite alternate;
 }
-.overture .arte__medida  { animation: arte-baja 700ms var(--ease-emphasized-decel) 2100ms both; }
-.overture .arte__pop     { animation: arte-pop 800ms var(--ease-spring) 1300ms both; }
-.overture .arte__bola    { animation: arte-bola 700ms var(--ease-emphasized-decel) 2200ms both; }
-.overture .arte__pista   { animation: arte-pista 700ms var(--ease-out) 2200ms both; }
-.overture .arte__vuelo {
-  animation: arte-vuelo 1200ms var(--ease-emphasized-decel) 1900ms both,
-             arte-mece 3.8s ease-in-out 3.1s infinite alternate;
-}
-.overture .arte__brillo  { animation: arte-brillo 1300ms var(--ease-out) 2700ms both; }
+.arte--entra .arte__brillo  { animation: arte-brillo 1300ms var(--ease-out) 4250ms both; }
 /* Cada vez que el cursor entra en la composición, main.js pone .arte--brilla y
    el brillo vuelve a cruzar la letra (con otro nombre de animación para que el
    navegador la relance). */
 .arte--brilla .arte__brillo { animation: arte-brillo-2 1300ms var(--ease-out) both; }
 
-@keyframes arte-lienzo  { from { opacity: 0; transform: rotate(-12deg) scale(0.72); } to { opacity: 1; transform: none; } }
+@keyframes arte-lienzo  { from { opacity: 0; transform: translateY(36px) rotate(-14deg) scale(0.66); } to { opacity: 1; transform: none; } }
 @keyframes arte-aparece { from { opacity: 0; } }
+@keyframes arte-se-va   { from { opacity: 1; } to { opacity: 0; } }
 @keyframes arte-guia    { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
-@keyframes arte-sube    { from { opacity: 0; transform: translateY(38px); } to { opacity: 1; transform: none; } }
+/* La pluma sale con un saltito justo antes de empezar a dibujar (0,8 s), se
+   queda mientras dibuja y se va al cerrar el trazado (2,5 s). */
+@keyframes arte-pluma {
+  0%   { opacity: 0; transform: scale(0.3); animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+  12%  { opacity: 1; transform: none; }
+  90%  { opacity: 1; transform: none; animation-timing-function: ease-in; }
+  100% { opacity: 0; transform: scale(0.6); }
+}
+@keyframes arte-cierre  { from { opacity: 1; transform: scale(0.4); } to { opacity: 0; transform: scale(2.8); } }
 @keyframes arte-prof    { from { --prof: 0; } to { --prof: 1; } }
 @keyframes arte-caja    { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
 @keyframes arte-pop     { 0% { opacity: 0; transform: scale(0); } 62% { opacity: 1; transform: scale(1.25); } 100% { opacity: 1; transform: none; } }
 @keyframes arte-baja    { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
 @keyframes arte-bola    { from { transform: translateX(-28px); } to { transform: none; } }
 @keyframes arte-pista   { from { fill: color-mix(in oklab, var(--color-text) 30%, var(--color-bg)); } }
-@keyframes arte-vuelo   { from { opacity: 0; transform: translate(80px, 120px); } to { opacity: 1; transform: none; } }
+/* El cursor aparece donde la pluma ha cerrado la letra (la esquina de arriba a
+   la izquierda de la selección) y se desliza por el borde de arriba hasta la
+   otra esquina, que es su sitio. */
+@keyframes arte-vuelo {
+  from { opacity: 0; transform: translate(-486px, -10px); }
+  10%  { opacity: 1; }
+  to   { opacity: 1; transform: none; }
+}
 @keyframes arte-mece    { from { transform: translate(0, -3px); } to { transform: translate(4px, 4px); } }
 @keyframes arte-brillo {
   0%   { opacity: 0; transform: translateX(-180px) skewX(-18deg); }
@@ -992,27 +1095,34 @@ p { text-wrap: pretty; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .overture .hero__arte::before,
-  .overture .arte__hoja,
-  .overture .arte__rejilla,
-  .overture .arte__marco2,
-  .overture .arte__guia,
-  .overture .arte__solido,
-  .overture .arte__marco,
-  .overture .arte__asas rect,
-  .overture .arte__medida,
-  .overture .arte__pop,
-  .overture .arte__bola,
-  .overture .arte__pista,
-  .overture .arte__vuelo,
-  .overture .arte__brillo,
+  .arte--entra::before,
+  .arte--entra .arte__hoja,
+  .arte--entra .arte__rejilla,
+  .arte--entra .arte__marco2,
+  .arte--entra .arte__guia,
+  .arte--entra .arte__solido,
+  .arte--entra .arte__marco,
+  .arte--entra .arte__asas rect,
+  .arte--entra .arte__medida,
+  .arte--entra .arte__pop,
+  .arte--entra .arte__bola,
+  .arte--entra .arte__pista,
+  .arte--entra .arte__vuelo,
+  .arte--entra .arte__brillo,
+  .arte--entra .arte__pluma-cuerpo,
+  .arte--entra .arte__trazo,
+  .arte--entra .arte__nodos,
+  .arte--entra .arte__cierre,
   .arte--brilla .arte__brillo { animation: none; }
+  .arte,
   .arte__capa,
   .arte__sigue,
   .arte__lado,
   .arte__sombra-m,
+  .arte__luz,
   .hero__arte::before { transition: none; }
   /* La letra se queda en volumen y quieta; el halo, encendido. */
+  .arte,
   .arte__capa { transform: none; }
 }
 
