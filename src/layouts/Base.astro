@@ -13,8 +13,6 @@ const {
   enPortada = false,
   /* detalle.css solo lo necesitan las fichas y los artículos. */
   hojaDetalle = false,
-  /* Motion solo lo carga la portada, que es donde está la trayectoria. */
-  conMotion = false,
   claseMain = ''
 } = Astro.props;
 
@@ -198,7 +196,6 @@ const personaJsonLd = {
   </dialog>
 )}
 
-{conMotion && <script is:inline src={conVersion('/js/vendor/motion.js')} defer></script>}
 <script is:inline src={conVersion('/js/main.js')} defer></script>
 <slot name="scripts" />
 </body>

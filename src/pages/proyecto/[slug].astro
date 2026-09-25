@@ -12,6 +12,7 @@ import { ARTICULOS } from '../../data/articulos.js';
 import { fechaLarga } from '../../lib/fecha.js';
 import { salidasExternas } from '../../lib/ajustes.js';
 import { conVersion } from '../../lib/version.js';
+import { srcsetDe, TAMANO_PORTADA } from '../../lib/imagenes.js';
 
 export function getStaticPaths() {
   return PROYECTOS.map((proyecto, i) => ({
@@ -197,6 +198,7 @@ const urlEmbed = (url) => {
       ) : proyecto.portada && (
         <figure class="caso__cover">
           <img src={rutaImagen(proyecto.portada)} alt={proyecto.portadaAlt || `Portada del proyecto ${proyecto.titulo}`}
+               srcset={srcsetDe(rutaImagen(proyecto.portada))} sizes={TAMANO_PORTADA}
                fetchpriority="high" style={`view-transition-name:portada-${proyecto.slug}`} />
         </figure>
       )}

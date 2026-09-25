@@ -203,11 +203,34 @@
   var PASO_PIEZA = 80;    // ms entre pieza y pieza de un grupo (--mov-paso en tokens.css)
   var MAX_PIEZAS = 6;     // de la sexta en adelante, todas a la vez: nadie espera tanto
 
-  /* Lo que main.js anima con Motion entra igual que lo que anima el CSS: el
-     mismo tiempo (--dur-entrada), la misma curva (--ease-emphasized-decel) y
-     la misma subida (--mov-subida). */
-  var ENTRADA = { duration: 0.76, ease: [0.05, 0.7, 0.1, 1] };
+  /* Lo que main.js anima por su cuenta entra igual que lo que anima el CSS:
+     el mismo tiempo (--dur-entrada), la misma curva (--ease-emphasized-decel)
+     y la misma subida (--mov-subida). */
+  var DURA_ENTRADA = 760;
+  var CURVA_ENTRADA = 'cubic-bezier(0.05, 0.7, 0.1, 1)';
   var SUBIDA = 'translateY(24px)';
+
+  /* Anima una serie de elementos, cada uno «paso» ms después del anterior,
+     con las animaciones del propio navegador. Antes lo hacía la librería
+     Motion (46 KB más que descargar antes de que la portada terminara de
+     arrancar); para esto no hace falta. Mientras esperan su turno se quedan
+     en el primer fotograma y, al acabar, en lo que diga el CSS, que es su
+     estado final: «soltar» quita el estilo con el que se habían dejado
+     ocultos hasta entonces. */
+  var puedeAnimar = 'animate' in document.documentElement;
+  function escalonarNativo(elementos, fotogramas, opciones, soltar) {
+    Array.prototype.forEach.call(elementos, function (el, i) {
+      if (soltar) soltar(el);
+      el.animate(fotogramas, {
+        duration: opciones.duracion || DURA_ENTRADA,
+        delay: (opciones.desde || 0) + (opciones.paso || 0) * i,
+        easing: opciones.curva || CURVA_ENTRADA,
+        fill: 'backwards'
+      });
+    });
+  }
+  function ocultar(el) { el.style.opacity = '0'; }
+  function mostrar(el) { el.style.opacity = ''; }
 
   /* La fila de entradas. Lo que aparece a la vez no arranca a la vez: cada
      bloque espera su turno, en el orden de la página, hasta que el anterior
@@ -226,7 +249,7 @@
     return Math.round(empieza - ahora);
   }
 
-  /* Lo que anima Motion dentro de un bloque .rise (los puestos, los pasos
+  /* Lo que main.js anima por su cuenta dentro de un bloque .rise (los puestos, los pasos
      del método, los idiomas) no se vigila por su cuenta: entra con su
      bloque, cuando a este le toca, y recibe el retraso que le ha dado la
      fila. Si no hay bloque o ya ha entrado, arranca ya. */
@@ -623,6 +646,10 @@
   /* ============================================================
      Obertura del hero: el titular sube por líneas y el retrato
      entra desenfocado. Se lanza en cuanto el navegador ha pintado.
+     La portada ya la lanza antes un script en línea, justo detrás
+     del hero (index.astro), para no esperar a que llegue este
+     archivo; esto queda por si acaso. Poner la clase dos veces no
+     cambia nada.
      ============================================================ */
   var hero = document.querySelector('.hero');
   if (hero) {
@@ -708,7 +735,7 @@
   });
 
   /* ============================================================
-     Trayectoria animada con Motion
+     Trayectoria animada
      ------------------------------------------------------------
      Dos cosas, y las dos acompañan a lo que hace el usuario: los
      puestos entran escalonados al asomar la sección, y las
@@ -718,14 +745,13 @@
      encarga el CSS, que ya sabe cuál está abierta sin tener que
      preguntárselo a nadie.
 
-     Es una mejora opcional: si motion.js no llega, o si se pide
-     menos movimiento, no se monta nada y la sección se queda como
-     estaba, con todo a la vista y el acordeón funcionando.
+     Es una mejora opcional: si el navegador no sabe animar, o si se
+     pide menos movimiento, no se monta nada y la sección se queda
+     como estaba, con todo a la vista y el acordeón funcionando.
      ============================================================ */
-  var motion = window.Motion;
   var pistas = Array.prototype.slice.call(document.querySelectorAll('.track'));
 
-  if (motion && pistas.length && !reduceMotion) {
+  if (puedeAnimar && pistas.length && !reduceMotion) {
     pistas.forEach(function (pista) {
       var puestos = Array.prototype.slice.call(pista.querySelectorAll('.job'));
       if (!puestos.length) return;
@@ -739,13 +765,11 @@
       function entrar(retraso) {
         if (entrado || !pista.offsetParent) return;
         entrado = true;
-        motion.animate(puestos,
-          { opacity: [0, 1], transform: [SUBIDA, 'none'] },
-          { delay: motion.stagger(PASO_PIEZA / 1000, { startDelay: (retraso || 0) / 1000 }),
-            duration: ENTRADA.duration, ease: ENTRADA.ease });
+        escalonarNativo(puestos, { opacity: [0, 1], transform: [SUBIDA, 'none'] },
+          { desde: retraso || 0, paso: PASO_PIEZA }, mostrar);
       }
 
-      puestos.forEach(function (puesto) { puesto.style.opacity = '0'; });
+      puestos.forEach(ocultar);
       alEntrar(pista, function (espera) { entrar(espera + 160); });
       pista.__entrar = function () { entrar(0); };
 
@@ -757,9 +781,8 @@
         var chips = cabecera.closest('.job').querySelectorAll('.job__fold .chip');
         if (!chips.length) return;
         /* Caen mientras se abre el pliegue, con su misma curva. */
-        motion.animate(chips,
-          { opacity: [0, 1], transform: ['translateY(8px)', 'none'] },
-          { delay: motion.stagger(0.035, { startDelay: 0.12 }), duration: 0.4, ease: [0.2, 0, 0, 1] });
+        escalonarNativo(chips, { opacity: [0, 1], transform: ['translateY(8px)', 'none'] },
+          { desde: 120, paso: 35, duracion: 400, curva: 'cubic-bezier(0.2, 0, 0, 1)' });
       });
     });
 
@@ -781,13 +804,13 @@
      los tres pasos entran en orden, con su raíl creciendo detrás,
      porque son una secuencia y no una lista suelta.
 
-     Igual que el resto: si Motion no llega o se pide menos
-     movimiento, no se monta nada y todo queda ya pintado, que es
-     el estado por defecto del CSS.
+     Igual que el resto: si el navegador no sabe animar o se pide
+     menos movimiento, no se monta nada y todo queda ya pintado, que
+     es el estado por defecto del CSS.
      ============================================================ */
   var sobreMi = document.querySelector('#sobre-mi .about__body');
 
-  if (motion && sobreMi && !reduceMotion) {
+  if (puedeAnimar && sobreMi && !reduceMotion) {
     /* «puente» está en el título, que en móvil queda lejos del cuerpo (el
        retrato va en medio): el trazo se dibuja cuando asoma el título, y los
        pasos cuando asoma el cuerpo. */
@@ -802,22 +825,23 @@
       var dibujarTrazo = function (retraso) {
         if (trazado || !titulo.offsetParent) return;
         trazado = true;
-        motion.animate(trazo, { '--trazo': [0, 1] },
-          { duration: 0.65, delay: retraso, ease: [0.2, 0, 0, 1] });
+        escalonarNativo([trazo], { '--trazo': [0, 1] },
+          { desde: retraso, duracion: 650, curva: 'cubic-bezier(0.2, 0, 0, 1)' },
+          function (el) { el.style.removeProperty('--trazo'); });
       };
       /* Con el titular entrando palabra a palabra, el trazo se dibuja justo
          cuando «puente» acaba de llegar a su sitio, sea cuando sea. */
       var palabraPuente = trazo.closest('.palabra');
       if (palabraPuente) {
         palabraPuente.addEventListener('animationend', function (e) {
-          if (e.target === palabraPuente) dibujarTrazo(0.05);
+          if (e.target === palabraPuente) dibujarTrazo(50);
         });
       } else {
-        motion.inView(titulo, function () { dibujarTrazo(0.25); }, { amount: 0.6 });
+        alEntrar(titulo, function (espera) { dibujarTrazo(espera + 250); });
       }
     }
     pasos.forEach(function (paso) {
-      paso.style.opacity = '0';
+      ocultar(paso);
       paso.style.setProperty('--rail', '0');
     });
 
@@ -831,14 +855,12 @@
            ya está llegando. */
         var pieza = pasos[0].closest('.escalon');
         var dPieza = pieza ? parseFloat(pieza.style.getPropertyValue('--d')) || 0 : 0;
-        espera = (espera + dPieza + 200) / 1000;
-        motion.animate(pasos,
-          { opacity: [0, 1], transform: [SUBIDA, 'none'] },
-          { delay: motion.stagger(PASO_PIEZA / 1000, { startDelay: espera }),
-            duration: ENTRADA.duration, ease: ENTRADA.ease });
-        motion.animate(pasos, { '--rail': [0, 1] },
-          { delay: motion.stagger(PASO_PIEZA / 1000, { startDelay: espera + 0.2 }),
-            duration: ENTRADA.duration, ease: ENTRADA.ease });
+        espera = espera + dPieza + 200;
+        escalonarNativo(pasos, { opacity: [0, 1], transform: [SUBIDA, 'none'] },
+          { desde: espera, paso: PASO_PIEZA }, mostrar);
+        escalonarNativo(pasos, { '--rail': [0, 1] },
+          { desde: espera + 200, paso: PASO_PIEZA },
+          function (el) { el.style.removeProperty('--rail'); });
       }
     });
   }
@@ -869,12 +891,12 @@
      Misma lógica que la trayectoria: la pestaña de Idiomas empieza
      oculta, así que la animación se lanza también al seleccionarla
      (el guardián __entrar evita repetirla si ya se lanzó al hacer
-     scroll). Sin Motion, o pidiendo menos movimiento, cada barra
-     salta a su ancho final de golpe, como antes.
+     scroll). Si el navegador no sabe animar, o pidiendo menos
+     movimiento, cada barra salta a su ancho final de golpe.
      ============================================================ */
   var listasIdiomas = Array.prototype.slice.call(document.querySelectorAll('.langs'));
 
-  if (motion && listasIdiomas.length && !reduceMotion) {
+  if (puedeAnimar && listasIdiomas.length && !reduceMotion) {
     listasIdiomas.forEach(function (lista) {
       var filas = Array.prototype.slice.call(lista.children);
       if (!filas.length) return;
@@ -883,23 +905,30 @@
       function entrar(retraso) {
         if (entrado || !lista.offsetParent) return;
         entrado = true;
-        var espera = (retraso || 0) / 1000;
-        var paso = PASO_PIEZA / 1000;
-        motion.animate(filas,
-          { opacity: [0, 1], transform: [SUBIDA, 'none'] },
-          { delay: motion.stagger(paso, { startDelay: espera }),
-            duration: ENTRADA.duration, ease: ENTRADA.ease });
-        filas.forEach(function (fila, i) {
+        var espera = retraso || 0;
+        escalonarNativo(filas, { opacity: [0, 1], transform: [SUBIDA, 'none'] },
+          { desde: espera, paso: PASO_PIEZA }, mostrar);
+        /* Cada barra se deja ya con su ancho final (sin su transición de CSS,
+           que se pondría por delante) y se anima desde cero encima. */
+        var rellenos = [];
+        filas.forEach(function (fila) {
           var relleno = fila.querySelector('.lang__fill');
-          if (!relleno) return;
+          if (relleno) rellenos.push(relleno);
+        });
+        rellenos.forEach(function (relleno, i) {
           var pct = relleno.style.getPropertyValue('--pct') || '0%';
-          motion.animate(relleno,
-            { inlineSize: ['0%', pct] },
-            { delay: espera + paso * i + 0.2, duration: ENTRADA.duration * 1.2, ease: ENTRADA.ease });
+          relleno.style.transition = 'none';
+          relleno.style.inlineSize = pct;
+          relleno.animate({ inlineSize: ['0%', pct] }, {
+            duration: DURA_ENTRADA * 1.2,
+            delay: espera + PASO_PIEZA * i + 200,
+            easing: CURVA_ENTRADA,
+            fill: 'backwards'
+          });
         });
       }
 
-      filas.forEach(function (fila) { fila.style.opacity = '0'; });
+      filas.forEach(ocultar);
       alEntrar(lista, function (espera) { entrar(espera + 160); });
       lista.__entrar = function () { entrar(0); };
     });

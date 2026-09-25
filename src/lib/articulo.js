@@ -8,6 +8,7 @@
 import { ARTICULOS } from '../data/articulos.js';
 import { ALT } from '../data/alt-textos.js';
 import { salidasExternas } from './ajustes.js';
+import { srcsetDe, TAMANO_COLUMNA } from './imagenes.js';
 
 /* Dentro del texto quedaron los enlaces que se escribieron en Medium. Los que
    apuntan a otro articulo de la serie tienen copia aqui, asi que se redirigen
@@ -83,6 +84,35 @@ export function prepararCuerpo(html) {
     return /alt="[^"]*"/.test(tag)
       ? tag.replace(/alt="[^"]*"/, `alt="${escapado}"`)
       : tag.replace(/<img\s/, `<img alt="${escapado}" `);
+  });
+
+  /* Las imágenes que siguen alojadas en Medium se piden ya en WebP y al
+     tamaño que toca. El feed las trae como …/max/1024/ID.png, una dirección
+     antigua que Medium redirige (un viaje de ida y vuelta más) y que sirve en
+     PNG: una de ellas pesaba 290 KB, y en WebP son 20. Con la dirección nueva
+     no hay redirección, y en el móvil se pide la de 640 (la columna del
+     artículo mide como mucho 44rem). Los GIF se dejan tal cual, para no
+     arriesgar su animación. Va después de los textos alternativos, que se
+     buscan por el nombre del archivo. */
+  salida = salida.replace(
+    /(<img\s[^>]*?)src="https:\/\/cdn-images-1\.medium\.com\/max\/(\d+)\/([^"]+?\.(?:png|jpe?g))"/gi,
+    (todo, antes, ancho, id) => {
+      const url = (w) => `https://cdn-images-1.medium.com/v2/resize:fit:${w}/format:webp/${id}`;
+      const n = Number(ancho);
+      const variantes = n > 640
+        ? ` srcset="${url(640)} 640w, ${url(n)} ${n}w" sizes="${TAMANO_COLUMNA}"`
+        : '';
+      return `${antes}src="${url(n)}"${variantes}`;
+    });
+
+  /* Las que sí se sirven desde la web (public/assets/…/articulo-*.webp) miden
+     2000 px y se ven a 704 como mucho: con su srcset, el móvil se baja la de
+     640 o la de 960 (scripts/variantes-imagen.py las hace). */
+  salida = salida.replace(/(<img\s[^>]*?)src="(\/assets\/[^"]+\.webp)"/g, (todo, antes, ruta) => {
+    const srcset = srcsetDe(ruta);
+    return srcset
+      ? `${antes}src="${ruta}" srcset="${srcset}" sizes="${TAMANO_COLUMNA}"`
+      : todo;
   });
 
   return { html: salida, titulares };

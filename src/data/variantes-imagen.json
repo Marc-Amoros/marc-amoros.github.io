@@ -1,0 +1,146 @@
+{
+  "/assets/agrolocker/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/awkward-good/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/besmie/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/bmw/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/cupra-born/portada-mockup.webp": {
+    "ancho": 1200,
+    "variantes": [
+      800
+    ]
+  },
+  "/assets/daily-ui/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/de-barrio/portada-mockup.webp": {
+    "ancho": 1024,
+    "variantes": [
+      800
+    ]
+  },
+  "/assets/escudia/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/galactic-records/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/pen/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/pnc/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/teatro-tips/portada-mockup.webp": {
+    "ancho": 1600,
+    "variantes": [
+      800,
+      1200
+    ]
+  },
+  "/assets/marc.webp": {
+    "ancho": 1050,
+    "variantes": [
+      600,
+      900
+    ]
+  },
+  "/assets/escudia/articulo-3-vistas.webp": {
+    "ancho": 2000,
+    "variantes": [
+      640,
+      960,
+      1400
+    ]
+  },
+  "/assets/escudia/articulo-arquitectura-info.webp": {
+    "ancho": 2000,
+    "variantes": [
+      640,
+      960,
+      1400
+    ]
+  },
+  "/assets/escudia/articulo-diagrama-flujo.webp": {
+    "ancho": 2000,
+    "variantes": [
+      640,
+      960,
+      1400
+    ]
+  },
+  "/assets/escudia/articulo-guia-estilo.webp": {
+    "ancho": 2000,
+    "variantes": [
+      640,
+      960,
+      1400
+    ]
+  },
+  "/assets/escudia/articulo-mapa-europa.webp": {
+    "ancho": 1200,
+    "variantes": [
+      640,
+      960
+    ]
+  },
+  "/assets/escudia/articulo-vistas-finales.webp": {
+    "ancho": 2000,
+    "variantes": [
+      640,
+      960,
+      1400
+    ]
+  },
+  "/assets/escudia/articulo-wireframes.webp": {
+    "ancho": 2000,
+    "variantes": [
+      640,
+      960,
+      1400
+    ]
+  }
+}

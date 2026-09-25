@@ -13,6 +13,12 @@
    pidamos, así que --weight-* sigue funcionando igual que con SF Pro.
    No se carga la cursiva porque el sitio no usa ninguna; si algún día hace
    falta, el navegador la inclina él mismo (font-synthesis por defecto).
+   El archivo está recortado a lo que se escribe en la web: el latino con sus
+   acentos (español, catalán, portugués, francés…), comillas, rayas, flechas y
+   cifras, con todos sus pesos y rasgos (números tabulares incluidos). Pesa
+   80 KB en vez de 128. Si un texto nuevo trae un carácter que no esté, el
+   navegador lo pinta con la fuente de reserva; para ampliarlo, se vuelve a
+   recortar con fontTools (pyftsubset) desde el Inter original.
    Licencia: SIL Open Font License 1.1 (ver Inter/OFL.txt).                */
 @font-face {
   font-family: "Inter";

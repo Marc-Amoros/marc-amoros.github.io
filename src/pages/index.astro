@@ -7,6 +7,7 @@
 import Base from '../layouts/Base.astro';
 import Contacto from '../components/Contacto.astro';
 import { salidasExternas, estadoHero, retratoHero, botonesHero, sobreMiCompleto } from '../lib/ajustes.js';
+import { srcsetDe, TAMANO_TARJETA, TAMANO_RETRATO } from '../lib/imagenes.js';
 
 /* La «M» del arte de la portada: un único trazado (sin fuente). Se declara una vez
    y se reutiliza para la cara, para su fondo extruido, para su sombra y para el
@@ -34,7 +35,6 @@ const rejilla = [
   titulo="Marc Amorós · Diseñador UX/UI"
   descripcion="Marc Amorós, diseñador UX/UI y gráfico en Barcelona. Investigación, prototipado y diseño de interfaces. Portafolio de proyectos y artículos de proceso."
   enPortada={true}
-  conMotion={true}
 >
   <!-- ============================================================
        Hero
@@ -247,7 +247,7 @@ const rejilla = [
       <div class={retratoHero ? 'hero__stage' : 'hero__stage hero__stage--sola'}>
         {retratoHero && (
           <figure class="portrait">
-            <img src="/assets/marc.webp" alt="Retrato de Marc Amorós" width="1200" height="1600"
+            <img src="/assets/marc.webp" srcset={srcsetDe('/assets/marc.webp')} sizes={TAMANO_RETRATO} alt="Retrato de Marc Amorós" width="1200" height="1600"
                  fetchpriority="high" decoding="async">
             <figcaption class="portrait__plate">
               <span class="portrait__name">Marc Amorós</span>
@@ -297,6 +297,19 @@ const rejilla = [
       </div>
     </div>
   </section>
+  <!-- La entrada del hero (el titular que sube, el texto que aparece) arranca
+       aquí mismo, en cuanto el navegador ha pintado, y no cuando llega main.js:
+       en un móvil con mala conexión eso eran segundos con el texto principal
+       invisible. main.js también pone la clase, por si acaso. -->
+  <script is:inline>
+    (function () {
+      var hero = document.getElementById('inicio');
+      if (!hero || !window.requestAnimationFrame) return;
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { hero.classList.add('overture'); });
+      });
+    })();
+  </script>
 
   <!-- ============================================================
        Sobre mí
@@ -309,7 +322,7 @@ const rejilla = [
         <!-- El retrato con su tarjeta: el nombre y, debajo, el oficio. Ya no está en
              la portada: retratoHero, en src/lib/ajustes.js, lo devuelve allí. -->
         <figure class="portrait">
-          <img src="/assets/marc.webp" alt="Retrato de Marc Amorós" width="1200" height="1600"
+          <img src="/assets/marc.webp" srcset={srcsetDe('/assets/marc.webp')} sizes={TAMANO_RETRATO} alt="Retrato de Marc Amorós" width="1200" height="1600"
                loading="lazy" decoding="async">
           <figcaption class="portrait__plate">
             <span class="portrait__name">Marc Amorós</span>
@@ -690,7 +703,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · producto de datos</span>
-              <img src="/assets/pen/portada-mockup.webp" alt="Un monitor sobre un escritorio muestra el Portal Estadístico del Notariado: un mapa de España en tonos naranjas." loading="lazy" decoding="async"
+              <img src="/assets/pen/portada-mockup.webp" srcset={srcsetDe('/assets/pen/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Un monitor sobre un escritorio muestra el Portal Estadístico del Notariado: un mapa de España en tonos naranjas." loading="lazy" decoding="async"
                    style="view-transition-name:portada-portal-estadistico-notariado">
             </div>
             <div class="work__body">
@@ -704,7 +717,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · Administración electrónica</span>
-              <img src="/assets/pnc/portada-mockup.webp" alt="Un portátil muestra la página de inicio del Portal Notarial del Ciudadano, con fondo azul y capturas del portal." loading="lazy" decoding="async"
+              <img src="/assets/pnc/portada-mockup.webp" srcset={srcsetDe('/assets/pnc/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Un portátil muestra la página de inicio del Portal Notarial del Ciudadano, con fondo azul y capturas del portal." loading="lazy" decoding="async"
                    style="view-transition-name:portada-portal-notarial-ciudadano">
             </div>
             <div class="work__body">
@@ -718,7 +731,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · HMI de automoción</span>
-              <img src="/assets/cupra-born/portada-mockup.webp" alt="Interior de un CUPRA Born de noche: volante, cuadro digital y pantalla central de infotainment." loading="lazy" decoding="async"
+              <img src="/assets/cupra-born/portada-mockup.webp" srcset={srcsetDe('/assets/cupra-born/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Interior de un CUPRA Born de noche: volante, cuadro digital y pantalla central de infotainment." loading="lazy" decoding="async"
                    style="view-transition-name:portada-cupra-born">
             </div>
             <div class="work__body">
@@ -732,7 +745,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · Dirección de arte</span>
-              <img src="/assets/besmie/portada-mockup.webp" alt="Dos móviles sobre fondo lila con la pantalla de inicio de Besmie y el listado «Explore» de perfiles." loading="lazy" decoding="async"
+              <img src="/assets/besmie/portada-mockup.webp" srcset={srcsetDe('/assets/besmie/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Dos móviles sobre fondo lila con la pantalla de inicio de Besmie y el listado «Explore» de perfiles." loading="lazy" decoding="async"
                    style="view-transition-name:portada-besmie">
             </div>
             <div class="work__body">
@@ -746,7 +759,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UI · Dirección de arte</span>
-              <img src="/assets/de-barrio/portada-mockup.webp" alt="Una mano sostiene un móvil con la app De Barrio: comercios destacados y productos de temporada." loading="lazy" decoding="async"
+              <img src="/assets/de-barrio/portada-mockup.webp" srcset={srcsetDe('/assets/de-barrio/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Una mano sostiene un móvil con la app De Barrio: comercios destacados y productos de temporada." loading="lazy" decoding="async"
                    style="view-transition-name:portada-de-barrio">
             </div>
             <div class="work__body">
@@ -760,7 +773,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · Design Sprint</span>
-              <img src="/assets/galactic-records/portada-mockup.webp" alt="Logotipo de Galactic Records, con un casco de astronauta de píxeles, y el texto «Metodología Design Sprint»." loading="lazy" decoding="async"
+              <img src="/assets/galactic-records/portada-mockup.webp" srcset={srcsetDe('/assets/galactic-records/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Logotipo de Galactic Records, con un casco de astronauta de píxeles, y el texto «Metodología Design Sprint»." loading="lazy" decoding="async"
                    style="view-transition-name:portada-galactic-records">
             </div>
             <div class="work__body">
@@ -774,7 +787,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">Daily UI Challenge</span>
-              <img src="/assets/daily-ui/portada-mockup.webp" alt="Un portátil con la web de Mercedes-Benz y un G 550 4x4² verde en la montaña, bajo el rótulo «Daily UI 003»." loading="lazy" decoding="async"
+              <img src="/assets/daily-ui/portada-mockup.webp" srcset={srcsetDe('/assets/daily-ui/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Un portátil con la web de Mercedes-Benz y un G 550 4x4² verde en la montaña, bajo el rótulo «Daily UI 003»." loading="lazy" decoding="async"
                    style="view-transition-name:portada-daily-ui">
             </div>
             <div class="work__body">
@@ -788,7 +801,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · Design Thinking</span>
-              <img src="/assets/escudia/portada-mockup.webp" alt="Un tótem con pantalla táctil: «Pedro, ¿qué te ha pasado?» y los botones Denunciar robo, Pedir ambulancia y Bloquear tarjeta." loading="lazy" decoding="async"
+              <img src="/assets/escudia/portada-mockup.webp" srcset={srcsetDe('/assets/escudia/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Un tótem con pantalla táctil: «Pedro, ¿qué te ha pasado?» y los botones Denunciar robo, Pedir ambulancia y Bloquear tarjeta." loading="lazy" decoding="async"
                    style="view-transition-name:portada-escudia">
             </div>
             <div class="work__body">
@@ -802,7 +815,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UI · Design Sprint</span>
-              <img src="/assets/agrolocker/portada-mockup.webp" alt="Un móvil con la bienvenida de Agrolocker junto a hojas de albahaca y el lema «La solución digital y distribución de última milla»." loading="lazy" decoding="async"
+              <img src="/assets/agrolocker/portada-mockup.webp" srcset={srcsetDe('/assets/agrolocker/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Un móvil con la bienvenida de Agrolocker junto a hojas de albahaca y el lema «La solución digital y distribución de última milla»." loading="lazy" decoding="async"
                    style="view-transition-name:portada-agrolocker">
             </div>
             <div class="work__body">
@@ -816,7 +829,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · flujo de acceso</span>
-              <img src="/assets/bmw/portada-mockup.webp" alt="Un móvil con el inicio de sesión de BMW en modo oscuro, con usuario, contraseña y acceso con Google y Facebook." loading="lazy" decoding="async"
+              <img src="/assets/bmw/portada-mockup.webp" srcset={srcsetDe('/assets/bmw/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Un móvil con el inicio de sesión de BMW en modo oscuro, con usuario, contraseña y acceso con Google y Facebook." loading="lazy" decoding="async"
                    style="view-transition-name:portada-bmw">
             </div>
             <div class="work__body">
@@ -830,7 +843,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · Design Thinking</span>
-              <img src="/assets/teatro-tips/portada-mockup.webp" alt="Logotipo de TIPS Teatro con el mensaje de bienvenida y dos pantallas: «Ver en directo» y «Ver en streaming»." loading="lazy" decoding="async"
+              <img src="/assets/teatro-tips/portada-mockup.webp" srcset={srcsetDe('/assets/teatro-tips/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Logotipo de TIPS Teatro con el mensaje de bienvenida y dos pantallas: «Ver en directo» y «Ver en streaming»." loading="lazy" decoding="async"
                    style="view-transition-name:portada-teatro-tips">
             </div>
             <div class="work__body">
@@ -844,7 +857,7 @@ const rejilla = [
           <article class="work" data-tilt="">
             <div class="work__media">
               <span class="work__badge">UX/UI · Design Sprint</span>
-              <img src="/assets/awkward-good/portada-mockup.webp" alt="Un portátil con la web amarilla de Awkward?Good sobre una foto en blanco y negro de una manifestación y el lema «Rompe con los prejuicios»." loading="lazy" decoding="async"
+              <img src="/assets/awkward-good/portada-mockup.webp" srcset={srcsetDe('/assets/awkward-good/portada-mockup.webp')} sizes={TAMANO_TARJETA} alt="Un portátil con la web amarilla de Awkward?Good sobre una foto en blanco y negro de una manifestación y el lema «Rompe con los prejuicios»." loading="lazy" decoding="async"
                    style="view-transition-name:portada-awkward-good">
             </div>
             <div class="work__body">
