@@ -1355,10 +1355,10 @@
   var etiqueta = dibujo.querySelector('.arte__medida text');
 
   /* Los tiempos, en ms desde que arranca la entrada: van con los de styles.css. */
-  var MEDIDA_EMPIEZA = 2650;   // la etiqueta sale a los 2,6 s
+  var MEDIDA_EMPIEZA = 3000;   // la etiqueta sale a los 2,95 s
   var MEDIDA_DURA = 950;
   /* Cuándo acaba el brillo de la entrada: hasta entonces el cursor no lo relanza. */
-  var FIN_BRILLO = 5200;
+  var FIN_BRILLO = 5550;
 
   var medidaFinal = etiqueta ? etiqueta.textContent : '';
   var cifras = medidaFinal.match(/(\d+)\s*×\s*(\d+)/);
