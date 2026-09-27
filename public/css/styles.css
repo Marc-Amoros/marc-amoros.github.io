@@ -1416,10 +1416,10 @@ p { text-wrap: pretty; }
 }
 
 /* El título de la sección es el lema: «El diseño como puente entre el usuario y el
-   producto». Es una frase larga y, en la columna estrecha, a tamaño de titular
-   (--text-3xl) pasaba de cuatro líneas; un escalón por debajo se queda en tres. */
+   producto». Va al mismo tamaño que el resto de títulos de sección (--text-3xl,
+   el del h2 base): en la columna estrecha ocupa una línea más, pero todas las
+   secciones se leen con la misma jerarquía. */
 .about__grid .section-head h2 {
-  font-size: var(--text-2xl);
   /* Un poco más de aire entre líneas: el trazo de «puente» cuelga bajo la
      palabra y con la interlínea del titular rozaba la línea de abajo. */
   line-height: 1.22;
