@@ -2835,9 +2835,11 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
      de ese recálculo, que es el mismo motivo por el que el anillo de
      lectura (.menu, en detalle.css) ya usa rem + env() en vez de vw.
      --alza la escribe main.js cuando el pie entra en la ventana: el botón se
-     detiene encima en vez de taparle el enlace de volver. */
+     detiene encima en vez de taparle el enlace de volver.
+     De lado, 1rem: el mismo margen que el texto en el móvil (--section-inline),
+     que es la única pantalla donde se ve. */
   inset-block-end: max(1.25rem, env(safe-area-inset-bottom, 0px), var(--alza, 0px));
-  inset-inline-end: max(1.25rem, env(safe-area-inset-right, 0px));
+  inset-inline-end: max(1rem, env(safe-area-inset-right, 0px));
   z-index: 60;
   display: inline-flex;
   align-items: center;

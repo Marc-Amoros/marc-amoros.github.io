@@ -1638,3 +1638,30 @@
     });
   }
 })();
+
+/* ============================================================
+   La portada no se queda con el apartado en la dirección
+   ------------------------------------------------------------
+   «Contactar», «Hablemos» y los enlaces del menú llevan a un apartado de la
+   portada (#contacto, #portafolio…), y el navegador dejaba esa marca en la
+   dirección. Ahí se quedaba: al volver a abrir la pestaña en el móvil, al
+   recargar o al guardar el enlace, la portada ya no empezaba por el hero,
+   sino en el contacto. Ahora se salta al apartado igual que antes, pero la
+   dirección vuelve a quedar en «/». Si se llega con la marca desde fuera (el
+   «Hablemos» de una ficha), se quita al terminar de cargar, cuando el
+   navegador ya ha colocado la página en su sitio.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  if (!document.getElementById('inicio') || !window.history || !history.replaceState) return;
+
+  function limpiar() {
+    if (!location.hash) return;
+    history.replaceState(history.state, '', location.pathname + location.search);
+  }
+
+  window.addEventListener('hashchange', limpiar);
+  if (document.readyState === 'complete') limpiar();
+  else window.addEventListener('load', limpiar);
+})();

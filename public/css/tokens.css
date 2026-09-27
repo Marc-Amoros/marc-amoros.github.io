@@ -260,6 +260,15 @@
   color-scheme: light;
 }
 
+/* ---------- Márgenes laterales en el móvil ----------
+   Por debajo de 48rem (donde la barra pasa al menú de hamburguesa) el margen
+   lateral es fijo, 16 px: con el 6 % del ancho salían 22 px en un iPhone y el
+   texto perdía anchura sin ganar aire. En tableta y escritorio sigue siendo
+   proporcional. */
+@media (max-width: 47.99rem) {
+  :root { --section-inline: 1rem; }
+}
+
 /* ---------- Oscuro por preferencia del sistema ----------
    Se anula si la persona ha elegido claro con el interruptor. */
 @media (prefers-color-scheme: dark) {
