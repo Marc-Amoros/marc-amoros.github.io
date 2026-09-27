@@ -69,6 +69,9 @@ h1, h2, h3, h4 {
 h1 { font-size: var(--text-5xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); }
 h2 { font-size: var(--text-3xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); }
 h3 { font-size: var(--text-lg); }
+/* Los párrafos, a 16 px (--text-parrafo). Los que llevan clase propia
+   (etiquetas, contadores) mandan sobre esto y conservan su tamaño. */
+p { font-size: var(--text-parrafo); }
 
 p { text-wrap: pretty; }
 
@@ -147,10 +150,10 @@ p { text-wrap: pretty; }
 }
 
 .lead {
-  font-size: var(--text-lg);
-  line-height: 1.45;
+  font-size: var(--text-parrafo);
+  line-height: 1.55;
   color: var(--color-text-muted);
-  letter-spacing: var(--tracking-title);
+  letter-spacing: var(--tracking-body);
 }
 .section-head {
   display: flex;
@@ -698,20 +701,12 @@ p { text-wrap: pretty; }
   display: flex;
   flex-direction: column;
   gap: var(--spacing-s);
-  /* Base de 20 px (1.25rem), por debajo de los ~22 px que llevaba (--text-lg):
-     con el arte al lado el párrafo compite menos con el titular. En pantallas
-     estrechas baja a 18 px para no alargar la portada en el móvil. */
-  font-size: 1.125rem;
-  line-height: 1.5;
-  letter-spacing: var(--tracking-title);
+  /* 16 px, como el resto de párrafos (--text-parrafo). */
+  font-size: var(--text-parrafo);
+  line-height: 1.55;
+  letter-spacing: var(--tracking-body);
   color: var(--color-text-muted);
   max-inline-size: 58ch;
-}
-
-@media (min-width: 40rem) {
-  .hero__sub {
-    font-size: 1.25rem;
-  }
 }
 
 .hero__actions {
@@ -1484,6 +1479,7 @@ p { text-wrap: pretty; }
   padding: 0;
   list-style: none;
   counter-reset: paso;
+  font-size: var(--text-parrafo);  /* la lista sigue al párrafo: mismo tamaño */
 }
 .metodo__lista li {
   position: relative;
@@ -1530,7 +1526,7 @@ p { text-wrap: pretty; }
   padding-block-start: var(--spacing-m);
   border-block-start: 1px solid var(--color-border-soft);
 }
-.about__body .oficio-texto p { font-size: var(--text-sm); line-height: 1.55; }
+.about__body .oficio-texto p { font-size: var(--text-parrafo); line-height: 1.55; }
 
 /* Lo que sigue -«Proyectos destacados» y las píldoras de herramientas- es de la
    versión completa (sobreMiCompleto en src/lib/ajustes.js): los estilos se
@@ -1608,7 +1604,7 @@ p { text-wrap: pretty; }
   background: var(--color-surface);
 }
 .skill h3 { font-size: var(--text-sm); margin-block-end: 0.25em; }
-.skill p { font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.5; }
+.skill p { font-size: var(--text-parrafo); color: var(--color-text-muted); line-height: 1.5; }
 
 .toolbar {
   display: flex;
@@ -1853,7 +1849,7 @@ p { text-wrap: pretty; }
 .work__meta { min-block-size: 2lh; }
 .work__title { font-size: var(--text-base); font-weight: var(--weight-semi); min-block-size: 2lh; }
 .work__title a::after { content: ""; position: absolute; inset: 0; }
-.work__desc { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.5; }
+.work__desc { font-size: var(--text-parrafo); color: var(--color-text-muted); line-height: 1.5; }
 .work__tags {
   display: flex;
   flex-wrap: wrap;
@@ -1908,7 +1904,7 @@ p { text-wrap: pretty; }
   border-radius: var(--radius-l);
   background: var(--color-surface-sunk);
 }
-.work-more p { font-size: var(--text-sm); color: var(--color-text-muted); }
+.work-more p { font-size: var(--text-parrafo); color: var(--color-text-muted); }
 .work-more__acciones { display: flex; flex-wrap: wrap; gap: var(--spacing-s); }
 /* A 320px cada botón medía lo que pedía su propio texto: el de la ficha
    ocupaba casi toda la fila y se partía en dos líneas, y el corto
@@ -1959,7 +1955,7 @@ p { text-wrap: pretty; }
 }
 .article__title { font-size: var(--text-base); font-weight: var(--weight-semi); line-height: 1.35; }
 .article__title a::after { content: ""; position: absolute; inset: 0; }
-.article__excerpt { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.55; }
+.article__excerpt { font-size: var(--text-parrafo); color: var(--color-text-muted); line-height: 1.55; }
 .article__foot { margin-block-start: auto; padding-block-start: var(--spacing-2xs); }
 
 .dot-sep { color: var(--color-border); }
@@ -2112,7 +2108,7 @@ p { text-wrap: pretty; }
 }
 .contacto-modal .contact__inner { gap: var(--spacing-xs); }
 .contacto-modal h2 { margin-block-start: var(--spacing-2xs); font-size: var(--text-2xl); text-wrap: balance; }
-.contacto-modal .lead { max-inline-size: 30rem; font-size: var(--text-base); color: var(--color-text-muted); text-wrap: balance; }
+.contacto-modal .lead { max-inline-size: 30rem; font-size: var(--text-parrafo); color: var(--color-text-muted); text-wrap: balance; }
 .contact__foto {
   inline-size: 5.175rem;
   block-size: 5.175rem;
@@ -2760,7 +2756,7 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
 }
 .job__text {
   margin-block-start: var(--spacing-2xs);
-  font-size: var(--text-sm);
+  font-size: var(--text-parrafo);
   color: var(--color-text-muted);
   line-height: 1.55;
   max-inline-size: var(--measure);
@@ -2769,7 +2765,7 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
 
 /* Idiomas: barras de nivel */
 .langs { list-style: none; padding: 0; display: grid; gap: var(--spacing-s); }
-.lang__row { display: flex; justify-content: space-between; font-size: var(--text-sm); margin-block-end: 0.35em; }
+.lang__row { display: flex; justify-content: space-between; font-size: var(--text-parrafo); margin-block-end: 0.35em; }
 .lang__level { color: var(--color-text-subtle); font-size: var(--text-xs); }
 .lang__bar { block-size: 4px; border-radius: 4px; background: var(--color-border-soft); overflow: hidden; }
 .lang__fill {

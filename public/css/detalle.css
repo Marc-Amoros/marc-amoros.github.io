@@ -44,8 +44,8 @@
   text-wrap: balance;
 }
 .caso__lead {
-  font-size: var(--text-lg);
-  line-height: 1.55;
+  font-size: var(--text-parrafo);
+  line-height: 1.6;
   color: var(--color-text-muted);
   max-inline-size: var(--measure);
 }
@@ -609,8 +609,10 @@
   letter-spacing: var(--tracking-label);
 }
 .bloque__t { font-size: var(--text-2xl); letter-spacing: var(--tracking-title); }
-.bloque__texto { display: grid; gap: var(--spacing-s); max-inline-size: var(--measure); }
-.bloque__texto p { font-size: var(--text-lg); line-height: 1.55; color: var(--color-text-muted); }
+/* El tamaño va también en el contenedor: --measure está en ch, y así los 65
+   caracteres de ancho se miden con la letra de 16 px del texto. */
+.bloque__texto { display: grid; gap: var(--spacing-s); max-inline-size: var(--measure); font-size: var(--text-parrafo); }
+.bloque__texto p { font-size: var(--text-parrafo); line-height: 1.6; color: var(--color-text-muted); }
 .bloque__texto p:first-child { color: var(--color-text); }
 
 /* Láminas intercaladas */
@@ -917,6 +919,9 @@
   font-size: var(--text-xs);
   color: var(--color-text-subtle);
 }
+/* Es un dato de la tarjeta, no un párrafo de lectura: se queda en el tamaño
+   pequeño de .menu__pie y no en los 16 px de los párrafos. */
+.menu__pie p { font-size: inherit; }
 .menu__pie strong {
   font-weight: var(--weight-semi);
   font-variant-numeric: tabular-nums;
@@ -1212,13 +1217,14 @@
   .menu__tirador:hover { transform: none; }
 }
 .post__cuerpo > * + * { margin-block-start: var(--spacing-s); }
-.post__cuerpo p { font-size: var(--text-lg); line-height: 1.65; color: var(--color-text-muted); }
-/* El primer párrafo hace de entradilla y da entrada al texto. */
-.post__cuerpo > p:first-child {
-  font-size: var(--text-xl);
-  line-height: 1.5;
-  color: var(--color-text);
-}
+/* Con la letra a 16 px, la columna de 44rem daba renglones de casi 90
+   caracteres. El texto se queda en --measure (65 caracteres, como en las
+   fichas) y las imágenes siguen ocupando la columna entera. */
+.post__cuerpo > :is(p, ul, ol, blockquote) { max-inline-size: var(--measure); }
+.post__cuerpo p { font-size: var(--text-parrafo); line-height: 1.65; color: var(--color-text-muted); }
+/* El primer párrafo hace de entradilla: mismo tamaño que el resto, pero en
+   la tinta del texto y no en la apagada. */
+.post__cuerpo > p:first-child { color: var(--color-text); }
 .post__cuerpo h2 {
   margin-block-start: var(--spacing-xl);
   font-size: var(--text-2xl);
@@ -1269,8 +1275,8 @@
   padding-inline-start: 1.4em;
   display: grid;
   gap: 0.5em;
-  font-size: var(--text-lg);
-  line-height: 1.55;
+  font-size: var(--text-parrafo);
+  line-height: 1.65;
   color: var(--color-text-muted);
 }
 /* La viñeta en acento: es el mismo violeta que marca dónde estás en el menú. */
@@ -1279,7 +1285,7 @@
   padding-inline-start: var(--spacing-m);
   border-inline-start: 3px solid var(--color-accent);
   color: var(--color-text);
-  font-size: var(--text-lg);
+  font-size: var(--text-parrafo);
 }
 .post__cuerpo blockquote > * + * { margin-block-start: var(--spacing-s); }
 .post__cuerpo figure { margin: var(--spacing-l) 0; }

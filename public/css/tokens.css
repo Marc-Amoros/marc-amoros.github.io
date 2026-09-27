@@ -54,6 +54,12 @@
   --text-4xl:  clamp(2.488rem, 2.160rem + 1.643vw, 3.433rem);
   /* Titular de hero: registro "landing de producto" de Apple */
   --text-5xl:  clamp(2.600rem, 1.765rem + 4.174vw, 5.000rem);
+  /* Todos los párrafos de lectura de la web: 16 px fijos, en cualquier
+     pantalla (entradillas, cuerpo de fichas y artículos, descripciones de
+     tarjetas, pie). Las etiquetas pequeñas (fechas, contadores, rótulos en
+     mayúsculas) y los subtítulos grandes no son párrafos de lectura y
+     conservan su tamaño. */
+  --text-parrafo: 1rem;
 
   --leading-tight:  1.06;
   --leading-snug:   1.22;
