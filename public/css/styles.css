@@ -653,9 +653,11 @@ p { text-wrap: pretty; }
 }
 .hero__status:hover .hero__dot { transform: scale(1.06) rotate(-1.5deg); }
 
-/* Dos renglones: «Diseño interfaces» y «que se entienden solas». El tamaño sale de
-   lo que mide el más largo, para que quepa entero en su columna a cualquier ancho. */
-.hero__title { font-size: min(4.25rem, 9.8cqw); }
+/* Dos renglones: «Diseño interfaces» y «que se entienden solas». En el código
+   sigue siendo el h1 de la portada, pero se ve como los h2 de las secciones
+   (--text-3xl): mismo tamaño que «Diez años diseñando…». El 9.8cqw es el tope
+   para que el renglón más largo quepa entero en su columna a cualquier ancho. */
+.hero__title { font-size: min(var(--text-3xl), 9.8cqw); }
 /* El acento del titular. En claro se queda plano: los tokens --portada-em-*
    valen el propio acento y transparente. En oscuro coge un degradado hacia un
    lila casi blanco. Sin text-shadow a proposito: cada .line lleva
