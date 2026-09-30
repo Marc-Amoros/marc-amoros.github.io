@@ -23,6 +23,13 @@ html {
      enfocado justo debajo de el. */
   scroll-padding-block-end: calc(5rem + var(--spacing-l));
   -webkit-text-size-adjust: 100%;
+  /* El scroll acaba en el pie: sin el «rebote» de iOS/Android, que al llegar
+     al final seguía arrastrando la página y dejaba un hueco bajo el pie. */
+  overscroll-behavior-y: none;
+  /* «clip» y no «hidden»: recorta lo que asome por los lados sin convertir
+     la página en un segundo contenedor de scroll (en iOS, «hidden» en body
+     no siempre se respeta y la página se podía desplazar de lado). */
+  overflow-x: clip;
 }
 
 /* Bloquea el scroll de toda la página mientras algo se muestra a pantalla
@@ -44,7 +51,7 @@ body {
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background var(--dur-mid) var(--ease-out),
               color var(--dur-mid) var(--ease-out);
 }
