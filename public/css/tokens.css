@@ -19,7 +19,7 @@
    80 KB en vez de 128. Si un texto nuevo trae un carácter que no esté, el
    navegador lo pinta con la fuente de reserva; para ampliarlo, se vuelve a
    recortar con fontTools (pyftsubset) desde el Inter original.
-   Licencia: SIL Open Font License 1.1 (ver Inter/OFL.txt).                */
+   Licencia: SIL Open Font License 1.1 (ver assets/fonts/OFL.txt).                */
 @font-face {
   font-family: "Inter";
   src: url("../assets/fonts/inter-var.woff2") format("woff2");

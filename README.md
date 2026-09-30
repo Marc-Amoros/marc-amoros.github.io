@@ -11,14 +11,14 @@ Peticiones a terceros: ninguna al abrir la portada ni las fichas. Los
 artículos cargan sus 75 imágenes desde Medium (`cdn-images-1.medium.com`). Todo
 lo demás —tipografía, láminas, vídeos, CSS y JS— se sirve desde el propio
 dominio. Los vídeos (`preload="none"`) y los prototipos de Figma solo se
-descargan cuando alguien los pulsa. La única librería del navegador es [Motion](https://motion.dev)
-(46 KB comprimidos), copiada en `public/js/vendor/`; solo la carga la portada.
+descargan cuando alguien los pulsa. No hay librerías de terceros en el
+navegador: las animaciones usan la API nativa del navegador (`element.animate()`).
 
 ## Cómo verla
 
 ```bash
 npm install      # solo la primera vez
-npm run dev      # http://localhost:4321
+npm run dev      # http://localhost:4340
 ```
 
 Para publicarla, `npm run build` deja en `dist/` el sitio entero como ficheros
@@ -43,9 +43,10 @@ Tres cosas que conviene saber:
   funciona en la raíz de un dominio. Por eso el repositorio tiene que llamarse
   `usuario.github.io`: con otro nombre se serviría desde una subcarpeta y se
   vería sin estilos ni imágenes.
-- `.gitignore` deja fuera los originales de la raíz. `AWARDS.mov` pesa 169 MB y
-  GitHub rechaza cualquier archivo de más de 100 MB, así que no lo quites
-  antes del primer commit.
+- GitHub rechaza cualquier archivo de más de 100 MB. Los vídeos más pesados
+  de la web rondan los 40 MB; exporta los nuevos por debajo de 50 MB, que es
+  cuando GitHub empieza a avisar. `.gitignore` deja fuera, por si acaso, las
+  imágenes y los vídeos sueltos en la raíz.
 - `site` (en `astro.config.mjs`) es la URL definitiva: de ella salen las
   canónicas, el sitemap y `robots.txt`. `marcamoros.com` lo sirve hoy
   Squarespace; para trasladarlo cambia `site`, crea `public/CNAME` con el
@@ -80,7 +81,6 @@ public/assets/                   Una carpeta por proyecto (láminas WEBP y SVG) 
 public/js/main.js                Tema, menú, pestañas, acordeón, revelados, ripple, malla, contacto, FAB
 public/js/caso.js                Comportamiento de la ficha (menú lateral, avance, vídeo, ampliaciones)
 public/js/lectura.js             Comportamiento del artículo (cuánto queda, apartado activo)
-public/js/vendor/motion.js       Motion 13 (MIT): trayectoria, «sobre mí» e idiomas
 public/proyecto.html             Redirige los enlaces antiguos proyecto.html?p=SLUG a la ruta nueva
 public/articulo.html             Ídem para los artículos (articulo.html?a=SLUG)
 
@@ -88,7 +88,6 @@ public/articulo.html             Ídem para los artículos (articulo.html?a=SLUG
 .gitignore                       Lo que no se sube a GitHub: originales de la raíz, node_modules y dist
 
 dist/                            Lo que genera el build. Es lo que se sube al hosting.
-_anterior/                       El sitio antes de Astro y activos que ya no se usan. Se puede borrar. No se sube a GitHub.
 ```
 
 Retratos en `public/assets/`: `marc.webp` (1200×1600, el de «Sobre mí» y, si se enciende
@@ -142,8 +141,7 @@ más los signos que usa el sitio (→ ↗ ● « » …) y conserva el eje ópti
 de 80 px y lo engorda en las etiquetas de 11 px. Se precarga en el `<head>`
 y va con `font-display: swap`, así que el texto se lee desde el primer
 frame. Detrás queda el stack del sistema como red de seguridad. Licencia SIL
-OFL 1.1, junto a la fuente. La carpeta `Inter/` de la raíz es el original de
-Google Fonts: no se sirve, solo está para poder rehacer el subconjunto.
+OFL 1.1, junto a la fuente (`public/assets/fonts/OFL.txt`).
 
 De **Material Design 3** vienen:
 
@@ -351,9 +349,6 @@ Lo que hay hecho, y lo que conviene no romper al tocar:
   `terser` (el original en `public/` no se toca). Si tocas ese script,
   compruébalo con `npm run build && npm run preview`, que sirve el resultado
   minificado de verdad; `npm run dev` no pasa por este paso.
-- `public/js/vendor/motion.js` (la librería Motion, copiada para no pedir
-  nada a terceros) ya llega minificada de fábrica y el script la deja tal
-  cual: re-minificarla no ahorra nada y arriesga el aviso de licencia.
 - Las portadas de proyecto y el retrato de «Sobre mí» están exportados al
   tamaño más grande en que de verdad se llegan a ver en la web (con margen
   para pantallas retina), no al tamaño del archivo original. Si añades un
