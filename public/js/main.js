@@ -472,6 +472,11 @@
     });
   }
 
+  /* Safari de iOS no enciende :active al tocar si nadie escucha el toque.
+     Este oyente vacío basta para que los estados de pulsado del CSS
+     (sección 18 de styles.css) respondan al dedo. */
+  document.addEventListener('touchstart', function () {}, { passive: true });
+
   /* Foco e inclinación 3D de las tarjetas de proyecto.
      Solo con ratón: en táctil no hay puntero que seguir. */
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;

@@ -196,6 +196,9 @@
   --state-hover: 0.06;
   --state-focus: 0.10;
   --state-press: 0.12;
+  /* El tinte de acento un punto más denso: lo que se ve mientras el dedo
+     está apoyado en una fila que ya se tiñe con --color-accent-soft. */
+  --color-accent-press: color-mix(in oklab, var(--color-accent-soft) 92%, var(--color-accent));
   --ripple-color: var(--color-accent);
 
   /* Curvas «emphasized» de Material 3: arranque lento, salida muy rápida */

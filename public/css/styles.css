@@ -219,23 +219,31 @@ p { text-wrap: pretty; }
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-emphasized);
 }
-.btn:hover::before  { opacity: var(--state-hover); }
+@media (hover: hover) {
+  .btn:hover::before  { opacity: var(--state-hover); }
+}
 .btn:active::before { opacity: var(--state-press); }
-.btn:hover  { transform: scale(1.02); }
+@media (hover: hover) {
+  .btn:hover  { transform: scale(1.02); }
+}
 .btn:active { transform: scale(0.98); }
 
 .btn--primary {
   background: var(--color-accent);
   color: var(--color-on-accent);
 }
-.btn--primary:hover { background: var(--color-accent-hover); }
+@media (hover: hover) {
+  .btn--primary:hover { background: var(--color-accent-hover); }
+}
 
 .btn--ghost {
   background: transparent;
   color: var(--color-accent);
   border-color: var(--color-border);
 }
-.btn--ghost:hover { border-color: var(--color-accent); background: var(--color-accent-soft); }
+@media (hover: hover) {
+  .btn--ghost:hover { border-color: var(--color-accent); background: var(--color-accent-soft); }
+}
 
 .btn--lg { font-size: var(--text-base); padding-block: 0.78em; padding-inline: 1.6em; }
 
@@ -254,8 +262,10 @@ p { text-wrap: pretty; }
   line-height: 1;
   transition: transform var(--dur-fast) var(--ease-emphasized);
 }
-.link-arrow:hover { text-decoration: underline; text-underline-offset: 0.28em; }
-.link-arrow:hover::after { transform: translateX(0.2em); }
+@media (hover: hover) {
+  .link-arrow:hover { text-decoration: underline; text-underline-offset: 0.28em; }
+  .link-arrow:hover::after { transform: translateX(0.2em); }
+}
 
 /* ------------------------------------------------------------
    5. Navegación translúcida fija
@@ -427,7 +437,9 @@ p { text-wrap: pretty; }
               border-color var(--dur-fast) var(--ease-out),
               transform var(--dur-fast) var(--ease-emphasized);
 }
-.theme-toggle:hover { color: var(--color-text); border-color: var(--color-text-subtle); transform: scale(1.06); }
+@media (hover: hover) {
+  .theme-toggle:hover { color: var(--color-text); border-color: var(--color-text-subtle); transform: scale(1.06); }
+}
 
 /* Zona de pulsación de los mandos redondos: 44×44, que es lo que piden Apple
    y Material para el dedo y lo que marca la WCAG en su nivel más alto (2.5.5).
@@ -1212,7 +1224,9 @@ p { text-wrap: pretty; }
     radial-gradient(72% 55% at 52% 34%, transparent 0%, rgba(0 0 0 / 0.34) 62%, rgba(0 0 0 / 0.82) 100%),
     linear-gradient(180deg, rgba(0 0 0 / 0.28) 0%, transparent 26%, rgba(0 0 0 / 0.55) 100%);
 }
-.portrait:hover img { transform: scale(1.08); filter: grayscale(1) contrast(1.22) brightness(0.98); }
+@media (hover: hover) {
+  .portrait:hover img { transform: scale(1.08); filter: grayscale(1) contrast(1.22) brightness(0.98); }
+}
 .portrait__plate {
   position: absolute;
   /* Por encima de la viñeta: el ::after se pinta después que el figcaption,
@@ -1592,8 +1606,10 @@ p { text-wrap: pretty; }
   color: var(--color-accent);
   transition: transform var(--dur-fast) var(--ease-emphasized);
 }
-.destacado:hover { background: var(--color-accent-soft); }
-.destacado:hover::after { transform: translateX(0.2em); }
+@media (hover: hover) {
+  .destacado:hover { background: var(--color-accent-soft); }
+  .destacado:hover::after { transform: translateX(0.2em); }
+}
 /* Hacia dentro: el contenedor recorta lo que salga de él. */
 .destacado:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
@@ -1769,6 +1785,9 @@ p { text-wrap: pretty; }
   translate: 0 -50%;
   block-size: max(100%, 2.75rem);
 }
+@media (hover: hover) {
+  .carrusel__punto:not([aria-current="true"]):hover::before { background: var(--color-text-subtle); }
+}
 .carrusel__punto:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 
 .carrusel__flechas { display: flex; gap: var(--spacing-2xs); }
@@ -1786,7 +1805,8 @@ p { text-wrap: pretty; }
   transition: background var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out),
-              opacity var(--dur-fast) var(--ease-out);
+              opacity var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-emphasized);
 }
 .carrusel__flecha svg { inline-size: 1.25rem; block-size: 1.25rem; }
 .carrusel__flecha:hover:not(:disabled) {
@@ -1810,10 +1830,12 @@ p { text-wrap: pretty; }
               box-shadow var(--dur-mid) var(--ease-emphasized),
               border-color var(--dur-mid) var(--ease-emphasized);
 }
-.work:hover {
-  transform: translateY(var(--mov-elevar));
-  box-shadow: var(--shadow-m);
-  border-color: var(--color-border);
+@media (hover: hover) {
+  .work:hover {
+    transform: translateY(var(--mov-elevar));
+    box-shadow: var(--shadow-m);
+    border-color: var(--color-border);
+  }
 }
 .work:focus-within { border-color: var(--color-accent); }
 
@@ -1835,7 +1857,9 @@ p { text-wrap: pretty; }
   object-fit: cover;
   transition: transform var(--dur-slow) var(--ease-emphasized);
 }
-.work:hover .work__media img { transform: scale(1.04); }
+@media (hover: hover) {
+  .work:hover .work__media img { transform: scale(1.04); }
+}
 .work__media img[data-failed="true"] { opacity: 0; }
 
 .work__body {
@@ -1951,11 +1975,15 @@ p { text-wrap: pretty; }
               box-shadow var(--dur-mid) var(--ease-emphasized),
               border-color var(--dur-mid) var(--ease-emphasized);
 }
-.article:hover {
-  transform: translateY(var(--mov-elevar));
-  box-shadow: var(--shadow-m);
-  border-color: var(--color-border);
+@media (hover: hover) {
+  .article:hover {
+    transform: translateY(var(--mov-elevar));
+    box-shadow: var(--shadow-m);
+    border-color: var(--color-border);
+  }
 }
+/* Con el teclado, el mismo filo de acento que las tarjetas de proyecto. */
+.article:focus-within { border-color: var(--color-accent); }
 .article__meta {
   display: flex;
   align-items: center;
@@ -2005,7 +2033,6 @@ p { text-wrap: pretty; }
   box-shadow: var(--elev-1, 0 1px 2px rgb(0 0 0 / 0.05));
   transition: border-color var(--dur-fast) var(--ease-out);
 }
-.contact__correo:hover,
 .contact__correo:focus-within { border-color: color-mix(in oklab, var(--color-accent) 55%, var(--color-border)); }
 .contact__mail {
   display: inline-flex;
@@ -2021,7 +2048,12 @@ p { text-wrap: pretty; }
   transition: background var(--dur-fast) var(--ease-out);
 }
 .contact__mail span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.contact__mail:hover { background: var(--color-accent-soft); }
+@media (hover: hover) {
+  .contact__correo:hover { border-color: color-mix(in oklab, var(--color-accent) 55%, var(--color-border)); }
+}
+@media (hover: hover) {
+  .contact__mail:hover { background: var(--color-accent-soft); }
+}
 .contact__mail:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -4px; border-radius: var(--radius-pill); }
 .copiar-mail svg {
   flex: none;
@@ -2049,7 +2081,9 @@ p { text-wrap: pretty; }
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
 }
-.copiar-mail:hover { color: var(--color-accent); background: var(--color-accent-soft); }
+@media (hover: hover) {
+  .copiar-mail:hover { color: var(--color-accent); background: var(--color-accent-soft); }
+}
 .copiar-mail:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -4px; }
 .copiar-mail[data-copiado="true"] { color: var(--color-accent); background: var(--color-accent-soft); }
 /* Los dos iconos ocupan la misma celda: al copiar, el de copiar se encoge y
@@ -2084,7 +2118,9 @@ p { text-wrap: pretty; }
   border: 5px solid transparent;
   border-block-start-color: var(--color-text);
 }
-.copiar-mail:hover .copiar-mail__texto,
+@media (hover: hover) {
+  .copiar-mail:hover .copiar-mail__texto { opacity: 1; translate: -50% 0; }
+}
 .copiar-mail:focus-visible .copiar-mail__texto,
 .copiar-mail[data-copiado="true"] .copiar-mail__texto { opacity: 1; translate: -50% 0; }
 @media (prefers-reduced-motion: reduce) {
@@ -2161,9 +2197,13 @@ p { text-wrap: pretty; }
   background: transparent;
   color: var(--color-text-subtle);
   cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+  transition: color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-emphasized);
 }
-.contacto-modal__cerrar:hover { color: var(--color-text); background: color-mix(in oklab, var(--color-text) 8%, transparent); }
+@media (hover: hover) {
+  .contacto-modal__cerrar:hover { color: var(--color-text); background: color-mix(in oklab, var(--color-text) 8%, transparent); }
+}
 .contacto-modal__cerrar:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .contacto-modal__cerrar svg {
   inline-size: 1.2rem;
@@ -2219,7 +2259,9 @@ p { text-wrap: pretty; }
               border-color var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out);
 }
-.social:hover { transform: scale(1.03); border-color: var(--color-accent); color: var(--color-accent); }
+@media (hover: hover) {
+  .social:hover { transform: scale(1.03); border-color: var(--color-accent); color: var(--color-accent); }
+}
 .social svg { inline-size: 1em; block-size: 1em; fill: currentColor; }
 
 .footer {
@@ -2251,11 +2293,18 @@ p { text-wrap: pretty; }
      del pie que lo rodea: es un enlace, no una nota al margen, y en fino se
      leía más débil de lo que es. */
   font-weight: var(--weight-medium);
+  gap: 0.3em;
 }
-.footer a:hover {
-  color: var(--color-accent-hover);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+/* La flecha de «Volver arriba» se adelanta hacia donde lleva, como las
+   flechas laterales de los demás enlaces. */
+.footer__flecha { transition: transform var(--dur-fast) var(--ease-emphasized); }
+@media (hover: hover) {
+  .footer a:hover .footer__flecha { transform: translateY(-0.2em); }
+  .footer a:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
 }
 
 /* El fondo detrás del menú de móvil: el mismo tratamiento que el ::backdrop
@@ -2304,6 +2353,7 @@ p { text-wrap: pretty; }
   border-radius: var(--radius-pill);
   background: transparent;
   cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-emphasized);
 }
 .nav__burger span {
   display: block;
@@ -2365,6 +2415,7 @@ p { text-wrap: pretty; }
   font-size: var(--text-base);
   font-weight: var(--weight-medium);
   border-block-end: 1px solid var(--color-border-soft);
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .nav__panel li:last-child a { border-block-end: 0; }
 
@@ -2498,7 +2549,9 @@ figure.rise.is-in img {
               background var(--dur-fast) var(--ease-emphasized),
               color var(--dur-fast) var(--ease-emphasized);
 }
-a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(--color-accent); }
+@media (hover: hover) {
+  a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(--color-accent); }
+}
 
 /* ============================================================
    13. Portafolio — tarjeta Material con foco que sigue al puntero
@@ -2518,9 +2571,11 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
    main.js escribe --mx / --my en porcentaje sobre la propia tarjeta. */
 .work > * { position: relative; z-index: 1; }
 
-.work:hover {
-  box-shadow: var(--elev-4);
-  border-color: transparent;
+@media (hover: hover) {
+  .work:hover {
+    box-shadow: var(--elev-4);
+    border-color: transparent;
+  }
 }
 
 /* Inclinación 3D sutil: main.js lleva la inclinación (--rx, --ry) y la
@@ -2560,7 +2615,9 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   line-height: 0.8;
   transition: transform var(--dur-fast) var(--ease-emphasized);
 }
-.work:hover .work__go::after { transform: translateX(0.25em); }
+@media (hover: hover) {
+  .work:hover .work__go::after { transform: translateX(0.25em); }
+}
 
 /* Insignia de estado sobre la portada (Material: assist chip elevado) */
 .work__badge {
@@ -2614,7 +2671,9 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-emphasized);
 }
-.tab:hover::before { opacity: var(--state-hover); }
+@media (hover: hover) {
+  .tab:hover::before { opacity: var(--state-hover); }
+}
 .tab[aria-selected="true"] { color: var(--color-accent); }
 
 /* El indicador se desplaza entre pestañas: es la firma de Material. */
@@ -2719,7 +2778,9 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   cursor: pointer;
   transition: background var(--dur-fast) var(--ease-out);
 }
-.job__head:hover { background: var(--surface-2); }
+@media (hover: hover) {
+  .job__head:hover { background: var(--surface-2); }
+}
 .job__head:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
@@ -2743,7 +2804,9 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   transition: transform var(--dur-emphasized) var(--ease-emphasized),
               color var(--dur-fast) var(--ease-out);
 }
-.job__head:hover .job__chev { color: var(--color-accent); }
+@media (hover: hover) {
+  .job__head:hover .job__chev { color: var(--color-accent); }
+}
 .job__head[aria-expanded="true"] .job__chev { transform: rotate(180deg); }
 
 /* El pliegue pasa de 0fr a 1fr, igual que el menú de las fichas: la altura
@@ -2884,13 +2947,17 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   pointer-events: auto;
   transition-delay: 0s;      /* al aparecer, visible desde el primer fotograma */
 }
-.fab:hover { box-shadow: var(--elev-5); }
+@media (hover: hover) {
+  .fab:hover { box-shadow: var(--elev-5); }
+}
 .fab::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background: #fff; opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-emphasized);
 }
-.fab:hover::before  { opacity: var(--state-hover); }
+@media (hover: hover) {
+  .fab:hover::before  { opacity: var(--state-hover); }
+}
 .fab:active::before { opacity: var(--state-press); }
 .fab svg { inline-size: 1.15em; block-size: 1.15em; }
 /* Por debajo de 87.5rem (1400px) la columna del articulo llega hasta donde
@@ -2943,4 +3010,52 @@ a.chip:hover, button.chip:hover { border-color: var(--color-accent); color: var(
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ============================================================
+   18. Pulsar: la respuesta al dedo
+   ------------------------------------------------------------
+   En el móvil no existe «pasar por encima»: lo único que confirma que un
+   toque ha llegado es lo que pasa mientras el dedo está apoyado. Por eso
+   los hover van dentro de @media (hover: hover) —en el iPhone se quedaban
+   puestos después de tocar: el botón de tema seguía agrandado, el puesto
+   de la trayectoria tintado y la etiqueta «Copiar correo» a la vista— y
+   aquí cada mando tiene su estado de pulsado, que sirve igual para el dedo
+   que para el clic. Una sola regla para todos: lo que se pulsa se hunde un
+   poco (los botones redondos un 8 %, las píldoras un 3 %, las tarjetas un
+   1,5 %) y lo que es una fila se tiñe un punto más que al pasar el ratón.
+   Safari de iOS solo enciende :active si alguien escucha el toque, y de eso
+   se encarga main.js.
+   ============================================================ */
+
+/* El recuadro gris que pinta iOS al tocar sobra donde ya hay respuesta
+   propia: se superponía, cuadrado, a botones redondos y píldoras. */
+:is(.btn, .theme-toggle, .nav__burger, .nav__panel a, .tab, .job__head,
+    .carrusel__flecha, .carrusel__punto, .work, .article, .destacado,
+    .contact__mail, .copiar-mail, .contacto-modal__cerrar, .social,
+    .footer a, .fab) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle:active,
+.nav__burger:active,
+.carrusel__flecha:active:not(:disabled),
+.contacto-modal__cerrar:active { transform: scale(0.92); }
+
+.social:active { transform: scale(0.97); }
+
+.tab:active::before { opacity: var(--state-press); }
+.job__head:active { background: var(--surface-3); }
+.destacado:active,
+.contact__mail:active { background: var(--color-accent-press); }
+.copiar-mail:active { color: var(--color-accent); background: var(--color-accent-press); }
+.copiar-mail:active .copiar-mail__icono { scale: 0.82; }
+.nav__panel a:active { color: var(--color-accent); }
+.footer a:active { color: var(--color-accent-hover); }
+
+/* Las tarjetas solo se hunden en táctil: con ratón ya se elevan y se
+   inclinan, y un tercer movimiento al hacer clic sería ruido. */
+@media (hover: none) {
+  .work:active,
+  .article:active { transform: scale(0.985); }
 }

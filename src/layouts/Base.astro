@@ -173,7 +173,7 @@ const personaJsonLd = {
 <footer class="footer">
   <div class="footer__inner">
     <p>© <span id="year">2026</span> Marc Amorós Soler · Diseñado y montado en Barcelona.</p>
-    <p><a href={enPortada ? '#inicio' : '/'}>{enPortada ? 'Volver arriba ↑' : 'Volver a la portada'}</a></p>
+    <p><a href={enPortada ? '#inicio' : '/'}>{enPortada ? <>Volver arriba <span class="footer__flecha" aria-hidden="true">↑</span></> : 'Volver a la portada'}</a></p>
   </div>
 </footer>
 

@@ -72,16 +72,22 @@
   font-weight: var(--weight-medium);
   color: var(--color-accent);
   transition: border-color var(--dur-fast) var(--ease-out),
-              background var(--dur-fast) var(--ease-out);
+              background var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-emphasized);
+  -webkit-tap-highlight-color: transparent;
 }
-.volver:hover { border-color: var(--color-accent); background: var(--color-accent-soft); }
+@media (hover: hover) {
+  .volver:hover { border-color: var(--color-accent); background: var(--color-accent-soft); }
+}
 .volver::before {
   content: "‹";
   font-size: 1.35em;
   line-height: 0.8;
   transition: transform var(--dur-fast) var(--ease-emphasized);
 }
-.volver:hover::before { transform: translateX(-0.2em); }
+@media (hover: hover) {
+  .volver:hover::before { transform: translateX(-0.2em); }
+}
 
 /* Portada: la imagen que se transforma desde la tarjeta de la portada */
 .caso__cover {
@@ -303,7 +309,9 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.proto__accion:hover { background: var(--color-accent); scale: 1.06; }
+@media (hover: hover) {
+  .proto__accion:hover { background: var(--color-accent); scale: 1.06; }
+}
 .proto__marco--cargando iframe { opacity: 0.35; transition: opacity var(--dur-fast, 150ms) ease; }
 .proto__reiniciar--gira svg { animation: proto-gira 500ms var(--ease-out, ease-out); }
 @keyframes proto-gira { to { transform: rotate(-360deg); } }
@@ -385,7 +393,9 @@
   inline-size: max(100%, 2.75rem);
   block-size: max(100%, 2.75rem);
 }
-.clipvid__ampliar:hover { background: var(--color-accent); scale: 1.06; }
+@media (hover: hover) {
+  .clipvid__ampliar:hover { background: var(--color-accent); scale: 1.06; }
+}
 .clipvid__ampliar:focus-visible { outline: 2px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 4px var(--color-accent); }
 .clipvid--modal {
   position: fixed;
@@ -513,7 +523,9 @@
   transition: color var(--dur-fast) var(--ease-out),
               background var(--dur-fast) var(--ease-out);
 }
-.indice__a:hover { color: var(--color-text); background: var(--surface-2); }
+@media (hover: hover) {
+  .indice__a:hover { color: var(--color-text); background: var(--surface-2); }
+}
 .indice__a[aria-current="true"] {
   color: var(--color-accent);
   background: var(--color-accent-soft);
@@ -690,7 +702,9 @@
   box-shadow: var(--elev-1);
   transition: box-shadow var(--dur-mid) var(--ease-emphasized), transform var(--dur-mid) var(--ease-emphasized);
 }
-.rel:hover { box-shadow: var(--elev-3); transform: translateY(var(--mov-elevar)); }
+@media (hover: hover) {
+  .rel:hover { box-shadow: var(--elev-3); transform: translateY(var(--mov-elevar)); }
+}
 .rel__meta { font-size: var(--text-xs); color: var(--color-text-subtle); }
 .rel__t { font-size: var(--text-base); font-weight: var(--weight-semi); }
 
@@ -711,7 +725,9 @@
   border: 1px solid var(--color-border-soft);
   transition: background var(--dur-mid) var(--ease-emphasized), box-shadow var(--dur-mid) var(--ease-emphasized);
 }
-.par:hover { background: var(--surface-3); box-shadow: var(--elev-2); }
+@media (hover: hover) {
+  .par:hover { background: var(--surface-3); box-shadow: var(--elev-2); }
+}
 /* El mismo lila del resto de enlaces con flecha del sitio (.link-arrow, el
    «Ver el caso completo ›» de las tarjetas): «‹ Anterior» y «Siguiente ›»
    llevan la misma etiqueta, así que con .par__k solo (sin --next ni nada
@@ -781,9 +797,11 @@
   transition: transform var(--dur-fast) var(--ease-emphasized),
               box-shadow var(--dur-fast) var(--ease-emphasized);
 }
-.menu__tirador:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--tirador-halo), var(--tirador-sombra-alta);
+@media (hover: hover) {
+  .menu__tirador:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--tirador-halo), var(--tirador-sombra-alta);
+  }
 }
 /* El foco global le pone --radius-s a todo lo enfocable: aquí lo deformaría en
    un cuadrado con las esquinas redondeadas. */
@@ -940,7 +958,9 @@
               opacity var(--dur-mid) var(--ease-out),
               transform var(--dur-mid) var(--ease-out);
 }
-.menu__caso:hover { background: var(--surface-3); border-color: var(--color-border); }
+@media (hover: hover) {
+  .menu__caso:hover { background: var(--surface-3); border-color: var(--color-border); }
+}
 .menu__caso-k {
   font-size: var(--text-2xs);
   letter-spacing: var(--tracking-label);
@@ -1302,3 +1322,25 @@
 }
 .post__cuerpo a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 0.2em; }
 
+
+/* ---------- Pulsar: la respuesta al dedo ----------
+   Mismas reglas que en styles.css (sección 18): los hover de arriba solo
+   valen con ratón, y al pulsar los mandos se hunden y las filas se tiñen. */
+:is(.proto__accion, .clipvid__ampliar, .indice__a, .rel, .par,
+    .menu__tirador, .menu__caso) {
+  -webkit-tap-highlight-color: transparent;
+}
+.volver:active { transform: scale(0.97); }
+.proto__accion:active,
+.clipvid__ampliar:active { scale: 0.92; }
+.menu__tirador:active { transform: scale(0.94); }
+.indice__a:active { background: var(--surface-3); }
+.par:active { background: var(--surface-3); }
+/* En escritorio el caso siguiente pierde su caja (ver arriba): ahí solo
+   se tiñe en el panel plegable. */
+@media (max-width: 63.99rem) {
+  .menu__caso:active { background: var(--surface-3); }
+}
+@media (hover: none) {
+  .rel:active { transform: scale(0.985); }
+}
