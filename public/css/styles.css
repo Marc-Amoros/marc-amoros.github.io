@@ -52,6 +52,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
+  /* El mismo freno al rebote que en html: en iPhone (Safari, y también
+     Chrome, que allí usa el mismo motor) hay versiones que lo leen de body
+     y no de html. Con los dos queda cubierto. */
+  overscroll-behavior-y: none;
   transition: background var(--dur-mid) var(--ease-out),
               color var(--dur-mid) var(--ease-out);
 }
