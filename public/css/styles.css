@@ -3059,3 +3059,84 @@ figure.rise.is-in img {
   .work:active,
   .article:active { transform: scale(0.985); }
 }
+
+/* ============================================================
+   19. Splash de entrada
+   ------------------------------------------------------------
+   Una vez por visita, al entrar por la portada (lo decide el <head> de
+   Base.astro). Cuenta en poco más de un segundo lo mismo que el arte del
+   hero: la «M» se traza en violeta, se rellena de tinta, la selecciona su
+   caja con las asas y aparece el nombre. A los 1,1 s se funde y el hero
+   arranca su entrada por debajo. Todo es CSS: si el script en línea fallara,
+   la animación de salida la apaga igual. Sin el atributo data-splash (sin JS,
+   con menos movimiento, en la segunda visita) no existe.
+   ============================================================ */
+.splash { display: none; }
+:root[data-splash] .splash {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  background: var(--color-bg);
+  -webkit-tap-highlight-color: transparent;
+  animation: splash-sale 420ms var(--ease-emphasized-accel) 1100ms forwards;
+}
+/* Saltada con un gesto: se va enseguida. */
+:root[data-splash] .splash--fuera { animation: splash-sale 260ms var(--ease-out) forwards; }
+
+.splash__marca {
+  display: grid;
+  justify-items: center;
+  gap: var(--spacing-s);
+  animation: splash-marca-sale 420ms var(--ease-emphasized-accel) 1100ms forwards;
+}
+.splash--fuera .splash__marca { animation: none; }
+
+.splash__m { inline-size: clamp(7.5rem, 22vw, 10.5rem); overflow: visible; }
+
+.splash__trazo {
+  fill: none;
+  stroke: var(--color-accent);
+  /* En unidades del dibujo (unos 2px en pantalla) y sin non-scaling-stroke:
+     con él, Chrome mide el trazo discontinuo en píxeles e ignora pathLength. */
+  stroke-width: 8;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: splash-dibuja 680ms var(--ease-emphasized) 60ms forwards;
+}
+.splash__relleno {
+  fill: var(--color-text);
+  opacity: 0;
+  animation: splash-rellena 340ms var(--ease-out) 540ms forwards;
+}
+.splash__caja {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  scale: 1.08;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: splash-selecciona 360ms var(--ease-emphasized-decel) 680ms forwards;
+}
+.splash__asa { fill: var(--color-bg); }
+
+.splash__nombre {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-text);
+  opacity: 0;
+  translate: 0 0.4rem;
+  animation: splash-nombre 480ms var(--ease-emphasized-decel) 420ms forwards;
+}
+
+@keyframes splash-dibuja     { to { stroke-dashoffset: 0; } }
+@keyframes splash-rellena    { to { opacity: 1; } }
+@keyframes splash-selecciona { to { opacity: 1; scale: 1; } }
+@keyframes splash-nombre     { to { opacity: 1; translate: 0 0; } }
+@keyframes splash-marca-sale { to { scale: 1.04; } }
+@keyframes splash-sale       { to { opacity: 0; visibility: hidden; } }

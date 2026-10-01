@@ -9,10 +9,9 @@ import Contacto from '../components/Contacto.astro';
 import { salidasExternas, estadoHero, retratoHero, botonesHero, sobreMiCompleto } from '../lib/ajustes.js';
 import { srcsetDe, TAMANO_TARJETA, TAMANO_RETRATO } from '../lib/imagenes.js';
 
-/* La «M» del arte de la portada: un único trazado (sin fuente). Se declara una vez
-   y se reutiliza para la cara, para su fondo extruido, para su sombra y para el
-   recorte del brillo. */
-const letraM = 'M46 30H194L306.1 292.2L426 30H574V38Q574 46 566 46H534Q520 46 520 62V388Q520 414 546 414H553Q560 414 560 421V430H400V421Q400 414 407 414H414Q440 414 440 388V56.2L269 430L124 90.8V388Q124 414 150 414H157Q164 414 164 421V430H58V421Q58 414 65 414H72Q98 414 98 388V62Q98 46 84 46H54Q46 46 46 38Z';
+/* La «M» del arte de la portada vive en src/lib/letra-m.js: la comparte con la
+   splash de entrada (Base.astro). */
+import { letraM } from '../lib/letra-m.js';
 /* Las 16 capas del fondo, de la más lejana (k = 1) a la más cercana a la cara. */
 const capasLado = Array.from({ length: 16 }, (_, i) => (16 - i) / 16);
 
@@ -305,6 +304,8 @@ const rejilla = [
     (function () {
       var hero = document.getElementById('inicio');
       if (!hero || !window.requestAnimationFrame) return;
+      /* Con la splash delante, la entrada la lanza ella al irse. */
+      if (document.documentElement.dataset.splash === 'on') return;
       requestAnimationFrame(function () {
         requestAnimationFrame(function () { hero.classList.add('overture'); });
       });

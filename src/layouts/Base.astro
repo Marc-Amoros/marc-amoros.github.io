@@ -2,6 +2,7 @@
 import Contacto from '../components/Contacto.astro';
 import { salidasExternas } from '../lib/ajustes.js';
 import { conVersion } from '../lib/version.js';
+import { letraM } from '../lib/letra-m.js';
 /* Esqueleto común de las tres clases de página. Antes la barra, el pie y el
    botón flotante estaban copiados en index.html, proyecto.html y
    articulo.html; ahora se escriben una vez y viajan en todas las páginas. */
@@ -120,11 +121,92 @@ const personaJsonLd = {
         try { sessionStorage.setItem(clave, String(Math.round(scrollY))); } catch (e) {}
       });
     })();
+
+    /* Splash: una vez por visita, al entrar por la portada. Se decide aquí,
+       antes de pintar, para que el hero no asome un instante por debajo. No
+       sale al volver atrás, al llegar a un apartado (/#contacto desde una
+       ficha), con menos movimiento ni si el navegador no deja recordar que
+       ya se vio: en ese caso saldría en cada visita. */
+    (function () {
+      if (location.hash) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      if (nav && nav.type === 'back_forward') return;
+      try {
+        if (sessionStorage.getItem('splash-vista')) return;
+        sessionStorage.setItem('splash-vista', '1');
+      } catch (e) { return; }
+      document.documentElement.dataset.splash = 'on';
+    })();
   </script>
 )}
 </head>
 
 <body>
+{enPortada && (
+  <>
+    <!-- Splash de entrada: la «M» del arte de la portada se dibuja, se rellena
+         y la selecciona su caja, con el nombre debajo; luego se funde y el hero
+         hace su entrada. Es decoración: oculta a los lectores de pantalla. -->
+    <div class="splash" id="splash" aria-hidden="true">
+      <div class="splash__marca">
+        <svg class="splash__m" viewBox="20 4 580 452" focusable="false">
+          <path class="splash__relleno" d={letraM}/>
+          <path class="splash__trazo" d={letraM} pathLength="1"/>
+          <g class="splash__caja">
+            <rect x="46" y="30" width="528" height="400"/>
+            {[[46, 30], [310, 30], [574, 30], [46, 230], [574, 230], [46, 430], [310, 430], [574, 430]].map(([x, y]) => (
+              <rect class="splash__asa" x={x - 11} y={y - 11} width="22" height="22"/>
+            ))}
+          </g>
+        </svg>
+        <span class="splash__nombre">Marc Amorós</span>
+      </div>
+    </div>
+    <!-- Quién manda en la splash. Va en línea y no en main.js: si ese archivo
+         tarda o falla, la splash se va igual (el CSS también la apaga solo). -->
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var splash = document.getElementById('splash');
+        if (!splash) return;
+        if (root.dataset.splash !== 'on') { splash.remove(); return; }
+
+        /* A los 1,1 s el hero empieza su entrada mientras la splash se funde:
+           las dos cosas se solapan y no hay un hueco en blanco entre ellas. */
+        var entregada = false;
+        function entregar() {
+          if (entregada) return;
+          entregada = true;
+          root.dataset.splash = 'sale';
+          var hero = document.getElementById('inicio');
+          if (hero) hero.classList.add('overture');
+          document.dispatchEvent(new Event('splash:fin'));
+        }
+        var gestos = ['pointerdown', 'keydown', 'wheel', 'touchstart'];
+        function terminar() {
+          entregar();
+          gestos.forEach(function (t) { removeEventListener(t, saltar); });
+          root.removeAttribute('data-splash');
+          splash.remove();
+        }
+        /* Cualquier gesto la quita al momento: nadie tiene que esperarla. */
+        function saltar() {
+          if (entregada) return;
+          splash.classList.add('splash--fuera');
+          entregar();
+        }
+
+        setTimeout(entregar, 1100);
+        setTimeout(terminar, 2600);
+        splash.addEventListener('animationend', function (e) {
+          if (e.target === splash && e.animationName === 'splash-sale') terminar();
+        });
+        gestos.forEach(function (t) { addEventListener(t, saltar, { passive: true }); });
+      })();
+    </script>
+  </>
+)}
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
 <header class="nav" id="nav">

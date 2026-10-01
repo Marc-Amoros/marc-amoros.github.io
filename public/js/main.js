@@ -9,6 +9,13 @@
   var root = document.documentElement;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Lo que se anima al entrar espera a que se vaya la splash de la portada
+     (Base.astro): si no, la entrada pasaría por debajo, tapada. */
+  function trasSplash(fn) {
+    if (root.dataset.splash !== 'on') fn();
+    else document.addEventListener('splash:fin', fn, { once: true });
+  }
+
   /* ---------- Año del pie ---------- */
   var year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
@@ -415,7 +422,9 @@
           porcentaje de sí mismo y se quedaba invisible para siempre. */
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
 
-    revealables.forEach(function (el) { revealObserver.observe(el); });
+    trasSplash(function () {
+      revealables.forEach(function (el) { revealObserver.observe(el); });
+    });
   }
 
   /* ---------- Enlace activo en la navegación ---------- */
@@ -679,8 +688,10 @@
      ============================================================ */
   var hero = document.querySelector('.hero');
   if (hero) {
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { hero.classList.add('overture'); });
+    trasSplash(function () {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { hero.classList.add('overture'); });
+      });
     });
   }
 
