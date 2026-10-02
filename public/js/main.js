@@ -626,6 +626,11 @@
         b.disabled = Number(b.dataset.ir) < 0 ? pista.scrollLeft <= 1 : alFinal();
       });
 
+      /* La tarjeta de la parada actual se marca: en el móvil hace de hover
+         (styles.css, sección 20). */
+      var enFoco = paradas[actual] ? paradas[actual].tarjeta : -1;
+      tarjetas.forEach(function (t, i) { t.toggleAttribute('data-actual', i === enFoco); });
+
       if (!puntos) return;
       Array.prototype.forEach.call(puntos.querySelectorAll('.carrusel__punto'),
         function (b, i) { b.setAttribute('aria-current', String(i === actual)); });
@@ -1208,6 +1213,23 @@
         hero.addEventListener('pointerleave', function () {
           raton.x = -9999; raton.y = -9999;
         });
+      } else {
+        // En táctil el dedo hace de cursor: la malla se enciende donde
+        // tocas y sigue al dedo mientras arrastras (también si la página se
+        // desplaza), y al soltar se apaga.
+        var alDedo = function (e) {
+          var t = e.touches[0];
+          if (!t) return;
+          var r = hero.getBoundingClientRect();
+          raton.x = t.clientX - r.left;
+          raton.y = t.clientY - r.top;
+          if (raton.dx < -1000 || e.type === 'touchstart') { raton.dx = raton.x; raton.dy = raton.y; }
+        };
+        var sueltaDedo = function () { raton.x = -9999; raton.y = -9999; };
+        hero.addEventListener('touchstart', alDedo, { passive: true });
+        hero.addEventListener('touchmove', alDedo, { passive: true });
+        hero.addEventListener('touchend', sueltaDedo, { passive: true });
+        hero.addEventListener('touchcancel', sueltaDedo, { passive: true });
       }
 
       // Fuera de pantalla no se dibuja nada.
@@ -1510,7 +1532,8 @@
       Y el lienzo se ilumina donde estás (se mueven los círculos de la luz;
       --luz la enciende).
    3) Cada vez que tu cursor entra, el brillo vuelve a cruzar la letra.
-   Sin cursor (táctil) o con movimiento reducido no hace nada.
+   En táctil lo mismo lo mueven el scroll y el dedo (al final de este bloque).
+   Con movimiento reducido no hace nada.
    ============================================================ */
 (function () {
   'use strict';
@@ -1622,7 +1645,9 @@
     pedir();
   }, { passive: true });
 
-  hero.addEventListener('pointerleave', function () {
+  /* Un dedo también «sale» al levantarlo: eso no debe deshacer el toque. */
+  hero.addEventListener('pointerleave', function (e) {
+    if (e.pointerType === 'touch') return;
     meta.px = 0;
     meta.py = 0;
     meta.dx = 0;
@@ -1635,24 +1660,73 @@
   /* El brillo: se relanza quitando y poniendo la clase, con una lectura del
      layout entre medias para que el navegador vea el cambio. No más de una vez
      cada cinco segundos, para que sea un detalle y no un tic. */
+  function relanzarBrillo() {
+    var ahora = Date.now();
+    /* Ni encima del brillo de la entrada (main.js apunta cuándo acaba) ni
+       antes de que la letra esté hecha. */
+    var finEntrada = parseInt(arte.getAttribute('data-fin-entrada'), 10) || 0;
+    if (arte.classList.contains('arte--pausa') || ahora < finEntrada) return;
+    if (ahora - ultimoBrillo < 5000) return;
+    ultimoBrillo = ahora;
+    dibujo.classList.remove('arte--brilla');
+    void dibujo.getBoundingClientRect();
+    dibujo.classList.add('arte--brilla');
+  }
   if (dibujo) {
     arte.addEventListener('pointerenter', function (e) {
-      if (e.pointerType === 'touch') return;
-      var ahora = Date.now();
-      /* Ni encima del brillo de la entrada (main.js apunta cuándo acaba) ni
-         antes de que la letra esté hecha. */
-      var finEntrada = parseInt(arte.getAttribute('data-fin-entrada'), 10) || 0;
-      if (arte.classList.contains('arte--pausa') || ahora < finEntrada) return;
-      if (ahora - ultimoBrillo < 5000) return;
-      ultimoBrillo = ahora;
-      dibujo.classList.remove('arte--brilla');
-      void dibujo.getBoundingClientRect();
-      dibujo.classList.add('arte--brilla');
+      if (e.pointerType !== 'touch') relanzarBrillo();
     });
     dibujo.addEventListener('animationend', function (e) {
       if (e.animationName === 'arte-brillo-2') dibujo.classList.remove('arte--brilla');
     });
   }
+
+  /* En táctil no hay cursor que seguir, así que la composición responde de
+     otras dos maneras, con los mismos valores que mueve el cursor:
+     - Al desplazar la página se inclina y sus capas se separan según dónde
+       quede en la pantalla: entra inclinada desde abajo, se endereza en el
+       centro y se inclina al otro lado al salir.
+     - Al tocarla, el cursor de Marc va hasta tu dedo, la luz se enciende ahí,
+       la letra se levanta y el brillo la cruza. Al poco vuelve a su sitio. */
+  if (!dibujo || window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  function alDesplazar() {
+    var r = dibujo.getBoundingClientRect();
+    var vh = window.innerHeight || 1;
+    if (r.bottom < 0 || r.top > vh) return;
+    var p = limitar((r.top + r.height / 2 - vh / 2) / vh, -1, 1);
+    meta.py = limitar(p * 2.4, -1, 1);
+    meta.px = limitar(p * -0.9, -1, 1);
+    pedir();
+  }
+  window.addEventListener('scroll', alDesplazar, { passive: true });
+  window.addEventListener('resize', alDesplazar, { passive: true });
+  alDesplazar();
+
+  var vuelta = 0;
+  dibujo.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'mouse') return;
+    var d = dibujo.getBoundingClientRect();
+    var sx = (e.clientX - d.left) / d.width * VB_W;
+    var sy = (e.clientY - d.top) / d.height * VB_H;
+    meta.dx = limitar(sx + 26, 40, 556) - REPOSO_X;
+    meta.dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
+    if (!luz) { ahora.lx = sx; ahora.ly = sy; }
+    meta.lx = sx;
+    meta.ly = sy;
+    meta.alza = 1;
+    luz = 1;
+    pedir();
+    relanzarBrillo();
+    clearTimeout(vuelta);
+    vuelta = setTimeout(function () {
+      meta.dx = 0;
+      meta.dy = 0;
+      meta.alza = 0;
+      luz = 0;
+      pedir();
+    }, 1600);
+  });
 })();
 
 /* ============================================================

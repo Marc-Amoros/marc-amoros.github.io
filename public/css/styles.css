@@ -3140,3 +3140,39 @@ figure.rise.is-in img {
 @keyframes splash-nombre     { to { opacity: 1; translate: 0 0; } }
 @keyframes splash-marca-sale { to { scale: 1.04; } }
 @keyframes splash-sale       { to { opacity: 0; visibility: hidden; } }
+
+/* ============================================================
+   20. En el móvil: lo que hacía el cursor
+   ------------------------------------------------------------
+   En táctil no hay hover, así que cada efecto que dependía del cursor tiene
+   aquí, o en main.js, su versión para el dedo:
+   - La malla de puntos del hero se enciende donde tocas (main.js).
+   - El arte del hero se inclina con el scroll y responde al tocarlo: el
+     cursor de Marc va hasta tu dedo y el brillo cruza la letra (main.js).
+   - En el carrusel de proyectos, la tarjeta que tienes delante se eleva como
+     con el ratón encima y las vecinas quedan un paso atrás. main.js marca
+     con data-actual la de la parada actual. Solo hasta 48rem: a partir de
+     ahí se ven dos o tres tarjetas enteras y ninguna es «la de delante».
+   ============================================================ */
+@media (hover: none) and (max-width: 47.99rem) {
+  .carrusel__pista > .work {
+    transition: transform var(--dur-mid) var(--ease-emphasized),
+                box-shadow var(--dur-mid) var(--ease-emphasized),
+                border-color var(--dur-mid) var(--ease-emphasized),
+                scale var(--dur-emphasized) var(--ease-emphasized),
+                opacity var(--dur-emphasized) var(--ease-emphasized);
+  }
+  .carrusel__pista:has(> .work[data-actual]) > .work:not([data-actual]) {
+    scale: 0.94;
+    opacity: 0.6;
+  }
+  .carrusel__pista > .work[data-actual] {
+    box-shadow: var(--elev-4);
+    border-color: transparent;
+  }
+  .carrusel__pista > .work[data-actual] .work__media img { transform: scale(1.04); }
+  .carrusel__pista > .work[data-actual] .work__go::after { transform: translateX(0.25em); }
+}
+@media (hover: none) and (max-width: 47.99rem) and (prefers-reduced-motion: reduce) {
+  .carrusel__pista:has(> .work[data-actual]) > .work:not([data-actual]) { scale: none; }
+}
