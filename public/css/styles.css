@@ -26,6 +26,14 @@ html {
   /* El scroll acaba en el pie: sin el «rebote» de iOS/Android, que al llegar
      al final seguía arrastrando la página y dejaba un hueco bajo el pie. */
   overscroll-behavior-y: none;
+  /* Pero Chrome en iPhone no respeta ese freno en la página principal: al
+     llegar al final con fuerza, el iPhone sigue estirando la página y lo que
+     asoma debajo es el fondo de html. Si fuera el mismo blanco que la página,
+     parecería que esta sigue sin fin; con el tono del pie (.footer), se lee
+     como el pie que se alarga y la página queda cerrada. El resto lo cubre
+     body, con el fondo de siempre. */
+  background: var(--color-surface-sunk);
+  transition: background var(--dur-mid) var(--ease-out);
   /* «clip» y no «hidden»: recorta lo que asome por los lados sin convertir
      la página en un segundo contenedor de scroll (en iOS, «hidden» en body
      no siempre se respeta y la página se podía desplazar de lado). */
@@ -2268,6 +2276,9 @@ p { text-wrap: pretty; }
   padding-block: var(--spacing-l);
   padding-inline: var(--section-inline);
   border-block-start: 1px solid var(--color-border-soft);
+  /* Un tono propio, el mismo que el fondo de html: cierra la página y es
+     lo que se ve si el iPhone la estira más allá del final. */
+  background: var(--color-surface-sunk);
   color: var(--color-text-subtle);
   font-size: var(--text-xs);
 }
