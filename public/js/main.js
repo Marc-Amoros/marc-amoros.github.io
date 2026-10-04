@@ -128,7 +128,6 @@
   var burger = document.getElementById('nav-burger');
   var panel = document.getElementById('nav-panel');
   var fondoMenu = document.getElementById('nav-backdrop');
-  var cabecera = document.getElementById('nav');
 
   /* Con el panel abierto, todo lo que no es la cabecera queda tapado por el
      fondo difuminado: sin esto, tabulando después del último enlace («cerrar
@@ -139,7 +138,7 @@
   var fondoAislado = [];
   function aislarFondo() {
     Array.prototype.forEach.call(document.body.children, function (nodo) {
-      if (nodo !== cabecera && nodo !== fondoMenu && !nodo.inert) {
+      if (nodo !== nav && nodo !== fondoMenu && !nodo.inert) {
         nodo.inert = true;
         fondoAislado.push(nodo);
       }
@@ -723,6 +722,15 @@
         if (p) p.hidden = !on;
       });
       moveIndicator(tab);
+      /* Lo que estaba en una pestaña oculta no pudo entrar al hacer scroll:
+         entra ahora, se elija con clic o con las flechas (ver __entrar más
+         abajo, en la trayectoria y en los idiomas). */
+      var panel = document.getElementById(tab.getAttribute('aria-controls'));
+      if (panel) {
+        panel.querySelectorAll('.track, .langs').forEach(function (el) {
+          if (el.__entrar) el.__entrar();
+        });
+      }
     }
 
     tabs.forEach(function (tab, i) {
@@ -825,14 +833,6 @@
         /* Caen mientras se abre el pliegue, con su misma curva. */
         escalonarNativo(chips, { opacity: [0, 1], transform: ['translateY(8px)', 'none'] },
           { desde: 120, paso: 35, duracion: 400, curva: 'cubic-bezier(0.2, 0, 0, 1)' });
-      });
-    });
-
-    document.querySelectorAll('.tab').forEach(function (boton) {
-      boton.addEventListener('click', function () {
-        var panel = document.getElementById(boton.getAttribute('aria-controls'));
-        var pista = panel && panel.querySelector('.track');
-        if (pista && pista.__entrar) pista.__entrar();
       });
     });
   }
@@ -974,14 +974,6 @@
       alEntrar(lista, function (espera) { entrar(espera + 160); });
       lista.__entrar = function () { entrar(0); };
     });
-
-    document.querySelectorAll('.tab').forEach(function (boton) {
-      boton.addEventListener('click', function () {
-        var panel = document.getElementById(boton.getAttribute('aria-controls'));
-        var lista = panel && panel.querySelector('.langs');
-        if (lista && lista.__entrar) lista.__entrar();
-      });
-    });
   } else {
     listasIdiomas.forEach(function (lista) { lista.classList.add('is-in'); });
   }
@@ -1003,7 +995,10 @@
         el.textContent = String(Math.round(fin * (1 - Math.pow(1 - p, 3))));
         if (p < 1) requestAnimationFrame(paso);
       }
-      setTimeout(function () { requestAnimationFrame(paso); }, 600);
+      /* Cuentan a la vez que entran las cifras: con la splash delante, después. */
+      trasSplash(function () {
+        setTimeout(function () { requestAnimationFrame(paso); }, 600);
+      });
     });
   }
 
@@ -1031,7 +1026,6 @@
       var zonas = [];        // cajas de texto que la malla no debe pisar
       var ancho = 0, alto = 0;
       var raton = { x: -9999, y: -9999, dx: -9999, dy: -9999 };
-      var visible = true;
       var animando = false;
       // Los dos extremos del degradado del retículo: el secundario en una
       // esquina, el acento en la otra. Cada punto es un color liso; el
@@ -1188,7 +1182,7 @@
       // Esto va antes de salir con movimiento reducido: el fotograma fijo tiene
       // que seguir el ancho de la ventana y los colores del tema, o se queda
       // como estaba al cargar.
-      window.addEventListener('resize', function () { medir(); pintar(performance.now()); });
+      window.addEventListener('resize', medir);
 
       // El interruptor de tema cambia los tokens: hay que releerlos y, si el
       // lienzo está quieto, volver a pintarlo con los colores nuevos.
@@ -1235,8 +1229,7 @@
       // Fuera de pantalla no se dibuja nada.
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (entradas) {
-          visible = entradas[0].isIntersecting;
-          if (visible) arrancar(); else parar();
+          if (entradas[0].isIntersecting) arrancar(); else parar();
         }, { threshold: 0 }).observe(hero);
       } else {
         arrancar();
@@ -1331,6 +1324,121 @@
     fabScroll();
     window.addEventListener('scroll', fabScroll, { passive: true });
   }
+})();
+
+/* ============================================================
+   Menú lateral de fichas y artículos
+   ------------------------------------------------------------
+   Las fichas y los artículos llevan el mismo menú: en pantalla estrecha un
+   botón redondo lo abre y lo cierra; desde 64rem vive desplegado y de eso se
+   encarga el CSS. Cada página decide qué apartado tiene delante y se lo
+   marca con aria-current (caso.js, lectura.js); el tramo de acento del raíl
+   lo sigue solo, igual que la píldora de la barra sigue a la sección.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var menu = document.querySelector('.menu');
+  if (!menu) return;
+  var tirador = menu.querySelector('.menu__tirador');
+  var panel = menu.querySelector('.menu__panel');
+  var esRail = window.matchMedia('(min-width: 64rem)');
+
+  /* ---------- Abrir y cerrar (solo en estrecho) ---------- */
+  if (tirador && panel) {
+    var abrir = function (v) {
+      menu.dataset.abierto = v ? 'true' : 'false';
+      tirador.setAttribute('aria-expanded', v ? 'true' : 'false');
+    };
+
+    tirador.addEventListener('click', function () {
+      abrir(menu.dataset.abierto !== 'true');
+    });
+
+    document.addEventListener('click', function (e) {
+      if (esRail.matches) return;
+      if (menu.dataset.abierto === 'true' && !menu.contains(e.target)) abrir(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (esRail.matches) return;
+      if (e.key === 'Escape' && menu.dataset.abierto === 'true') {
+        abrir(false);
+        tirador.focus();
+      }
+    });
+
+    /* Al saltar a un apartado el menú estorba: en estrecho se cierra solo. */
+    panel.addEventListener('click', function (e) {
+      if (e.target.closest('a') && !esRail.matches) abrir(false);
+    });
+
+    if (esRail.addEventListener) {
+      esRail.addEventListener('change', function () { abrir(false); });
+    }
+  }
+
+  /* ---------- El raíl y su tramo de acento ---------- */
+  var lista = menu.querySelector('.indice__lista');
+  var indice = menu.querySelector('.indice');
+  var marca = menu.querySelector('.indice__marca');
+  if (!lista) return;
+
+  /* El raíl no puede salirse de los puntos: en la primera y en la última
+     entrada se recorta a la altura del punto, que es justo donde empieza y
+     acaba. Sin esto asomaba un trozo de línea en el aire. */
+  function limitesDelRail() {
+    var puntos = lista.querySelectorAll('.indice__a');
+    if (!puntos.length) return null;
+    var centro = parseFloat(
+      window.getComputedStyle(puntos[0], '::before').getPropertyValue('inset-block-start'));
+    if (isNaN(centro)) return null;
+    centro += 4;                                   /* el punto mide 8px */
+    return {
+      centro: centro,
+      alto: puntos[0].offsetTop + centro,
+      bajo: puntos[puntos.length - 1].offsetTop + centro
+    };
+  }
+
+  function ajustaRail() {
+    var lim = limitesDelRail();
+    if (!lim) return;
+    lista.style.setProperty('--rail-a', lim.alto + 'px');
+    lista.style.setProperty('--rail-h', (lim.bajo - lim.alto) + 'px');
+  }
+
+  /* El tramo de acento va del primer punto al del apartado en el que estás,
+     no de borde a borde de su caja: así los dos extremos caen siempre sobre
+     un circulito y no en el hueco entre dos, que con los títulos de varias
+     líneas quedaba a la deriva. Sin apartado marcado (al empezar a leer un
+     artículo, antes del primer titular) no se pinta. */
+  function situarMarca() {
+    var a = lista.querySelector('.indice__a[aria-current="true"]');
+    if (!a) {
+      if (indice) indice.dataset.marca = 'off';
+      return;
+    }
+    if (!marca || !a.offsetHeight) return;
+    var lim = limitesDelRail();
+    if (!lim) return;
+    var fin = Math.min(Math.max(a.offsetTop + lim.centro, lim.alto), lim.bajo);
+    marca.style.setProperty('--marca-y', lim.alto + 'px');
+    marca.style.setProperty('--marca-h', (fin - lim.alto) + 'px');
+    if (indice) indice.dataset.marca = 'on';
+  }
+
+  function recolocar() { ajustaRail(); situarMarca(); }
+
+  if ('MutationObserver' in window) {
+    new MutationObserver(situarMarca).observe(lista, {
+      subtree: true, attributes: true, attributeFilter: ['aria-current']
+    });
+  }
+  window.addEventListener('resize', recolocar);
+  /* Con la tipografía definitiva los títulos pueden ocupar otras líneas. */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(recolocar);
+  recolocar();
 })();
 
 /* ============================================================
@@ -1612,6 +1720,31 @@
   }
   function limitar(v, min, max) { return Math.min(max, Math.max(min, v)); }
 
+  /* El cursor de Marc va hacia un punto del dibujo (en unidades del viewBox),
+     un poco por detrás y por debajo para no taparlo; ahí se enciende la luz y
+     la letra se levanta. La luz aparece donde estás, sin cruzar el lienzo
+     desde el sitio donde se apagó. */
+  function apuntar(sx, sy) {
+    meta.dx = limitar(sx + 26, 40, 556) - REPOSO_X;
+    meta.dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
+    if (!luz) { ahora.lx = sx; ahora.ly = sy; }
+    meta.lx = sx;
+    meta.ly = sy;
+    meta.alza = 1;
+    luz = 1;
+  }
+  /* Y vuelve a su sitio. */
+  function soltar() {
+    meta.dx = 0;
+    meta.dy = 0;
+    meta.alza = 0;
+    luz = 0;
+  }
+  function enElDibujo(e) {
+    var d = dibujo.getBoundingClientRect();
+    return { x: (e.clientX - d.left) / d.width * VB_W, y: (e.clientY - d.top) / d.height * VB_H };
+  }
+
   hero.addEventListener('pointermove', function (e) {
     if (e.pointerType === 'touch') return;
     var r = hero.getBoundingClientRect();
@@ -1619,28 +1752,11 @@
     meta.py = ((e.clientY - r.top) / r.height - 0.5) * 2;
 
     /* El cursor de Marc solo sigue al tuyo si lo tienes sobre la composición
-       (o justo al lado); lejos, vuelve a su sitio. Se coloca un poco por
-       detrás y por debajo del tuyo, para no taparlo. */
+       (o justo al lado); lejos, vuelve a su sitio. */
     if (dibujo) {
-      var d = dibujo.getBoundingClientRect();
-      var sx = (e.clientX - d.left) / d.width * VB_W;
-      var sy = (e.clientY - d.top) / d.height * VB_H;
-      if (sx > -70 && sx < VB_W + 70 && sy > -70 && sy < VB_H + 70) {
-        meta.dx = limitar(sx + 26, 40, 556) - REPOSO_X;
-        meta.dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
-        /* La luz aparece donde estás, sin cruzar el lienzo desde el sitio
-           donde se apagó. */
-        if (!luz) { ahora.lx = sx; ahora.ly = sy; }
-        meta.lx = sx;
-        meta.ly = sy;
-        meta.alza = 1;
-        luz = 1;
-      } else {
-        meta.dx = 0;
-        meta.dy = 0;
-        meta.alza = 0;
-        luz = 0;
-      }
+      var p = enElDibujo(e);
+      if (p.x > -70 && p.x < VB_W + 70 && p.y > -70 && p.y < VB_H + 70) apuntar(p.x, p.y);
+      else soltar();
     }
     pedir();
   }, { passive: true });
@@ -1650,10 +1766,7 @@
     if (e.pointerType === 'touch') return;
     meta.px = 0;
     meta.py = 0;
-    meta.dx = 0;
-    meta.dy = 0;
-    meta.alza = 0;
-    luz = 0;
+    soltar();
     pedir();
   });
 
@@ -1706,26 +1819,12 @@
   var vuelta = 0;
   dibujo.addEventListener('pointerdown', function (e) {
     if (e.pointerType === 'mouse') return;
-    var d = dibujo.getBoundingClientRect();
-    var sx = (e.clientX - d.left) / d.width * VB_W;
-    var sy = (e.clientY - d.top) / d.height * VB_H;
-    meta.dx = limitar(sx + 26, 40, 556) - REPOSO_X;
-    meta.dy = limitar(sy + 18, 60, 566) - REPOSO_Y;
-    if (!luz) { ahora.lx = sx; ahora.ly = sy; }
-    meta.lx = sx;
-    meta.ly = sy;
-    meta.alza = 1;
-    luz = 1;
+    var p = enElDibujo(e);
+    apuntar(p.x, p.y);
     pedir();
     relanzarBrillo();
     clearTimeout(vuelta);
-    vuelta = setTimeout(function () {
-      meta.dx = 0;
-      meta.dy = 0;
-      meta.alza = 0;
-      luz = 0;
-      pedir();
-    }, 1600);
+    vuelta = setTimeout(function () { soltar(); pedir(); }, 1600);
   });
 })();
 

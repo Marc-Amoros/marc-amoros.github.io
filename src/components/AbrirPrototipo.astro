@@ -1,0 +1,17 @@
+---
+/* El botón que ocupa el sitio de un prototipo de Figma hasta que alguien lo
+   pulsa: Figma pesa y pone sus cookies, así que no entra en la página antes.
+   caso.js lo cambia por el iframe (embed es la dirección ya preparada por
+   urlEmbed en la ficha). */
+const { embed, titulo } = Astro.props;
+---
+<button class="proto__abrir" type="button" data-embed={embed} data-titulo={titulo}>
+  <span class="proto__chapa" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+         stroke-linecap="round" stroke-linejoin="round" focusable="false">
+      <path d="M5 3.5l13.5 8.2L12 12.9l-2.2 6.6z" />
+    </svg>
+  </span>
+  <span class="proto__rotulo">Abrir el prototipo</span>
+  <span class="proto__aviso">Se carga desde Figma al pulsar</span>
+</button>

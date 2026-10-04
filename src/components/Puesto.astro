@@ -1,0 +1,23 @@
+---
+/* Un puesto o un curso de la trayectoria: el rótulo es un botón que abre y
+   cierra su descripción (el acordeón lo lleva main.js). Todos empiezan
+   plegados, así que la lista ya se pinta plegada aunque main.js tarde. */
+const { id, puesto, lugar, fechas, texto, etiquetas } = Astro.props;
+---
+<li class="job">
+  <h3 class="job__h">
+    <button class="job__head" type="button" aria-expanded="false" aria-controls={id}>
+      <span class="job__role">{puesto}&nbsp;<span class="job__org">· {lugar}</span><span class="visually-hidden">. </span></span>
+      <span class="job__meta">
+        <span class="job__date">{fechas}</span>
+        <svg class="job__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </span>
+    </button>
+  </h3>
+  <div class="job__fold" id={id}>
+    <div class="job__fold-i">
+      <p class="job__text">{texto}</p>
+      {etiquetas && <ul class="job__tags">{etiquetas.map((e) => <li class="chip">{e}</li>)}</ul>}
+    </div>
+  </div>
+</li>

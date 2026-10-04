@@ -8,3 +8,9 @@ export function fechaLarga(iso) {
   const [anio, mes, dia] = iso.split('-');
   return `${parseInt(dia, 10)} de ${MESES[parseInt(mes, 10) - 1]} de ${anio}`;
 }
+
+/* La fecha corta de las listas: «15 sep 2020». */
+export function fechaCorta(iso) {
+  const [anio, mes, dia] = iso.split('-');
+  return `${parseInt(dia, 10)} ${MESES[parseInt(mes, 10) - 1].slice(0, 3)} ${anio}`;
+}

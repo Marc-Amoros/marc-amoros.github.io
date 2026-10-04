@@ -142,17 +142,15 @@ p { text-wrap: pretty; }
   position: relative;
 }
 .section--sunk { background: var(--color-bg-alt); }
-.section--tight { padding-block: var(--spacing-xl); }
-/* Cuando el bloque de la seccion ya trae su propio marco -la tarjeta de
-   contacto, sin ir mas lejos- el aire de arriba se cuenta dos veces: el que
-   cierra la seccion anterior y el que abre esta. Con uno basta. */
+/* Cuando el bloque de la sección ya trae su propio marco -la tarjeta de
+   contacto, sin ir más lejos- el aire de arriba se cuenta dos veces: el que
+   cierra la sección anterior y el que abre esta. Con uno basta. */
 .section--flush-top { padding-block-start: 0; }
 
 .container {
   max-inline-size: var(--container-max);
   margin-inline: auto;
 }
-.container--wide { max-inline-size: var(--container-wide); }
 
 .measure { max-inline-size: var(--measure); }
 .measure-narrow { max-inline-size: var(--measure-narrow); }
@@ -1825,24 +1823,29 @@ p { text-wrap: pretty; }
 .carrusel__flecha:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 .carrusel__flecha:disabled { opacity: 0.35; cursor: default; }
 
+/* La tarjeta, en superficie Material: elevación tonal en reposo y al pasar
+   el ratón se levanta. La inclinación 3D con el cursor está en la sección 13. */
 .work {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-l);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-s);
-  transition: transform var(--dur-mid) var(--ease-emphasized),
-              box-shadow var(--dur-mid) var(--ease-emphasized),
+  background: var(--surface-1);
+  box-shadow: var(--elev-1);
+  transform-style: preserve-3d;
+  transition: box-shadow var(--dur-mid) var(--ease-emphasized),
+              transform var(--dur-mid) var(--ease-emphasized),
               border-color var(--dur-mid) var(--ease-emphasized);
 }
+.work > * { position: relative; z-index: 1; }
 @media (hover: hover) {
   .work:hover {
     transform: translateY(var(--mov-elevar));
-    box-shadow: var(--shadow-m);
-    border-color: var(--color-border);
+    box-shadow: var(--elev-4);
+    border-color: transparent;
   }
 }
 .work:focus-within { border-color: var(--color-accent); }
@@ -2565,30 +2568,8 @@ figure.rise.is-in img {
 }
 
 /* ============================================================
-   13. Portafolio — tarjeta Material con foco que sigue al puntero
+   13. Portafolio — la tarjeta se inclina hacia el cursor
    ============================================================ */
-.work {
-  position: relative;
-  isolation: isolate;
-  background: var(--surface-1);
-  box-shadow: var(--elev-1);
-  transform-style: preserve-3d;
-  transition: box-shadow var(--dur-mid) var(--ease-emphasized),
-              transform var(--dur-mid) var(--ease-emphasized),
-              border-color var(--dur-mid) var(--ease-emphasized);
-}
-
-/* El foco: un halo del color de acento centrado donde está el cursor.
-   main.js escribe --mx / --my en porcentaje sobre la propia tarjeta. */
-.work > * { position: relative; z-index: 1; }
-
-@media (hover: hover) {
-  .work:hover {
-    box-shadow: var(--elev-4);
-    border-color: transparent;
-  }
-}
-
 /* Inclinación 3D sutil: main.js lleva la inclinación (--rx, --ry) y la
    elevación (--tz) con su propio seguimiento suave, así que aquí la
    transformación va sin transición: si el CSS la suavizara también, las dos

@@ -1,0 +1,26 @@
+---
+/* Una tarjeta del carrusel del portafolio. El título, la portada y su texto
+   alternativo son los de la ficha; lo demás (la insignia, la fecha corta, el
+   resumen y las tres etiquetas) está redactado para la tarjeta y vive en el
+   campo «tarjeta» de cada proyecto, en src/data/proyectos.js.
+   El view-transition-name es el mismo que lleva la portada en la ficha: así
+   la imagen viaja de la tarjeta a la cabecera al abrirla. */
+import { srcsetDe, TAMANO_TARJETA } from '../lib/imagenes.js';
+const { proyecto } = Astro.props;
+const { tarjeta } = proyecto;
+const portada = `/${proyecto.portada}`;
+---
+<article class="work" data-tilt="">
+  <div class="work__media">
+    <span class="work__badge">{tarjeta.insignia}</span>
+    <img src={portada} srcset={srcsetDe(portada)} sizes={TAMANO_TARJETA} alt={proyecto.portadaAlt} loading="lazy" decoding="async"
+         style={`view-transition-name:portada-${proyecto.slug}`}>
+  </div>
+  <div class="work__body">
+    <p class="work__meta"><span>{tarjeta.fecha}</span><span class="dot-sep" aria-hidden="true">·</span><span>{tarjeta.contexto}</span></p>
+    <h3 class="work__title"><a href={`/proyecto/${proyecto.slug}/`}>{proyecto.titulo}</a></h3>
+    <p class="work__desc">{tarjeta.resumen}</p>
+    <ul class="work__tags">{tarjeta.etiquetas.map((e) => <li>{e}</li>)}</ul>
+    <span class="work__go">Ver el caso completo</span>
+  </div>
+</article>

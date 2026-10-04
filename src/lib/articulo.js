@@ -11,8 +11,8 @@ import { salidasExternas } from './ajustes.js';
 import { srcsetDe, TAMANO_COLUMNA } from './imagenes.js';
 
 /* Dentro del texto quedaron los enlaces que se escribieron en Medium. Los que
-   apuntan a otro articulo de la serie tienen copia aqui, asi que se redirigen
-   a la copia local: el lector sigue leyendo y no se va. Los demas -una
+   apuntan a otro artículo de la serie tienen copia aquí, así que se redirigen
+   a la copia local: el lector sigue leyendo y no se va. Los demás -una
    referencia, un prototipo- pierden el enlace y conservan las palabras, que
    es lo que la frase necesita para entenderse. */
 const copiaLocal = new Map(ARTICULOS.map((a) => [a.medium, `/articulo/${a.slug}/`]));

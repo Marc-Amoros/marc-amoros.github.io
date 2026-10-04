@@ -7,6 +7,8 @@
    y su meta descripción. El JavaScript que queda —el menú lateral, el
    parallax— solo añade comportamiento sobre un HTML que ya viene hecho. */
 import Base from '../../layouts/Base.astro';
+import AbrirPrototipo from '../../components/AbrirPrototipo.astro';
+import Clip from '../../components/Clip.astro';
 import { PROYECTOS } from '../../data/proyectos.js';
 import { ARTICULOS } from '../../data/articulos.js';
 import { fechaLarga } from '../../lib/fecha.js';
@@ -64,12 +66,12 @@ const piezas = (grupo) => grupo.reduce((acc, l) => {
   if (l.unir && acc.length) acc[acc.length - 1].push(l); else acc.push([l]);
   return acc;
 }, []);
-const clipsTras = (src) => (proyecto.clips || []).filter((c) => c.tras === src);
 // "fondo" deja que el clip herede el color con el que acaba la lámina: si la
 // lámina termina en negro, el vídeo no puede caer sobre una banda blanca.
+const clipsTras = (src) => (proyecto.clips || []).filter((c) => c.tras === src);
 
-/* Lo que va detras de los cuatro bloques de texto se numera solo, para que
-   anadir una seccion no obligue a renumerar la siguiente a mano. */
+/* Lo que va detrás de los cuatro bloques de texto se numera solo, para que
+   añadir una sección no obligue a renumerar la siguiente a mano. */
 const extras = [
   ...(proyecto.prototipo ? [{ id: 'prototipo', titulo: 'Prototipo navegable' }] : []),
   ...(relacionados.length ? [{ id: 'proceso', titulo: 'El proceso, escrito' }] : [])
@@ -78,8 +80,8 @@ const nSecc = Object.fromEntries(extras.map((s) => [s.id, s.n]));
 
 /* El pie de la ficha hace dos cosas: probar que el proyecto existe fuera de
    este portafolio y ofrecer una salida. La prueba se mantiene siempre -las
-   estadisticas de Behance, la nota del producto- porque es lo que da
-   credibilidad; la salida solo apunta fuera si las salidas externas estan
+   estadísticas de Behance, la nota del producto- porque es lo que da
+   credibilidad; la salida solo apunta fuera si las salidas externas están
    encendidas, y si no, lleva al contacto. */
 const cierre = proyecto.behance
   ? {
@@ -134,12 +136,12 @@ const etiqueta = (t) => (t === 'iOS' ? t : t.charAt(0).toLocaleUpperCase('es') +
 const rutaImagen = (src) => (src.startsWith('http') ? src : `/${src}`);
 
 /* El enlace que da Figma al compartir sirve para abrir el prototipo en una
-   pestana; para incrustarlo hay que pedirlo al host de embeds y declarar quien
-   lo aloja. El t= que Figma anade es un testigo de sesion que caduca, asi que
+   pestaña; para incrustarlo hay que pedirlo al host de embeds y declarar quién
+   lo aloja. El t= que Figma añade es un testigo de sesión que caduca, así que
    no viaja al HTML.
 
-   hide-ui quita la barra que Figma pinta dentro del marco: ahi van el nombre
-   del archivo y el boton de pantalla completa, y los dos sacan al visitante
+   hide-ui quita la barra que Figma pinta dentro del marco: ahí van el nombre
+   del archivo y el botón de pantalla completa, y los dos sacan al visitante
    del portafolio. El prototipo se recorre igual, pulsando sus zonas activas,
    pero sin puerta de salida. */
 const urlEmbed = (url) => {
@@ -167,9 +169,6 @@ const urlEmbed = (url) => {
         <p class="caso__claim" lang={proyecto.claimIdioma}>{proyecto.claim}</p>
         {proyecto.resumen && <p class="caso__lead">{proyecto.resumen}</p>}
         <ul class="caso__tags">
-          {/* capitalize pone en mayuscula la inicial de cada palabra. Con una
-              etiqueta como "iOS" eso da "IOS", asi que las que ya traen
-              mayuscula dentro y empiezan en minuscula se dejan tal cual. */}
           {proyecto.tags.map((t) => (
             <li class="chip">{etiqueta(t)}</li>
           ))}
@@ -292,25 +291,10 @@ const urlEmbed = (url) => {
                             <div class="lamina__clip" style={c.fondo ? `background:${c.fondo}` : undefined}>
                               {c.tipo === 'figma' ? (
                                 <div class="proto__marco proto__marco--ancho">
-                                  <button class="proto__abrir" type="button"
-                                          data-embed={urlEmbed(c.url)} data-titulo={c.titulo}>
-                                    <span class="proto__chapa" aria-hidden="true">
-                                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
-                                           stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                                        <path d="M5 3.5l13.5 8.2L12 12.9l-2.2 6.6z" />
-                                      </svg>
-                                    </span>
-                                    <span class="proto__rotulo">Abrir el prototipo</span>
-                                    <span class="proto__aviso">Se carga desde Figma al pulsar</span>
-                                  </button>
+                                  <AbrirPrototipo embed={urlEmbed(c.url)} titulo={c.titulo} />
                                 </div>
                               ) : (
-                                <video src={rutaImagen(c.src)} poster={c.poster && rutaImagen(c.poster)}
-                                       controls controlslist="nodownload" playsinline preload="none"
-                                       width={c.w || undefined} height={c.h || undefined}
-                                       aria-label={c.titulo}>
-                                  {c.subtitulos && <track kind="subtitles" srclang="es" label="Español" src={rutaImagen(c.subtitulos)} default />}
-                                </video>
+                                <Clip clip={c} etiqueta={c.titulo} ruta={rutaImagen} />
                               )}
                               {c.credito && (
                                 <p class="lamina__credito">
@@ -329,12 +313,7 @@ const urlEmbed = (url) => {
               )}
               {(proyecto.clips || []).filter((c) => c.bloque === id).map((c) => (
                 <figure class="lamina clip rise">
-                  <video src={rutaImagen(c.src)} poster={c.poster && rutaImagen(c.poster)}
-                         controls controlslist="nodownload" playsinline preload="none"
-                         width={c.w || undefined} height={c.h || undefined}
-                         aria-label={`${c.titulo} de ${proyecto.titulo}`}>
-                    {c.subtitulos && <track kind="subtitles" srclang="es" label="Español" src={rutaImagen(c.subtitulos)} default />}
-                  </video>
+                  <Clip clip={c} etiqueta={`${c.titulo} de ${proyecto.titulo}`} ruta={rutaImagen} />
                   {c.pie && <figcaption>{c.pie}</figcaption>}
                 </figure>
               ))}
@@ -352,18 +331,7 @@ const urlEmbed = (url) => {
               </div>
               <figure class="proto">
                 <div class="proto__marco">
-                  <button class="proto__abrir" type="button"
-                          data-embed={urlEmbed(proyecto.prototipo.url)}
-                          data-titulo={proyecto.prototipo.titulo}>
-                    <span class="proto__chapa" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
-                           stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                        <path d="M5 3.5l13.5 8.2L12 12.9l-2.2 6.6z" />
-                      </svg>
-                    </span>
-                    <span class="proto__rotulo">Abrir el prototipo</span>
-                    <span class="proto__aviso">Se carga desde Figma al pulsar</span>
-                  </button>
+                  <AbrirPrototipo embed={urlEmbed(proyecto.prototipo.url)} titulo={proyecto.prototipo.titulo} />
                 </div>
                 <figcaption class="proto__pie">
                   {proyecto.prototipo.titulo}. Se recorre pulsando las zonas activas de cada pantalla.

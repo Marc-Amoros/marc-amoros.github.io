@@ -4,14 +4,11 @@
    ------------------------------------------------------------
    styles.css, tokens.css, detalle.css, main.js, caso.js y lectura.js
    viven en public/ sin pasar por Astro/Vite (los sirve tal cual), así
-   que el HTML que edita Marc en esos archivos —con sus comentarios en
+   que el código que edita Marc en esos archivos —con sus comentarios en
    español, que documentan por qué está hecho así— es el mismo que se
    publicaría si no fuera por este paso. Aquí, después del build, se
    coge lo ya copiado a dist/ (el original en public/ no se toca) y se
    comprime: fuera comentarios y espacio sobrante, mismo comportamiento.
-
-   Los vendor/*.js (Motion) ya llegan minificados de fábrica: tocarlos
-   no ahorra nada y arriesga el aviso de licencia, así que se dejan.
 
    Si algo falla al minificar, el build entero falla: mejor que
    GitHub Actions avise a que la web publicada se quede con un
@@ -24,27 +21,16 @@ import { minify as minificarJS } from 'terser';
 
 const DIST = new URL('../dist/', import.meta.url);
 
-async function archivosCon(extension, carpeta, { recursivo = false } = {}) {
-  const base = new URL(carpeta, DIST);
+async function archivosCon(extension, carpeta) {
   let entradas;
   try {
-    entradas = await readdir(base, { withFileTypes: true });
+    entradas = await readdir(new URL(carpeta, DIST), { withFileTypes: true });
   } catch {
     return [];
   }
-  const encontrados = [];
-  for (const entrada of entradas) {
-    if (entrada.isDirectory()) {
-      if (recursivo) {
-        encontrados.push(...await archivosCon(extension, `${carpeta}${entrada.name}/`, { recursivo }));
-      }
-      continue;
-    }
-    if (extname(entrada.name) === extension) {
-      encontrados.push(join(carpeta, entrada.name));
-    }
-  }
-  return encontrados;
+  return entradas
+    .filter((e) => e.isFile() && extname(e.name) === extension)
+    .map((e) => join(carpeta, e.name));
 }
 
 async function minificarCSS(rutaRelativa) {
@@ -75,9 +61,7 @@ async function minificarArchivoJS(rutaRelativa) {
 
 async function main() {
   const cssRelativos = await archivosCon('.css', 'css/');
-  // js/ pero no js/vendor/: ese ya llega minificado de fábrica.
-  const todosJS = await archivosCon('.js', 'js/', { recursivo: true });
-  const jsRelativos = todosJS.filter((r) => !r.startsWith('js/vendor/'));
+  const jsRelativos = await archivosCon('.js', 'js/');
 
   let totalAntes = 0;
   let totalDespues = 0;

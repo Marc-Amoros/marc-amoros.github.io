@@ -63,8 +63,13 @@ src/pages/sitemap.xml.js         Mapa del sitio, escrito con los mismos datos
 src/pages/robots.txt.js          robots.txt, con el sitemap en el mismo dominio que `site`
 src/layouts/Base.astro           Cabeza, barra, pie, botón flotante y modal de contacto
 src/components/Contacto.astro    El bloque de contacto (portada y modal de las fichas)
+src/components/Tarjeta.astro     Una tarjeta del carrusel del portafolio
+src/components/Puesto.astro      Un puesto o un curso de la trayectoria
+src/components/Clip.astro        Un vídeo de una ficha
+src/components/AbrirPrototipo.astro  El botón que carga un prototipo de Figma al pulsarlo
 
-src/data/proyectos.js            Los 12 casos de estudio (textos + láminas)
+src/data/proyectos.js            Los 12 casos de estudio (textos, láminas y su tarjeta)
+src/data/trayectoria.js          Experiencia, formación e idiomas de la portada
 src/data/articulos.js            Los 5 artículos de Medium, íntegros
 src/data/alt-textos.js           Textos alternativos de las imágenes de los artículos
 src/lib/ajustes.js               Interruptor de los enlaces que sacan del sitio
@@ -79,7 +84,8 @@ public/assets/fonts/             Inter variable subconjunto (woff2) + su licenci
 public/assets/                   Una carpeta por proyecto (láminas WEBP y SVG) y los retratos
 
 public/js/main.js                Tema, menú, pestañas, acordeón, revelados, ripple, malla, contacto, FAB
-public/js/caso.js                Comportamiento de la ficha (menú lateral, avance, vídeo, ampliaciones)
+                                 y el menú lateral que comparten fichas y artículos
+public/js/caso.js                Comportamiento de la ficha (sección activa, avance, vídeo, ampliaciones)
 public/js/lectura.js             Comportamiento del artículo (cuánto queda, apartado activo)
 public/proyecto.html             Redirige los enlaces antiguos proyecto.html?p=SLUG a la ruta nueva
 public/articulo.html             Ídem para los artículos (articulo.html?a=SLUG)
@@ -244,6 +250,9 @@ Todo vive en `src/data/proyectos.js`. Copia un objeto de la lista y cambia:
 - `destacados` — las tres cifras de la cabecera. Siempre tres.
 - `fecha` — `AAAA-MM-DD`; sale en la ficha y en el sitemap.
 - `tags` y `portada` (la imagen de la tarjeta y de la cabecera).
+- `tarjeta` — el texto de su tarjeta en el carrusel de la portada: `insignia`,
+  `fecha` (la corta, «feb 2021»), `contexto`, `resumen` y tres `etiquetas`. El
+  título, la imagen y su texto alternativo los toma de la ficha.
 - `galeria` — las láminas, en orden; se reparten solas entre los cuatro bloques,
   o se fijan a uno con `bloque`. Cada una lleva `src`, `w` y `h` (los píxeles
   reales: reservan el hueco y evitan que la página salte al cargar) y **una de
@@ -260,13 +269,11 @@ Todo vive en `src/data/proyectos.js`. Copia un objeto de la lista y cambia:
 - `sitio`, `sitioTexto`, `sitioNota` y `forzarSitio` — para un producto público
   (ver «Los interruptores»).
 
-Después añade su tarjeta en `src/pages/index.astro`, dentro de
-`<div class="carrusel__pista">`, copiando otra y cambiando el `href`, la imagen,
-los textos y el `view-transition-name` (tiene que ser `portada-` + el `slug`).
-Los puntos del carrusel se generan solos a partir de las tarjetas que encuentre.
-La portada escribe a mano dos cosas más que hay que actualizar: «Doce casos» y
-«los nueve proyectos publicados en Behance» en el párrafo de la sección
-Portafolio, y los contadores del hero (`data-count`).
+La tarjeta aparece sola en la portada, en el lugar que ocupa el proyecto en la
+lista, y el carrusel genera sus puntos. El contador del hero «Proyectos
+publicados en Behance» también se cuenta solo (los que tienen `behance`). Lo
+único escrito a mano es el párrafo de la sección Portafolio («Doce casos… los
+nueve proyectos publicados en Behance»): si cambia el número, cámbialo ahí.
 
 Las imágenes van en WEBP, a 1600 px de ancho las láminas (2000 las de BMW),
 calidad 82.
@@ -277,8 +284,9 @@ calidad 82.
 objeto, pon su `slug`, su `proyecto` (para que aparezca en la ficha de ese caso),
 su `proyectoTitulo` —el título del caso, copiado aquí para que la página del
 artículo no tenga que cargar el fichero entero de proyectos—, `orden`, `titulo`,
-`sub`, `fecha`, `fechaLarga`, `minutos` y el cuerpo en `html`. Después añade su
-tarjeta en la sección `#articulos` de `src/pages/index.astro`.
+`sub`, `fecha`, `fechaLarga`, `minutos` y el cuerpo en `html`. La portada lo
+lista sola, con `sub` como entradilla, y el contador de artículos del hero se
+actualiza también.
 
 Los `<h2>` del cuerpo son los que alimentan el menú lateral: `src/lib/articulo.js`
 les pone id y los convierte en apartados. Con menos de tres no monta índice, solo
@@ -378,9 +386,8 @@ en el bloque de `src/components/Contacto.astro`.
 **La caché no se gestiona a mano.** `src/lib/version.js` añade a cada CSS y JS un
 `?v=` que sale del contenido del archivo: cambia solo cuando el archivo cambia.
 
-**La trayectoria sale de tu CV.** El primer puesto pone «Feb 2022 - Actualmente»
-porque es lo que dice el CV. Si cambia, edítalo en `src/pages/index.astro`,
-dentro de `#panel-exp`.
+**La trayectoria sale de tu CV.** El primer puesto pone «Feb 2022 – actualidad»
+porque es lo que dice el CV. Si cambia, edítalo en `src/data/trayectoria.js`.
 
 **Los enlaces antiguos siguen funcionando.** `public/proyecto.html` y
 `public/articulo.html` redirigen `?p=SLUG` y `?a=SLUG` a las rutas nuevas, para

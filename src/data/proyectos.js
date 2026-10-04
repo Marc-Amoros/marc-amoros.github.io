@@ -1,5 +1,8 @@
 /* Los 12 casos de estudio. Antes esto colgaba de window.PROYECTOS y lo leía
-   el navegador; ahora lo lee Astro al compilar y el HTML sale ya hecho. */
+   el navegador; ahora lo lee Astro al compilar y el HTML sale ya hecho.
+   El orden de la lista es el del carrusel de la portada y el de «Anterior» y
+   «Siguiente» en las fichas. «tarjeta» es el texto de la tarjeta del
+   carrusel (src/components/Tarjeta.astro). */
 export const PROYECTOS = [
  {
   "slug": "portal-estadistico-notariado",
@@ -95,7 +98,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/pen/portada-mockup.webp",
-  "portadaAlt": "Un monitor sobre un escritorio muestra el Portal Estadístico del Notariado: un mapa de España en tonos naranjas."
+  "portadaAlt": "Un monitor sobre un escritorio muestra el Portal Estadístico del Notariado: un mapa de España en tonos naranjas.",
+  "tarjeta": {
+   "insignia": "UX/UI · producto de datos",
+   "fecha": "oct 2025",
+   "contexto": "Centro Tecnológico del Notariado",
+   "resumen": "El precio real de la vivienda, el de las escrituras, abierto a cualquiera: mapa, estadísticas y utilidades para decidir con datos.",
+   "etiquetas": [
+    "producto digital",
+    "datos y estadística",
+    "mapa interactivo"
+   ]
+  }
  },
  {
   "slug": "portal-notarial-ciudadano",
@@ -213,7 +227,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/pnc/portada-mockup.webp",
-  "portadaAlt": "Un portátil muestra la página de inicio del Portal Notarial del Ciudadano, con fondo azul y capturas del portal."
+  "portadaAlt": "Un portátil muestra la página de inicio del Portal Notarial del Ciudadano, con fondo azul y capturas del portal.",
+  "tarjeta": {
+   "insignia": "UX/UI · Administración electrónica",
+   "fecha": "mar 2022",
+   "contexto": "Centro Tecnológico del Notariado",
+   "resumen": "Trámites, copias electrónicas y cita en notaría desde cualquier dispositivo, explicados para quien no es jurista.",
+   "etiquetas": [
+    "administración electrónica",
+    "identidad verificada",
+    "multiidioma"
+   ]
+  }
  },
  {
   "slug": "cupra-born",
@@ -312,7 +337,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/cupra-born/portada-mockup.webp",
-  "portadaAlt": "Interior de un CUPRA Born de noche: volante, cuadro digital y pantalla central de infotainment."
+  "portadaAlt": "Interior de un CUPRA Born de noche: volante, cuadro digital y pantalla central de infotainment.",
+  "tarjeta": {
+   "insignia": "UX/UI · HMI de automoción",
+   "fecha": "feb – sep 2021",
+   "contexto": "Proyecto profesional en EDAG",
+   "resumen": "Cuadro de instrumentos, infotainment y head-up display del primer CUPRA 100 % eléctrico: informar sin robarle la vista a la carretera.",
+   "etiquetas": [
+    "automoción",
+    "HMI",
+    "infotainment"
+   ]
+  }
  },
  {
   "slug": "besmie",
@@ -432,7 +468,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/besmie/portada-mockup.webp",
-  "portadaAlt": "Dos móviles sobre fondo lila con la pantalla de inicio de Besmie y el listado «Explore» de perfiles."
+  "portadaAlt": "Dos móviles sobre fondo lila con la pantalla de inicio de Besmie y el listado «Explore» de perfiles.",
+  "tarjeta": {
+   "insignia": "UX/UI · Dirección de arte",
+   "fecha": "sep 2021",
+   "contexto": "Proyecto final de máster",
+   "resumen": "App para encontrar con quién compartir piso a partir de la afinidad real entre personas, no solo del precio del alquiler.",
+   "etiquetas": [
+    "app design",
+    "design thinking",
+    "Figma"
+   ]
+  }
  },
  {
   "slug": "de-barrio",
@@ -558,7 +605,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/de-barrio/portada-mockup.webp",
-  "portadaAlt": "Una mano sostiene un móvil con la app De Barrio: comercios destacados y productos de temporada."
+  "portadaAlt": "Una mano sostiene un móvil con la app De Barrio: comercios destacados y productos de temporada.",
+  "tarjeta": {
+   "insignia": "UI · Dirección de arte",
+   "fecha": "ago 2021",
+   "contexto": "Case study en equipo",
+   "resumen": "Marketplace para el comercio de barrio: recuperar el mercado de proximidad con la comodidad de comprar desde el móvil.",
+   "etiquetas": [
+    "Case Study",
+    "Ecommerce",
+    "Figma"
+   ]
+  }
  },
  {
   "slug": "galactic-records",
@@ -679,7 +737,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/galactic-records/portada-mockup.webp",
-  "portadaAlt": "Logotipo de Galactic Records, con un casco de astronauta de píxeles, y el texto «Metodología Design Sprint»."
+  "portadaAlt": "Logotipo de Galactic Records, con un casco de astronauta de píxeles, y el texto «Metodología Design Sprint».",
+  "tarjeta": {
+   "insignia": "UX/UI · Design Sprint",
+   "fecha": "ago 2021",
+   "contexto": "Design Sprint en pareja",
+   "resumen": "Identidad y app para el concurso y festival anual de talentos musicales emergentes de la productora Galactic Records.",
+   "etiquetas": [
+    "Design Sprint",
+    "Figma",
+    "graphic design"
+   ]
+  }
  },
  {
   "slug": "daily-ui",
@@ -765,7 +834,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/daily-ui/portada-mockup.webp",
-  "portadaAlt": "Un portátil con la web de Mercedes-Benz y un G 550 4x4² verde en la montaña, bajo el rótulo «Daily UI 003»."
+  "portadaAlt": "Un portátil con la web de Mercedes-Benz y un G 550 4x4² verde en la montaña, bajo el rótulo «Daily UI 003».",
+  "tarjeta": {
+   "insignia": "Daily UI Challenge",
+   "fecha": "feb 2021",
+   "contexto": "Serie de retos de UI",
+   "resumen": "Serie de retos Daily UI resueltos en febrero de 2021: registro de SEAT Competición, pasarela de pago de Air Jordan y home de Mercedes-Benz Clase G.",
+   "etiquetas": [
+    "4x4",
+    "daily UI",
+    "Diseño web"
+   ]
+  }
  },
  {
   "slug": "escudia",
@@ -907,7 +987,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/escudia/portada-mockup.webp",
-  "portadaAlt": "Un tótem con pantalla táctil: «Pedro, ¿qué te ha pasado?» y los botones Denunciar robo, Pedir ambulancia y Bloquear tarjeta."
+  "portadaAlt": "Un tótem con pantalla táctil: «Pedro, ¿qué te ha pasado?» y los botones Denunciar robo, Pedir ambulancia y Bloquear tarjeta.",
+  "tarjeta": {
+   "insignia": "UX/UI · Design Thinking",
+   "fecha": "ene 2021",
+   "contexto": "Case study individual",
+   "resumen": "Tótem y app de Protección Civil para que una persona sorda pueda denunciar un robo, pedir una ambulancia o bloquear su tarjeta sin depender de un intérprete.",
+   "etiquetas": [
+    "Case Study",
+    "design",
+    "design thinking"
+   ]
+  }
  },
  {
   "slug": "agrolocker",
@@ -989,7 +1080,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/agrolocker/portada-mockup.webp",
-  "portadaAlt": "Un móvil con la bienvenida de Agrolocker junto a hojas de albahaca y el lema «La solución digital y distribución de última milla»."
+  "portadaAlt": "Un móvil con la bienvenida de Agrolocker junto a hojas de albahaca y el lema «La solución digital y distribución de última milla».",
+  "tarjeta": {
+   "insignia": "UI · Design Sprint",
+   "fecha": "ene 2021",
+   "contexto": "Design Sprint en grupo",
+   "resumen": "Marketplace de km 0 con entrega en taquillas refrigeradas: distribución de última milla para el producto agroalimentario local.",
+   "etiquetas": [
+    "app",
+    "Design Sprint",
+    "digital"
+   ]
+  }
  },
  {
   "slug": "bmw",
@@ -1102,7 +1204,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/bmw/portada-mockup.webp",
-  "portadaAlt": "Un móvil con el inicio de sesión de BMW en modo oscuro, con usuario, contraseña y acceso con Google y Facebook."
+  "portadaAlt": "Un móvil con el inicio de sesión de BMW en modo oscuro, con usuario, contraseña y acceso con Google y Facebook.",
+  "tarjeta": {
+   "insignia": "UX/UI · flujo de acceso",
+   "fecha": "ene 2021",
+   "contexto": "Case study individual",
+   "resumen": "Case study del flujo de acceso y registro de BMW en móvil, incluida la recuperación de contraseña por SMS y por correo.",
+   "etiquetas": [
+    "BMW",
+    "coches",
+    "design"
+   ]
+  }
  },
  {
   "slug": "teatro-tips",
@@ -1190,7 +1303,18 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/teatro-tips/portada-mockup.webp",
-  "portadaAlt": "Logotipo de TIPS Teatro con el mensaje de bienvenida y dos pantallas: «Ver en directo» y «Ver en streaming»."
+  "portadaAlt": "Logotipo de TIPS Teatro con el mensaje de bienvenida y dos pantallas: «Ver en directo» y «Ver en streaming».",
+  "tarjeta": {
+   "insignia": "UX/UI · Design Thinking",
+   "fecha": "oct 2020",
+   "contexto": "Reto de Neoland en equipo",
+   "resumen": "Cómo ayudar a un sector tan físico como el de las artes escénicas en un entorno digital: una obra cuyo guion decide el público.",
+   "etiquetas": [
+    "design thinking",
+    "Neoland",
+    "Prototyping"
+   ]
+  }
  },
  {
   "slug": "awkward-good",
@@ -1281,6 +1405,17 @@ export const PROYECTOS = [
    }
   ],
   "portada": "assets/awkward-good/portada-mockup.webp",
-  "portadaAlt": "Un portátil con la web amarilla de Awkward?Good sobre una foto en blanco y negro de una manifestación y el lema «Rompe con los prejuicios»."
+  "portadaAlt": "Un portátil con la web amarilla de Awkward?Good sobre una foto en blanco y negro de una manifestación y el lema «Rompe con los prejuicios».",
+  "tarjeta": {
+   "insignia": "UX/UI · Design Sprint",
+   "fecha": "sep 2020",
+   "contexto": "Design Sprint en equipo",
+   "resumen": "Plataforma multicultural nacida del movimiento Black Lives Matter: conocer perfiles de otras culturas a través del arte, la música y el activismo.",
+   "etiquetas": [
+    "Design Sprint",
+    "UI",
+    "UX"
+   ]
+  }
  }
 ];

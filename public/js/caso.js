@@ -44,99 +44,88 @@
     aislados = [];
   }
 
-  /* Botón de ampliar para un marco con un <video> dentro: la modal cubre la
-     ventana y una X (o Esc) devuelve la página. El vídeo no se recrea, así que
-     si estaba reproduciéndose sigue igual al ampliar o al cerrar.
-     `antes` (opcional) se ejecuta al pedir ampliar, por si el vídeo aún no
-     está cargado. */
   var ICONO_AMPLIAR = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
   var ICONO_CERRAR = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 
-  function conAmpliar(marco, antes) {
-    marco.classList.add('clipvid');
-    var boton = document.createElement('button');
-    boton.type = 'button';
-    boton.className = 'clipvid__ampliar';
+  /* Un botón que amplía un marco hasta cubrir la ventana y lo devuelve a su
+     sitio, con el mismo botón (que pasa a ser una X) o con Esc. El marco no se
+     mueve ni se recrea: un vídeo sigue sonando y un prototipo se queda en la
+     pantalla en la que estaba (sacar un iframe del DOM lo recarga).
+     No se usa la pantalla completa del navegador: en iPhone no existe y otros
+     la bloquean sin avisar.
+     op.clase es la que pinta la modal; op.rotulo y op.titulo, lo que dice el
+     botón cerrado; op.nombre(), cómo se anuncia la modal; op.antes, lo que hay
+     que hacer antes de abrir, y op.alCambiar, lo que hay que hacer después de
+     abrir o cerrar. */
+  function ampliable(marco, boton, op) {
     var abierta = false;
-    var pintar = function () {
-      boton.setAttribute('aria-label', abierta ? 'Cerrar y volver a la página' : 'Ver el vídeo más grande');
-      boton.title = abierta ? 'Cerrar' : 'Ampliar';
+    function pintar() {
+      boton.setAttribute('aria-label', abierta ? 'Cerrar y volver a la página' : op.rotulo);
+      boton.title = abierta ? 'Cerrar' : op.titulo;
       boton.innerHTML = abierta ? ICONO_CERRAR : ICONO_AMPLIAR;
-    };
-    var conTecla = function (e) { if (e.key === 'Escape') cerrar(); };
-    var abrir = function () {
-      if (antes) antes();
+      if (abierta) {
+        marco.setAttribute('role', 'dialog');
+        marco.setAttribute('aria-modal', 'true');
+        marco.setAttribute('aria-label', op.nombre());
+      } else {
+        marco.removeAttribute('role');
+        marco.removeAttribute('aria-modal');
+        marco.removeAttribute('aria-label');
+      }
+      if (op.alCambiar) op.alCambiar();
+    }
+    function conTecla(e) { if (e.key === 'Escape') cerrar(); }
+    function abrir() {
+      if (op.antes) op.antes();
       abierta = true;
-      marco.classList.add('clipvid--modal');
+      marco.classList.add(op.clase);
       document.documentElement.classList.add('sin-scroll');
       aislar(marco);
       document.addEventListener('keydown', conTecla);
       pintar();
       boton.focus();
-    };
-    var cerrar = function () {
+    }
+    function cerrar() {
       abierta = false;
-      marco.classList.remove('clipvid--modal');
+      marco.classList.remove(op.clase);
       document.documentElement.classList.remove('sin-scroll');
       liberar();
       document.removeEventListener('keydown', conTecla);
       pintar();
       boton.focus();
-    };
+    }
     boton.addEventListener('click', function () { if (abierta) cerrar(); else abrir(); });
     pintar();
-    marco.appendChild(boton);
   }
 
-  /* ---------- Menú lateral: abrir y cerrar ----------
-     A partir de 64rem el panel vive desplegado y el tirador ni se dibuja;
-     eso lo resuelve el CSS. Aquí solo hace falta el caso estrecho. */
-  var menu = caso.querySelector('.menu');
-  var tirador = menu && menu.querySelector('.menu__tirador');
-  var panel = menu && menu.querySelector('.menu__panel');
-  var esRail = window.matchMedia('(min-width: 64rem)');
-
-  if (menu && tirador && panel) {
-    var abrir = function (v) {
-      menu.dataset.abierto = v ? 'true' : 'false';
-      tirador.setAttribute('aria-expanded', v ? 'true' : 'false');
-    };
-
-    tirador.addEventListener('click', function () {
-      abrir(menu.dataset.abierto !== 'true');
+  /* Ampliar un marco con un <video> dentro. `antes` (opcional) se ejecuta al
+     pedir ampliar, por si el vídeo aún no está cargado. */
+  function conAmpliar(marco, antes) {
+    marco.classList.add('clipvid');
+    var boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'clipvid__ampliar';
+    ampliable(marco, boton, {
+      clase: 'clipvid--modal',
+      rotulo: 'Ver el vídeo más grande',
+      titulo: 'Ampliar',
+      nombre: function () {
+        var video = marco.querySelector('video');
+        return (video && video.getAttribute('aria-label')) || 'Vídeo';
+      },
+      antes: antes
     });
-
-    document.addEventListener('click', function (e) {
-      if (esRail.matches) return;
-      if (menu.dataset.abierto === 'true' && !menu.contains(e.target)) abrir(false);
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (esRail.matches) return;
-      if (e.key === 'Escape' && menu.dataset.abierto === 'true') {
-        abrir(false);
-        tirador.focus();
-      }
-    });
-
-    /* Al saltar a una sección el menú estorba: en estrecho se cierra solo. */
-    panel.addEventListener('click', function (e) {
-      if (e.target.closest('a') && !esRail.matches) abrir(false);
-    });
-
-    if (esRail.addEventListener) {
-      esRail.addEventListener('change', function () { abrir(false); });
-    }
+    marco.appendChild(boton);
   }
 
   /* ---------- Sección activa y avance ----------
      Las secciones se miran por posición y no con IntersectionObserver: son
      bloques altos y desiguales, y al saltar a un ancla ninguno está dentro de
      la banda en ese instante, así que el índice se quedaba sin marcar. La
-     sección activa es la última que ya ha pasado. */
+     sección activa es la última que ya ha pasado. El menú (abrirlo, el raíl
+     y su tramo de acento) es el mismo que el de los artículos y lo lleva
+     main.js; aquí solo se marca la sección con aria-current. */
   var lista = caso.querySelector('.indice__lista');
-  var indice = caso.querySelector('.indice');
-  var marca = caso.querySelector('.indice__marca');
   var avance = caso.querySelector('.menu__avance');
   var barra = caso.querySelector('.menu__barra-i');
   var cifraAnillo = caso.querySelector('.menu__cifra');
@@ -153,44 +142,6 @@
       enlaces[id] = a;
       bloques.push({ id: id, nodo: nodo });
     });
-  }
-
-  /* El tramo de acento no puede salirse del raíl: en la primera y en la
-     última entrada se recorta a la altura del punto, que es justo donde el
-     raíl empieza y acaba. Sin esto asomaba un trozo de línea en el aire. */
-  function limitesDelRail() {
-    var puntos = lista ? lista.querySelectorAll('.indice__a') : [];
-    if (!puntos.length) return null;
-    var centro = parseFloat(
-      window.getComputedStyle(puntos[0], '::before').getPropertyValue('inset-block-start'));
-    if (isNaN(centro)) return null;
-    centro += 4;                                   /* el punto mide 8px */
-    return {
-      centro: centro,
-      alto: puntos[0].offsetTop + centro,
-      bajo: puntos[puntos.length - 1].offsetTop + centro
-    };
-  }
-
-  function ajustaRail() {
-    var lim = limitesDelRail();
-    if (!lim || !lista) return;
-    lista.style.setProperty('--rail-a', lim.alto + 'px');
-    lista.style.setProperty('--rail-h', (lim.bajo - lim.alto) + 'px');
-  }
-
-  /* El tramo de acento va del primer punto al punto del apartado en el que
-     estás, no de borde a borde de su caja: así los dos extremos caen siempre
-     sobre un circulito y no en el hueco entre dos, que con los títulos de
-     varias líneas quedaba a la deriva. */
-  function situarMarca(a) {
-    if (!marca || !a || !a.offsetHeight) return;
-    var lim = limitesDelRail();
-    if (!lim) return;
-    var fin = Math.min(Math.max(a.offsetTop + lim.centro, lim.alto), lim.bajo);
-    marca.style.setProperty('--marca-y', lim.alto + 'px');
-    marca.style.setProperty('--marca-h', (fin - lim.alto) + 'px');
-    if (indice) indice.dataset.marca = 'on';
   }
 
   var pendiente = false;
@@ -225,15 +176,13 @@
         });
         a.setAttribute('aria-current', 'true');
       }
-      situarMarca(a);
       pendiente = false;
     });
   }
 
-  ajustaRail();
   actualizar();
   window.addEventListener('scroll', actualizar, { passive: true });
-  window.addEventListener('resize', function () { ajustaRail(); actualizar(); });
+  window.addEventListener('resize', actualizar);
 
   /* ---------- Vídeo a la carta ----------
      Hasta que no se pulsa aquí no hay más que la miniatura: el archivo de
@@ -318,55 +267,17 @@
         escalar();
         if ('ResizeObserver' in window) new ResizeObserver(escalar).observe(marco);
 
-        /* Ampliar: el marco se abre como una modal que cubre toda la ventana,
-           con un aspa para volver. No se usa la pantalla completa del navegador
-           (en iPhone no existe y otros la bloquean sin avisar), y el marco no se
-           mueve de sitio: sacar un iframe del DOM lo recarga y se perdería la
-           pantalla del prototipo en la que estaba. */
+        /* Ampliar: el marco se abre como una modal que cubre toda la ventana. */
         var boton = document.createElement('button');
         boton.type = 'button';
         boton.className = 'proto__accion proto__pantalla';
-        var abierta = false;
-        var pintar = function () {
-          boton.setAttribute('aria-label', abierta ? 'Cerrar y volver a la página' : 'Ver el prototipo a pantalla completa');
-          boton.title = abierta ? 'Cerrar' : 'Pantalla completa';
-          boton.innerHTML = abierta ? ICONO_CERRAR : ICONO_AMPLIAR;
-          if (abierta) {
-            marco.setAttribute('role', 'dialog');
-            marco.setAttribute('aria-modal', 'true');
-            marco.setAttribute('aria-label', iframe.title);
-          } else {
-            marco.removeAttribute('role');
-            marco.removeAttribute('aria-modal');
-            marco.removeAttribute('aria-label');
-          }
-          escalar();
-        };
-        var conTecla = function (e) {
-          if (e.key === 'Escape') cerrar();
-        };
-        var abrir = function () {
-          abierta = true;
-          marco.classList.add('proto__marco--modal');
-          document.documentElement.classList.add('sin-scroll');
-          aislar(marco);
-          document.addEventListener('keydown', conTecla);
-          pintar();
-          boton.focus();
-        };
-        var cerrar = function () {
-          abierta = false;
-          marco.classList.remove('proto__marco--modal');
-          document.documentElement.classList.remove('sin-scroll');
-          liberar();
-          document.removeEventListener('keydown', conTecla);
-          pintar();
-          boton.focus();
-        };
-        boton.addEventListener('click', function () {
-          if (abierta) cerrar(); else abrir();
+        ampliable(marco, boton, {
+          clase: 'proto__marco--modal',
+          rotulo: 'Ver el prototipo a pantalla completa',
+          titulo: 'Pantalla completa',
+          nombre: function () { return iframe.title; },
+          alCambiar: escalar
         });
-        pintar();
         acciones.appendChild(boton);
       }
       marco.appendChild(acciones);

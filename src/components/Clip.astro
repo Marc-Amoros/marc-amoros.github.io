@@ -1,0 +1,12 @@
+---
+/* Un vídeo de una ficha. preload="none": no se descarga nada hasta que se
+   pulsa reproducir, que algunos pesan decenas de megas. ruta convierte la
+   dirección de los datos en la que sirve la web. */
+const { clip, etiqueta, ruta } = Astro.props;
+---
+<video src={ruta(clip.src)} poster={clip.poster && ruta(clip.poster)}
+       controls controlslist="nodownload" playsinline preload="none"
+       width={clip.w || undefined} height={clip.h || undefined}
+       aria-label={etiqueta}>
+  {clip.subtitulos && <track kind="subtitles" srclang="es" label="Español" src={ruta(clip.subtitulos)} default />}
+</video>
