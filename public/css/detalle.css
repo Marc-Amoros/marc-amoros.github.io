@@ -636,8 +636,8 @@
   background: var(--color-surface-sunk);
   border: 1px solid var(--color-border-soft);
   box-shadow: var(--elev-2);
+  container-type: inline-size;
 }
-.lamina { container-type: inline-size; }
 .lamina img { display: block; inline-size: 100%; block-size: auto; }
 /* Vídeo al final de una sección: mismo marco que las láminas. Sin precarga,
    para que el archivo solo se descargue si alguien pulsa reproducir. */
@@ -1017,8 +1017,6 @@
               block-size var(--dur-mid) var(--ease-emphasized),
               opacity var(--dur-fast) var(--ease-out);
 }
-/* El acento pasa por detrás de los puntos: son opacos y le hacen de tapa. */
-.menu .indice__a::before { z-index: 1; }
 .menu .indice[data-marca="on"] .indice__marca { opacity: 1; }
 /* Los títulos parten en varias líneas: son los que escribió Marc y se leen
    enteros, no cortados con puntos suspensivos. */
@@ -1042,6 +1040,8 @@
   inline-size: 8px;
   block-size: 8px;
   border-radius: 50%;
+  /* El acento pasa por detrás de los puntos: son opacos y le hacen de tapa. */
+  z-index: 1;
   background: var(--color-surface);
   border: 2px solid var(--color-border);
   transition: transform var(--dur-mid) var(--ease-emphasized),

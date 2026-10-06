@@ -74,8 +74,6 @@
   --tracking-body:    -0.003em;
   --tracking-label:    0.06em;
 
-  --weight-light:   300;
-  --weight-regular: 400;
   --weight-medium:  500;
   --weight-semi:    600;
   --weight-bold:    700;
@@ -95,7 +93,6 @@
   --measure:        65ch;
   --measure-narrow: 46ch;
   --container-max:  75rem;   /* 1200px — ancho de las landings de Apple */
-  --container-wide: 90rem;   /* 1440px — para rejillas full-bleed */
   --section-block:  clamp(3.5rem, 12vh, 7.5rem);
   --section-inline: clamp(1.25rem, 6vw, 5rem);
   --nav-height:     3.75rem; /* 60px en reposo; al bajar se condensa a 52px */
@@ -147,9 +144,6 @@
   --color-neutral-900: var(--color-plum-500);  /* tinta: 10.4:1 sobre blanco */
   --color-neutral-1000: #000000; /* fondo en oscuro: negro puro */
 
-  --color-success-500: #34c759;
-  --color-danger-500:  #ff3b30;
-
   /* ================= COLOR — capa 2: semánticos ================= */
   --color-bg:            var(--color-neutral-0);
   --color-bg-alt:        var(--color-neutral-50);
@@ -194,12 +188,10 @@
 
   /* Capas de estado (state layers) de Material sobre cualquier superficie */
   --state-hover: 0.06;
-  --state-focus: 0.10;
   --state-press: 0.12;
   /* El tinte de acento un punto más denso: lo que se ve mientras el dedo
      está apoyado en una fila que ya se tiñe con --color-accent-soft. */
   --color-accent-press: color-mix(in oklab, var(--color-accent-soft) 92%, var(--color-accent));
-  --ripple-color: var(--color-accent);
 
   /* Curvas «emphasized» de Material 3: arranque lento, salida muy rápida */
   --ease-emphasized:       cubic-bezier(0.2, 0, 0, 1);
@@ -232,7 +224,6 @@
   /* Acento secundario: el 30 % de la paleta haciendo de «secondary» de
      Material — superficies tonales y estados destacados. */
   --color-accent-2:      var(--color-plum-500);
-  --color-accent-2-soft: rgba(71 57 96 / 0.12);
 
   /* ---------- Portada: piezas que solo existen sobre negro ----------
      La aurora, la viñeta y el halo del botón solo tienen sentido en oscuro.
@@ -314,10 +305,8 @@
     --surface-2: color-mix(in oklab, var(--color-surface) 90%, var(--color-accent));
     --surface-3: color-mix(in oklab, var(--color-surface) 85%, var(--color-accent));
     --state-hover: 0.10;
-    --state-focus: 0.14;
     --state-press: 0.18;
     --color-accent-2:      var(--color-plum-300);
-    --color-accent-2-soft: rgba(138 118 181 / 0.18);
 
     --portada-aurora:  0.85;
     --portada-vineta:  0.9;
@@ -378,10 +367,8 @@
   --surface-2: color-mix(in oklab, var(--color-surface) 90%, var(--color-accent));
   --surface-3: color-mix(in oklab, var(--color-surface) 85%, var(--color-accent));
   --state-hover: 0.10;
-  --state-focus: 0.14;
   --state-press: 0.18;
   --color-accent-2:      var(--color-plum-300);
-  --color-accent-2-soft: rgba(138 118 181 / 0.18);
 
   --portada-aurora:  0.85;
   --portada-vineta:  0.9;

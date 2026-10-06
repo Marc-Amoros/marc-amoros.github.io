@@ -90,9 +90,7 @@ h2 { font-size: var(--text-3xl); line-height: var(--leading-tight); letter-spaci
 h3 { font-size: var(--text-lg); }
 /* Los párrafos, a 16 px (--text-parrafo). Los que llevan clase propia
    (etiquetas, contadores) mandan sobre esto y conservan su tamaño. */
-p { font-size: var(--text-parrafo); }
-
-p { text-wrap: pretty; }
+p { font-size: var(--text-parrafo); text-wrap: pretty; }
 
 ::selection { background: var(--color-accent); color: var(--color-on-accent); }
 
@@ -152,10 +150,7 @@ p { text-wrap: pretty; }
   margin-inline: auto;
 }
 
-.measure { max-inline-size: var(--measure); }
 .measure-narrow { max-inline-size: var(--measure-narrow); }
-
-.flow > * + * { margin-block-start: var(--flow-space, var(--spacing-m)); }
 
 .eyebrow {
   display: block;
@@ -1763,6 +1758,7 @@ p { text-wrap: pretty; }
   display: grid;
   place-items: center;
   cursor: pointer;
+  position: relative;
   transition: inline-size var(--dur-mid) var(--ease-out);
 }
 .carrusel__punto::before {
@@ -1782,7 +1778,6 @@ p { text-wrap: pretty; }
 /* 24×24 es el mínimo de la norma y no da para más ancho: doce puntos a 44 no
    caben en un móvil. A lo alto sí hay sitio, así que la diana sube a 44 y el
    punto que se ve no cambia. */
-.carrusel__punto { position: relative; }
 .carrusel__punto::after {
   content: "";
   position: absolute;
@@ -2075,6 +2070,10 @@ p { text-wrap: pretty; }
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+  /* Los dos iconos ocupan la misma celda: al copiar, el de copiar se encoge y
+     el check entra en su lugar. */
+  grid-area: 1 / 1;
+  transition: opacity var(--dur-fast) var(--ease-out), scale var(--dur-mid) var(--ease-spring);
 }
 .copiar-mail {
   position: relative;
@@ -2097,9 +2096,6 @@ p { text-wrap: pretty; }
 }
 .copiar-mail:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -4px; }
 .copiar-mail[data-copiado="true"] { color: var(--color-accent); background: var(--color-accent-soft); }
-/* Los dos iconos ocupan la misma celda: al copiar, el de copiar se encoge y
-   el check entra en su lugar. */
-.copiar-mail svg { grid-area: 1 / 1; transition: opacity var(--dur-fast) var(--ease-out), scale var(--dur-mid) var(--ease-spring); }
 .copiar-mail__ok { opacity: 0; scale: 0.4; stroke-width: 2.4; }
 .copiar-mail[data-copiado="true"] .copiar-mail__icono { opacity: 0; scale: 0.4; }
 .copiar-mail[data-copiado="true"] .copiar-mail__ok { opacity: 1; scale: 1; }
@@ -2977,10 +2973,8 @@ figure.rise.is-in img {
 ::view-transition-group(*) { animation-timing-function: var(--ease-emphasized); }
 
 /* ============================================================
-   17. Contadores y ajustes finales de movimiento
+   17. Movimiento reducido
    ============================================================ */
-.stat__num { transition: none; }
-
 @media (prefers-reduced-motion: reduce) {
   .line > span { transform: none !important; }
   .enter, .hero__stage .portrait { opacity: 1 !important; transform: none !important; filter: none !important; }
