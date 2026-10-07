@@ -204,12 +204,16 @@ const urlEmbed = (url) => {
 
       <aside class="menu" data-abierto="false" aria-label="Secciones de la ficha">
         <button class="menu__tirador" type="button" aria-expanded="false"
-                aria-controls="menu-secciones" aria-label="Secciones de la ficha y avance">
+                aria-controls="menu-secciones">
           <svg class="menu__anillo" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
             <circle class="menu__pista" cx="20" cy="20" r="17"></circle>
             <circle class="menu__avance" cx="20" cy="20" r="17" pathLength="1"></circle>
           </svg>
+          <!-- Nombre desde el contenido, con la cifra visible dentro: ver el
+               mismo botón en los artículos. -->
+          <span class="visually-hidden">Secciones de la ficha: apartado </span>
           <span class="menu__cifra">1</span>
+          <span class="visually-hidden"> de {secciones.length}</span>
         </button>
 
         <div class="menu__panel" id="menu-secciones">

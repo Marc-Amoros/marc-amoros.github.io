@@ -1006,7 +1006,7 @@
      Malla de puntos del hero
 
      El adorno de la portada, hecho con color plano: un retículo de puntos
-     del color de los bordes que respira muy despacio, y que se enciende en
+     del color de los bordes que respira unos segundos al entrar, y que se enciende en
      el acento allí donde está el cursor. Sin degradados: cada punto es un
      color liso y la profundidad la dan el tamaño y la opacidad.
 
@@ -1157,9 +1157,18 @@
         }
       }
 
+      // La onda respira 5 s y se para frenando poco a poco: WCAG 2.2.2 no deja
+      // que nada se mueva solo más tiempo sin un botón para pararlo. El cursor
+      // (o el dedo) la sigue encendiendo después: eso lo mueve quien visita.
+      // La cuenta empieza en el primer fotograma y no se reinicia al volver
+      // al hero: una vez quieta, queda quieta.
+      var RESPIRA = 5000;
+      var inicio = null;
       function bucle(t) {
         if (!animando) return;
-        pintar(t);
+        if (inicio === null) inicio = t;
+        var s = Math.min((t - inicio) / RESPIRA, 1);
+        pintar(RESPIRA / 2 * s * (2 - s));
         requestAnimationFrame(bucle);
       }
 

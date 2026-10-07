@@ -559,7 +559,10 @@ p { font-size: var(--text-parrafo); text-wrap: pretty; }
       color-mix(in oklab, var(--color-accent) 40%, transparent) 0%, transparent 70%),
     radial-gradient(30% 34% at 86% 50%,
       color-mix(in oklab, var(--color-accent-2) 38%, transparent) 0%, transparent 70%);
-  animation: aurora 26s var(--ease-soft) infinite alternate;
+  /* Un solo desplazamiento y se queda: WCAG 2.2.2 no deja que nada se mueva
+     solo más de 5 s junto al contenido sin un botón para pararlo. Antes iba y
+     volvía en bucle cada 26 s. */
+  animation: aurora 5s var(--ease-soft) both;
   will-change: transform;
 }
 @keyframes aurora {
@@ -662,7 +665,9 @@ p { font-size: var(--text-parrafo); text-wrap: pretty; }
           mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           mask-composite: exclude;
   opacity: 0.43;
-  animation: haz 5s linear infinite;
+  /* Una vuelta y para (WCAG 2.2.2: nada en bucle más de 5 s). Al acabar,
+     --haz vuelve a 0, que es el mismo punto que 1turn: no salta. */
+  animation: haz 5s linear;
   transition: opacity var(--dur-mid) var(--ease-out);
   pointer-events: none;
 }
@@ -996,7 +1001,8 @@ p { font-size: var(--text-parrafo); text-wrap: pretty; }
    4 s      El cursor de Marc llega describiendo una curva suave y, al posarse
             en la esquina (5,05 s), hace clic: un anillo y el asa responde.
    5,15 s   El brillo cruza la letra y deja un destello en su pie.
-   Después el cursor se mece despacio. Los tiempos de main.js (la medida y
+   Y ahí se queda quieto: antes se mecía en bucle, y WCAG 2.2.2 no deja que
+   nada se mueva solo indefinidamente sin un botón para pararlo. Los tiempos de main.js (la medida y
    cuándo acaba el brillo) van con estos: si cambias unos, cambia los otros.
    main.js pone .arte--entra y .arte--pausa en cuanto carga: la entrada queda
    puesta pero parada en su primer fotograma (nada a la vista), y quita la
@@ -1052,8 +1058,7 @@ p { font-size: var(--text-parrafo); text-wrap: pretty; }
    en vertical tarde, así que llega describiendo un arco suave. */
 .arte--entra .arte__vuelo {
   animation: arte-vuelo-x 1050ms cubic-bezier(0.15, 0.6, 0.25, 1) 4000ms backwards,
-             arte-vuelo-y 1050ms cubic-bezier(0.45, 0, 0.15, 1) 4000ms backwards,
-             arte-mece 3.8s ease-in-out 5250ms infinite alternate;
+             arte-vuelo-y 1050ms cubic-bezier(0.45, 0, 0.15, 1) 4000ms backwards;
 }
 .arte--entra .arte__clic     { animation: arte-clic 650ms var(--ease-out) 5050ms; }
 .arte--entra .arte__brillo   { animation: arte-brillo 1300ms var(--ease-out) 5150ms backwards; }
@@ -1094,7 +1099,6 @@ p { font-size: var(--text-parrafo); text-wrap: pretty; }
   from { opacity: 0; transform: translateY(130px) rotate(-8deg); }
   25%  { opacity: 1; }
 }
-@keyframes arte-mece    { from { transform: none; } to { transform: translate(4px, -5px); } }
 @keyframes arte-clic    { from { opacity: 0.9; transform: scale(0.2); } to { opacity: 0; transform: scale(1.8); } }
 @keyframes arte-brillo {
   0%   { opacity: 0; transform: translateX(-180px) skewX(-18deg); }
@@ -2053,7 +2057,10 @@ p { font-size: var(--text-parrafo); text-wrap: pretty; }
   border-radius: var(--radius-pill) 0 0 var(--radius-pill);
   transition: background var(--dur-fast) var(--ease-out);
 }
-.contact__mail span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Antes se cortaba con «…» cuando no cabía (a 320px se leía «asmarc.uxui@gm…»):
+   la dirección es justo lo que hay que poder leer entera. Ahora, si no cabe,
+   baja a dos líneas por la arroba (el <wbr> de Contacto.astro). */
+.contact__mail span { min-inline-size: 0; overflow-wrap: anywhere; text-align: center; }
 @media (hover: hover) {
   .contact__correo:hover { border-color: color-mix(in oklab, var(--color-accent) 55%, var(--color-border)); }
 }
@@ -2674,6 +2681,19 @@ figure.rise.is-in img {
   transition: transform var(--dur-emphasized) var(--ease-emphasized),
               inline-size var(--dur-emphasized) var(--ease-emphasized);
   pointer-events: none;
+}
+
+/* En pantallas muy estrechas (320px con el texto espaciado que pide WCAG
+   1.4.12) las tres pestañas no caben y se cortaba «Experiencia». Primero se
+   recorta el aire de los lados, que basta con el texto normal; si aun así no
+   caben, la fila se desliza en horizontal en vez de recortar los rótulos. El
+   indicador sube un píxel porque el desplazamiento recorta lo que sobresale
+   por abajo. */
+@media (max-width: 22.5rem) {
+  .tabs { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; padding-inline: 0.7em; }
+  .tabs__indicator { inset-block-end: 0; }
 }
 
 .tabpanel[hidden] { display: none; }

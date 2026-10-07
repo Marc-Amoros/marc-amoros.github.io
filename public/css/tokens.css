@@ -160,8 +160,11 @@
   --color-on-accent:     var(--color-neutral-0);
   --color-focus-ring:    var(--color-violet-500);
 
-  /* Cristal esmerilado y sombras difusas */
-  --glass-bg:     rgba(255 255 255 / 0.72);
+  /* Cristal esmerilado y sombras difusas. --glass-bg va al 86 %: al 72 %, una
+     lámina clara pasando por detrás de la barra en oscuro dejaba sus enlaces
+     en 2,8:1 (WCAG pide 4,5). Sigue viéndose el cristal, pero ya no manda lo
+     que pasa por debajo. */
+  --glass-bg:     rgba(255 255 255 / 0.86);
   --glass-solid:  rgba(255 255 255 / 0.96);
   --glass-border: rgba(0 0 0 / 0.08);
   --glass-blur:   saturate(180%) blur(20px);
@@ -288,7 +291,7 @@
     --color-on-accent:     #17102a;
     --color-focus-ring:    var(--color-violet-400);
 
-    --glass-bg:     rgba(28 22 41 / 0.72);
+    --glass-bg:     rgba(28 22 41 / 0.86);
     --glass-solid:  rgba(0 0 0 / 0.94);
     --glass-border: rgba(255 255 255 / 0.10);
 
@@ -350,7 +353,7 @@
   --color-on-accent:     #17102a;
   --color-focus-ring:    var(--color-violet-400);
 
-  --glass-bg:     rgba(28 22 41 / 0.72);
+  --glass-bg:     rgba(28 22 41 / 0.86);
   --glass-solid:  rgba(0 0 0 / 0.94);
   --glass-border: rgba(255 255 255 / 0.10);
 

@@ -79,13 +79,17 @@ const rotulo = (t) => t === t.toLocaleUpperCase('es') && /\p{Ll}/u.test(t.toLoca
         <aside class="menu" data-abierto="false" data-solo={conIndice ? undefined : 'true'}
                aria-label="Lectura del artículo">
           <button class="menu__tirador" type="button" aria-expanded="false"
-                  aria-controls="menu-lectura"
-                  aria-label={conIndice ? 'Apartados y progreso de lectura' : 'Progreso de lectura'}>
+                  aria-controls="menu-lectura">
             <svg class="menu__anillo" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
               <circle class="menu__pista" cx="20" cy="20" r="17"></circle>
               <circle class="menu__avance" cx="20" cy="20" r="17" pathLength="1"></circle>
             </svg>
+            <!-- El nombre sale del propio contenido y no de un aria-label: así
+                 incluye la cifra que se ve («7»), que es lo que dirá quien
+                 maneje la página por voz. -->
+            <span class="visually-hidden">{conIndice ? 'Apartados y progreso de lectura' : 'Progreso de lectura'}: quedan </span>
             <span class="menu__cifra">{articulo.minutos}</span>
+            <span class="visually-hidden"> min</span>
           </button>
 
           <div class="menu__panel" id="menu-lectura">

@@ -768,7 +768,14 @@
   display: grid;
   justify-items: start;
   gap: var(--spacing-2xs);
+  /* Plegado, el panel sigue ocupando su sitio (invisible) dentro de esta caja:
+     unos 300 × 450 px encima del botón. Sin esto, esa caja vacía se tragaba
+     los toques de los enlaces que quedaban debajo. Solo responden el botón y
+     el panel, y el panel solo cuando se ve (visibility: hidden no recibe
+     toques). */
+  pointer-events: none;
 }
+.menu > * { pointer-events: auto; }
 
 /* El tirador: el anillo se completa con lo leído y dentro van los minutos
    que quedan. Es el resumen de todo el panel en 48 píxeles.
